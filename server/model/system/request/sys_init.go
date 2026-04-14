@@ -8,16 +8,17 @@ import (
 
 type InitDB struct {
 	AdminPassword string `json:"adminPassword" binding:"required"`
-	DBType        string `json:"dbType"`                    // 数据库类型
-	Host          string `json:"host"`                      // 服务器地址
-	Port          string `json:"port"`                      // 数据库连接端口
-	UserName      string `json:"userName"`                  // 数据库用户名
-	Password      string `json:"password"`                  // 数据库密码
-	DBName        string `json:"dbName" binding:"required"` // 数据库名
-	DBPath        string `json:"dbPath"`                    // sqlite数据库文件路径
+	DBType        string `json:"dbType"`                    // Databasetype
+	Host          string `json:"host"`                      // server address
+	Port          string `json:"port"`                      // DatabaseConnectionport
+	UserName      string `json:"userName"`                  // Databaseusername
+	Password      string `json:"password"`                  // Databasepassword
+	DBName        string `json:"dbName" binding:"required"` // DatabaseName
+	DBPath        string `json:"dbPath"`                    // sqliteDatabaseFilepath
+	Template      string `json:"template"`                  // postgresqlSpecifytemplate
 }
 
-// MysqlEmptyDsn msyql 空数据库 建库链接
+// MysqlEmptyDsn msyql empty database database creation connection string
 // Author SliverHorn
 func (i *InitDB) MysqlEmptyDsn() string {
 	if i.Host == "" {
@@ -29,7 +30,7 @@ func (i *InitDB) MysqlEmptyDsn() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/", i.UserName, i.Password, i.Host, i.Port)
 }
 
-// PgsqlEmptyDsn pgsql 空数据库 建库链接
+// PgsqlEmptyDsn pgsql empty database database creation connection string
 // Author SliverHorn
 func (i *InitDB) PgsqlEmptyDsn() string {
 	if i.Host == "" {
@@ -41,7 +42,7 @@ func (i *InitDB) PgsqlEmptyDsn() string {
 	return "host=" + i.Host + " user=" + i.UserName + " password=" + i.Password + " port=" + i.Port + " dbname=" + "postgres" + " " + "sslmode=disable TimeZone=Asia/Shanghai"
 }
 
-// SqliteEmptyDsn sqlite 空数据库 建库链接
+// SqliteEmptyDsn sqlite empty database database creation connection string
 // Author Kafumio
 func (i *InitDB) SqliteEmptyDsn() string {
 	separator := string(os.PathSeparator)
@@ -52,7 +53,7 @@ func (i *InitDB) MssqlEmptyDsn() string {
 	return "sqlserver://" + i.UserName + ":" + i.Password + "@" + i.Host + ":" + i.Port + "?database=" + i.DBName + "&encrypt=disable"
 }
 
-// ToMysqlConfig 转换 config.Mysql
+// ToMysqlConfig convert config.Mysql
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (i *InitDB) ToMysqlConfig() config.Mysql {
 	return config.Mysql{
@@ -70,7 +71,7 @@ func (i *InitDB) ToMysqlConfig() config.Mysql {
 	}
 }
 
-// ToPgsqlConfig 转换 config.Pgsql
+// ToPgsqlConfig convert config.Pgsql
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (i *InitDB) ToPgsqlConfig() config.Pgsql {
 	return config.Pgsql{
@@ -88,7 +89,7 @@ func (i *InitDB) ToPgsqlConfig() config.Pgsql {
 	}
 }
 
-// ToSqliteConfig 转换 config.Sqlite
+// ToSqliteConfig convert config.Sqlite
 // Author [Kafumio](https://github.com/Kafumio)
 func (i *InitDB) ToSqliteConfig() config.Sqlite {
 	return config.Sqlite{

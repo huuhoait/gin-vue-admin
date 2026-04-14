@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Plugin 插件模式接口化v2
+// Plugin plugin mode APIv2
 type Plugin interface {
-	// Register 注册路由
+	// Register register routes
 	Register(group *gin.Engine)
 }

@@ -2,9 +2,11 @@ package request
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 func HttpRequest(
@@ -13,20 +15,71 @@ func HttpRequest(
 	headers map[string]string,
 	params map[string]string,
 	data any) (*http.Response, error) {
-	// 创建URL
+	return doJSONRequest(context.Background(), 0, urlStr, method, headers, params, data)
+}
+
+// HttpRequestWithTimeout sendHTTPRequest, SupportCustomtimeout
+// timeout ParameterCanChoose, UnitForTime.Duration, defaultValueFor 10 PartClock
+func HttpRequestWithTimeout(
+	urlStr string,
+	method string,
+	headers map[string]string,
+	params map[string]string,
+	data any,
+	timeout ...time.Duration) (*http.Response, error) {
+	t := 10 * time.Minute
+	if len(timeout) > 0 && timeout[0] > 0 {
+		t = timeout[0]
+	}
+	return doJSONRequest(context.Background(), t, urlStr, method, headers, params, data)
+}
+
+// HttpRequestWithContextAndTimeout sendHTTPRequest, SupportCustomtimeoutAndContext
+func HttpRequestWithContextAndTimeout(
+	ctx context.Context,
+	urlStr string,
+	method string,
+	headers map[string]string,
+	params map[string]string,
+	data any,
+	timeout ...time.Duration) (*http.Response, error) {
+	t := 10 * time.Minute
+	if len(timeout) > 0 {
+		if timeout[0] < 0 {
+			t = 0 // negativeValueTableShowNotsetTimeout(Used for SSE etc.FlowstyleScenario)
+		} else if timeout[0] > 0 {
+			t = timeout[0]
+		}
+	}
+	return doJSONRequest(ctx, t, urlStr, method, headers, params, data)
+}
+
+func doJSONRequest(
+	ctx context.Context,
+	timeout time.Duration,
+	urlStr string,
+	method string,
+	headers map[string]string,
+	params map[string]string,
+	data any) (*http.Response, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	// URL
 	u, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
 	}
 
-	// 添加查询参数
+	// AddQuery Parameter
 	query := u.Query()
 	for k, v := range params {
 		query.Set(k, v)
 	}
 	u.RawQuery = query.Encode()
 
-	// 将数据编码为JSON
+	// WillDataCodeForJSON
 	buf := new(bytes.Buffer)
 	if data != nil {
 		b, err := json.Marshal(data)
@@ -36,9 +89,8 @@ func HttpRequest(
 		buf = bytes.NewBuffer(b)
 	}
 
-	// 创建请求
-	req, err := http.NewRequest(method, u.String(), buf)
-
+	// CreateRequest
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), buf)
 	if err != nil {
 		return nil, err
 	}
@@ -51,12 +103,25 @@ func HttpRequest(
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	// 发送请求
-	resp, err := http.DefaultClient.Do(req)
+	client := &http.Client{}
+	if timeout > 0 {
+		client.Timeout = timeout
+	}
+
+	// WhenRequest SSE FlowWhen, Disable Transport LayerofAutomatic gzip compress
+	// Avoid gzip unzipRelieverushCause SSE EventUnablerealWhenToReach
+	if req.Header.Get("Accept") == "text/event-stream" {
+		client.Transport = &http.Transport{
+			DisableCompression: true,
+		}
+	}
+
+	// sendRequest
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	// 返回响应，让调用者处理
+	// ReturnResponse, InvokeSideResponsibleDisable
 	return resp, nil
 }

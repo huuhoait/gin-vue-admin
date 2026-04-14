@@ -148,7 +148,7 @@ go env -w GOPROXY=https://goproxy.cn,https://goproxy.io,direct
 cd server
 go generate -run "go env -w .*?"
 
-# 使用如下命令下载swag
+# Use the following command to download swag
 go get -u github.com/swaggo/swag/cmd/swag
 ````
 
@@ -298,6 +298,10 @@ swag init
 ## 8. Contributors
 
 Thank you for considering your contribution to gin-vue-admin!
+
+<a href="https://openomy.app/github/flipped-aurora/gin-vue-admin" target="_blank" style="display: block; width: 100%;" align="center">
+  <img src="https://openomy.app/svg?repo=flipped-aurora/gin-vue-admin&chart=bubble&latestMonth=3" target="_blank" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
+ </a>
 
 <a href="https://github.com/flipped-aurora/gin-vue-admin/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=flipped-aurora/gin-vue-admin" />

@@ -1,45 +1,133 @@
-import axios from 'axios' // 引入axios
-import { ElMessage, ElMessageBox } from 'element-plus'
+import axios from 'axios'
 import { useUserStore } from '@/pinia/modules/user'
+import { ElLoading, ElMessage } from 'element-plus'
+import { emitter } from '@/utils/bus'
 import router from '@/router/index'
-import { ElLoading } from 'element-plus'
 
-const service = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API,
-  timeout: 99999
-})
+const DEFAULT_REQUEST_TIMEOUT = 1000 * 60 * 10
+const DEFAULT_LOADING_FORCE_CLOSE_DELAY = 30000
+
+const service = axios.create()
+
 let activeAxios = 0
-let timer
-let loadingInstance
-const showLoading = (option = {
-  target: null,
-}) => {
-  const loadDom = document.getElementById('gva-base-load-dom')
-  activeAxios++
+let persistentLoadingCount = 0
+let timer = null
+let forceCloseTimer = null
+let loadingInstance = null
+let isLoadingVisible = false
+
+const clearLoadingTimers = () => {
   if (timer) {
     clearTimeout(timer)
+    timer = null
   }
-  timer = setTimeout(() => {
-    if (activeAxios > 0) {
-      if (!option.target) option.target = loadDom
-      loadingInstance = ElLoading.service(option)
+
+  if (forceCloseTimer) {
+    clearTimeout(forceCloseTimer)
+    forceCloseTimer = null
+  }
+}
+
+const closeLoadingInstance = () => {
+  if (isLoadingVisible && loadingInstance) {
+    loadingInstance.close()
+  }
+  loadingInstance = null
+  isLoadingVisible = false
+}
+
+const scheduleForceClose = () => {
+  if (!isLoadingVisible || activeAxios <= 0 || persistentLoadingCount > 0) {
+    return
+  }
+
+  forceCloseTimer = setTimeout(() => {
+    if (isLoadingVisible && loadingInstance) {
+      console.warn(
+        `Loading force closed after ${DEFAULT_LOADING_FORCE_CLOSE_DELAY}ms`
+      )
+      closeLoadingInstance()
+      activeAxios = 0
+      persistentLoadingCount = 0
     }
+  }, DEFAULT_LOADING_FORCE_CLOSE_DELAY)
+}
+
+const showLoading = (
+  option = {
+    target: null
+  }
+) => {
+  const loadDom = document.getElementById('gva-base-load-dom')
+  const loadingOption = {
+    target: null,
+    ...option
+  }
+  const persistLoading = Boolean(loadingOption.persistLoading)
+
+  delete loadingOption.persistLoading
+
+  activeAxios++
+  if (persistLoading) {
+    persistentLoadingCount++
+  }
+
+  clearLoadingTimers()
+
+  timer = setTimeout(() => {
+    if (activeAxios > 0 && !isLoadingVisible) {
+      if (!loadingOption.target) {
+        loadingOption.target = loadDom
+      }
+      loadingInstance = ElLoading.service(loadingOption)
+      isLoadingVisible = true
+    }
+
+    scheduleForceClose()
   }, 400)
 }
 
-const closeLoading = () => {
+const closeLoading = (option = {}) => {
   activeAxios--
-  if (activeAxios <= 0) {
-    clearTimeout(timer)
-    loadingInstance && loadingInstance.close()
+  if (option?.persistLoading && persistentLoadingCount > 0) {
+    persistentLoadingCount--
   }
+
+  if (activeAxios <= 0) {
+    activeAxios = 0
+    persistentLoadingCount = 0
+    clearLoadingTimers()
+    closeLoadingInstance()
+    return
+  }
+
+  if (forceCloseTimer) {
+    clearTimeout(forceCloseTimer)
+    forceCloseTimer = null
+  }
+
+  scheduleForceClose()
 }
-// http request 拦截器
+
+const resetLoading = () => {
+  activeAxios = 0
+  persistentLoadingCount = 0
+  clearLoadingTimers()
+  closeLoadingInstance()
+}
+
 service.interceptors.request.use(
-  config => {
+  (config) => {
+    if (typeof config.timeout === 'undefined') {
+      config.timeout = DEFAULT_REQUEST_TIMEOUT
+    }
+
     if (!config.donNotShowLoading) {
       showLoading(config.loadingOption)
     }
+
+    config.baseURL = config.baseURL || import.meta.env.VITE_BASE_API
+
     const userStore = useUserStore()
     config.headers = {
       'Content-Type': 'application/json',
@@ -47,110 +135,97 @@ service.interceptors.request.use(
       'x-user-id': userStore.userInfo.ID,
       ...config.headers
     }
+
     return config
   },
-  error => {
-    if (!error.config.donNotShowLoading) {
-      closeLoading()
+  (error) => {
+    if (!error.config?.donNotShowLoading) {
+      closeLoading(error.config?.loadingOption)
     }
-    ElMessage({
-      showClose: true,
-      message: error,
-      type: 'error'
+
+    emitter.emit('show-error', {
+      code: 'request',
+      message: error.message || 'Request failed to send'
     })
+
     return error
   }
 )
 
-// http response 拦截器
+function getErrorMessage(error) {
+  return error.response?.data?.msg || error.response?.statusText || 'Request failed'
+}
+
 service.interceptors.response.use(
-  response => {
+  (response) => {
     const userStore = useUserStore()
+
     if (!response.config.donNotShowLoading) {
-      closeLoading()
+      closeLoading(response.config.loadingOption)
     }
+
     if (response.headers['new-token']) {
       userStore.setToken(response.headers['new-token'])
     }
+
+    if (typeof response.data.code === 'undefined') {
+      return response
+    }
+
     if (response.data.code === 0 || response.headers.success === 'true') {
       if (response.headers.msg) {
         response.data.msg = decodeURI(response.headers.msg)
       }
       return response.data
-    } else {
-      ElMessage({
-        showClose: true,
-        message: response.data.msg || decodeURI(response.headers.msg),
-        type: 'error'
-      })
-      return response.data.msg ? response.data : response
     }
+
+    ElMessage({
+      showClose: true,
+      message: response.data.msg || decodeURI(response.headers.msg),
+      type: 'error'
+    })
+
+    return response.data.msg ? response.data : response
   },
-  error => {
-    if (!error.config.donNotShowLoading) {
-      closeLoading()
+  (error) => {
+    if (!error.config?.donNotShowLoading) {
+      closeLoading(error.config?.loadingOption)
     }
 
     if (!error.response) {
-      ElMessageBox.confirm(`
-        <p>检测到请求错误</p>
-        <p>${error}</p>
-        `, '请求报错', {
-        dangerouslyUseHTMLString: true,
-        distinguishCancelAndClose: true,
-        confirmButtonText: '稍后重试',
-        cancelButtonText: '取消'
+      resetLoading()
+      emitter.emit('show-error', {
+        code: 'network',
+        message: getErrorMessage(error)
       })
-      return
+      return Promise.reject(error)
     }
 
-    switch (error.response.status) {
-      case 500:
-        ElMessageBox.confirm(`
-        <p>检测到接口错误${error}</p>
-        <p>错误码<span style="color:red"> 500 </span>：此类错误内容常见于后台panic，请先查看后台日志，如果影响您正常使用可强制登出清理缓存</p>
-        `, '接口报错', {
-          dangerouslyUseHTMLString: true,
-          distinguishCancelAndClose: true,
-          confirmButtonText: '清理缓存',
-          cancelButtonText: '取消'
-        })
-          .then(() => {
-            const userStore = useUserStore()
-            userStore.ClearStorage()
-            router.push({ name: 'Login', replace: true })
-          })
-        break
-      case 404:
-        ElMessageBox.confirm(`
-          <p>检测到接口错误${error}</p>
-          <p>错误码<span style="color:red"> 404 </span>：此类错误多为接口未注册（或未重启）或者请求路径（方法）与api路径（方法）不符--如果为自动化代码请检查是否存在空格</p>
-          `, '接口报错', {
-          dangerouslyUseHTMLString: true,
-          distinguishCancelAndClose: true,
-          confirmButtonText: '我知道了',
-          cancelButtonText: '取消'
-        })
-        break
-      case 401:
-        ElMessageBox.confirm(`
-          <p>无效的令牌</p>
-          <p>错误码:<span style="color:red"> 401 </span>错误信息:${error}</p>
-          `, '身份信息', {
-          dangerouslyUseHTMLString: true,
-          distinguishCancelAndClose: true,
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消'
-        })
-          .then(() => {
-            const userStore = useUserStore()
-            userStore.ClearStorage()
-            router.push({ name: 'Login', replace: true })
-          })
-        break
+    if (error.response.status === 401) {
+      emitter.emit('show-error', {
+        code: '401',
+        message: getErrorMessage(error),
+        fn: () => {
+          const userStore = useUserStore()
+          userStore.ClearStorage()
+          router.push({ name: 'Login', replace: true })
+        }
+      })
+      return Promise.reject(error)
     }
 
-    return error
+    emitter.emit('show-error', {
+      code: error.response.status,
+      message: getErrorMessage(error)
+    })
+    return Promise.reject(error)
   }
 )
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', resetLoading)
+  window.addEventListener('unload', resetLoading)
+}
+
+export { resetLoading }
 export default service

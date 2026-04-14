@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
 	"math/rand"
 	"reflect"
 	"strings"
@@ -9,7 +10,7 @@ import (
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: StructToMap
-//@description: 利用反射将结构体转化为map
+//@description: benefitUseReflectionWillStructureBodyTurntransformFormap
 //@param: obj interface{}
 //@return: map[string]interface{}
 
@@ -30,7 +31,7 @@ func StructToMap(obj interface{}) map[string]interface{} {
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: ArrayToString
-//@description: 将数组格式化为字符串
+//@description: WillArrayFormatForString
 //@param: array []interface{}
 //@return: string
 
@@ -56,7 +57,7 @@ func FirstLower(s string) string {
 	return strings.ToLower(s[:1]) + s[1:]
 }
 
-// MaheHump 将字符串转换为驼峰命名
+// MaheHump WillStringConvertForcamel caseNameName
 func MaheHump(s string) string {
 	words := strings.Split(s, "-")
 
@@ -67,7 +68,24 @@ func MaheHump(s string) string {
 	return strings.Join(words, "")
 }
 
-// 随机字符串
+// HumpToUnderscore Willcamel caseNameNameConvertForDownDrawLinePartcutMode
+func HumpToUnderscore(s string) string {
+	var result strings.Builder
+
+	for i, char := range s {
+		if i > 0 && char >= 'A' && char <= 'Z' {
+			// AtLargeWriteLetterBeforeAddDownDrawLine
+			result.WriteRune('_')
+			result.WriteRune(char - 'A' + 'a') // TurnLowercase
+		} else {
+			result.WriteRune(char)
+		}
+	}
+
+	return strings.ToLower(result.String())
+}
+
+// RandomString RandomString
 func RandomString(n int) string {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	b := make([]rune, n)
@@ -79,4 +97,29 @@ func RandomString(n int) string {
 
 func RandomInt(min, max int) int {
 	return min + rand.Intn(max-min)
+}
+
+// BuildTree Used forBuildOnePiecetree structure
+func BuildTree[T common.TreeNode[T]](nodes []T) []T {
+	nodeMap := make(map[int]T)
+	// CreateOnePieceBasicmap
+	for i := range nodes {
+		nodeMap[nodes[i].GetID()] = nodes[i]
+	}
+
+	for i := range nodes {
+		if nodes[i].GetParentID() != 0 {
+			parent := nodeMap[nodes[i].GetParentID()]
+			parent.SetChildren(nodes[i])
+		}
+	}
+
+	var rootNodes []T
+
+	for i := range nodeMap {
+		if nodeMap[i].GetParentID() == 0 {
+			rootNodes = append(rootNodes, nodeMap[i])
+		}
+	}
+	return rootNodes
 }

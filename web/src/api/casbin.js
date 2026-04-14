@@ -1,11 +1,11 @@
 import service from '@/utils/request'
 // @Tags authority
-// @Summary 更改角色api权限
+// @Summary Update role API permissions
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body api.CreateAuthorityPatams true "更改角色api权限"
-// @Success 200 {string} json "{"success":true,"data":{},"msg":"获取成功"}"
+// @Param data body api.CreateAuthorityPatams true "Update role API permissions"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"OK"}"
 // @Router /casbin/UpdateCasbin [post]
 export const UpdateCasbin = (data) => {
   return service({
@@ -16,12 +16,12 @@ export const UpdateCasbin = (data) => {
 }
 
 // @Tags casbin
-// @Summary 获取权限列表
+// @Summary Get permission list
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body api.CreateAuthorityPatams true "获取权限列表"
-// @Success 200 {string} json "{"success":true,"data":{},"msg":"获取成功"}"
+// @Param data body api.CreateAuthorityPatams true "Get permission list"
+// @Success 200 {string} json "{"success":true,"data":{},"msg":"OK"}"
 // @Router /casbin/getPolicyPathByAuthorityId [post]
 export const getPolicyPathByAuthorityId = (data) => {
   return service({

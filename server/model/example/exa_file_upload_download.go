@@ -6,10 +6,11 @@ import (
 
 type ExaFileUploadAndDownload struct {
 	global.GVA_MODEL
-	Name string `json:"name" gorm:"comment:文件名"` // 文件名
-	Url  string `json:"url" gorm:"comment:文件地址"` // 文件地址
-	Tag  string `json:"tag" gorm:"comment:文件标签"` // 文件标签
-	Key  string `json:"key" gorm:"comment:编号"`   // 编号
+	Name    string `json:"name" form:"name" gorm:"column:name;comment:file name"`                                // file name
+	ClassId int    `json:"classId" form:"classId" gorm:"default:0;type:int;column:class_id;comment:category ID;"` // category ID
+	Url     string `json:"url" form:"url" gorm:"column:url;comment:file URL"`                                  // file URL
+	Tag     string `json:"tag" form:"tag" gorm:"column:tag;comment:file tag"`                                  // file tag
+	Key     string `json:"key" form:"key" gorm:"column:key;comment:serial number"`                                    // serial number
 }
 
 func (ExaFileUploadAndDownload) TableName() string {

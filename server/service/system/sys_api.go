@@ -3,17 +3,18 @@ package system
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
 	"gorm.io/gorm"
-	"strings"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: CreateApi
-//@description: 新增基础api
+//@description: Create a base API
 //@param: api model.SysApi
 //@return: err error
 
@@ -23,7 +24,7 @@ var ApiServiceApp = new(ApiService)
 
 func (apiService *ApiService) CreateApi(api system.SysApi) (err error) {
 	if !errors.Is(global.GVA_DB.Where("path = ? AND method = ?", api.Path, api.Method).First(&system.SysApi{}).Error, gorm.ErrRecordNotFound) {
-		return errors.New("存在相同api")
+		return errors.New("duplicate API already exists")
 	}
 	return global.GVA_DB.Create(&api).Error
 }
@@ -91,10 +92,10 @@ func (apiService *ApiService) SyncApi() (newApis, deleteApis, ignoreApis []syste
 		}
 	}
 
-	//对比数据库中的api和内存中的api，如果数据库中的api不存在于内存中，则把api放入删除数组，如果内存中的api不存在于数据库中，则把api放入新增数组
+	// compare APIs in database with those in memory; if a DB API is not in memory, add to delete array; if a memory API is not in DB, add to new array
 	for i := range cacheApis {
 		var flag bool
-		// 如果存在于内存不存在于api数组中
+		// if exists in memory but not in api array
 		for j := range apis {
 			if cacheApis[i].Path == apis[j].Path && cacheApis[i].Method == apis[j].Method {
 				flag = true
@@ -112,7 +113,7 @@ func (apiService *ApiService) SyncApi() (newApis, deleteApis, ignoreApis []syste
 
 	for i := range apis {
 		var flag bool
-		// 如果存在于api数组不存在于内存
+		// if exists in api array but not in memory
 		for j := range cacheApis {
 			if cacheApis[j].Path == apis[i].Path && cacheApis[j].Method == apis[i].Method {
 				flag = true
@@ -135,7 +136,7 @@ func (apiService *ApiService) IgnoreApi(ignoreApi system.SysIgnoreApi) (err erro
 func (apiService *ApiService) EnterSyncApi(syncApis systemRes.SysSyncApis) (err error) {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		var txErr error
-		if syncApis.NewApis != nil && len(syncApis.NewApis) > 0 {
+		if len(syncApis.NewApis) > 0 {
 			txErr = tx.Create(&syncApis.NewApis).Error
 			if txErr != nil {
 				return txErr
@@ -154,14 +155,14 @@ func (apiService *ApiService) EnterSyncApi(syncApis systemRes.SysSyncApis) (err 
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteApi
-//@description: 删除基础api
+//@description: Delete a base API
 //@param: api model.SysApi
 //@return: err error
 
 func (apiService *ApiService) DeleteApi(api system.SysApi) (err error) {
 	var entity system.SysApi
-	err = global.GVA_DB.First(&entity, "id = ?", api.ID).Error // 根据id查询api记录
-	if errors.Is(err, gorm.ErrRecordNotFound) {                // api记录不存在
+	err = global.GVA_DB.First(&entity, "id = ?", api.ID).Error // query api record by id
+	if errors.Is(err, gorm.ErrRecordNotFound) {                // api record does not exist
 		return err
 	}
 	err = global.GVA_DB.Delete(&entity).Error
@@ -174,7 +175,7 @@ func (apiService *ApiService) DeleteApi(api system.SysApi) (err error) {
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetAPIInfoList
-//@description: 分页获取数据,
+//@description: Get data with pagination
 //@param: api model.SysApi, info request.PageInfo, order string, desc bool
 //@return: list interface{}, total int64, err error
 
@@ -216,7 +217,7 @@ func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.Pag
 		orderMap["description"] = true
 		orderMap["method"] = true
 		if !orderMap[order] {
-			err = fmt.Errorf("非法的排序字段: %v", order)
+			err = fmt.Errorf("illegal order field: %v", order)
 			return apiList, total, err
 		}
 		OrderStr = order
@@ -230,17 +231,34 @@ func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.Pag
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetAllApis
-//@description: 获取所有的api
+//@description: Get all APIs
 //@return:  apis []model.SysApi, err error
 
-func (apiService *ApiService) GetAllApis() (apis []system.SysApi, err error) {
+func (apiService *ApiService) GetAllApis(authorityID uint) (apis []system.SysApi, err error) {
+	parentAuthorityID, err := AuthorityServiceApp.GetParentAuthorityID(authorityID)
+	if err != nil {
+		return nil, err
+	}
 	err = global.GVA_DB.Order("id desc").Find(&apis).Error
-	return
+	if parentAuthorityID == 0 || !global.GVA_CONFIG.System.UseStrictAuth {
+		return
+	}
+	paths := CasbinServiceApp.GetPolicyPathByAuthorityId(authorityID)
+	// filter apis whose path and method are also in paths
+	var authApis []system.SysApi
+	for i := range apis {
+		for j := range paths {
+			if paths[j].Path == apis[i].Path && paths[j].Method == apis[i].Method {
+				authApis = append(authApis, apis[i])
+			}
+		}
+	}
+	return authApis, err
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetApiById
-//@description: 根据id获取api
+//@description: Get API by id
 //@param: id float64
 //@return: api model.SysApi, err error
 
@@ -251,7 +269,7 @@ func (apiService *ApiService) GetApiById(id int) (api system.SysApi, err error) 
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateApi
-//@description: 根据id更新api
+//@description: Update API by id
 //@param: api model.SysApi
 //@return: err error
 
@@ -266,7 +284,7 @@ func (apiService *ApiService) UpdateApi(api system.SysApi) (err error) {
 			}
 		} else {
 			if duplicateApi.ID != api.ID {
-				return errors.New("存在相同api路径")
+				return errors.New("duplicate API path already exists")
 			}
 		}
 
@@ -285,7 +303,7 @@ func (apiService *ApiService) UpdateApi(api system.SysApi) (err error) {
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteApisByIds
-//@description: 删除选中API
+//@description: Delete selected APIs
 //@param: apis []model.SysApi
 //@return: err error
 

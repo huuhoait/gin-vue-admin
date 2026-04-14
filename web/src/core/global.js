@@ -1,41 +1,59 @@
 import config from './config'
 import { h } from 'vue'
 
-// 统一导入el-icon图标
+// Import Element Plus icon components
 import * as ElIconModules from '@element-plus/icons-vue'
 import svgIcon from '@/components/svgIcon/svgIcon.vue'
-// 导入转换图标名称的函数
+// Icon name conversion helpers (if needed)
 
 const createIconComponent = (name) => ({
   name: 'SvgIcon',
   render() {
     return h(svgIcon, {
-      name: name,
+      localIcon: name
     })
-  },
+  }
 })
 
-const registerIcons = async(app) => {
-  const iconModules = import.meta.glob('@/assets/icons/**/*.svg')
-  for (const path in iconModules) {
-    const iconName = path.split('/').pop().replace(/\.svg$/, '')
-    // 如果iconName带空格则不加入到图标库中并且提示名称不合法
-    console.log(iconName)
+const registerIcons = async (app) => {
+  const iconModules = import.meta.glob('@/assets/icons/**/*.svg') // app svg icons
+  const pluginIconModules = import.meta.glob(
+    '@/plugin/**/assets/icons/**/*.svg'
+  ) // plugin svg icons
+  const mergedIconModules = Object.assign({}, iconModules, pluginIconModules) // merged svg icons
+  let allKeys = []
+  for (const path in mergedIconModules) {
+    let pluginName = ''
+    if (path.startsWith('/src/plugin/')) {
+      pluginName = `${path.split('/')[3]}-`
+    }
+    const iconName = path
+      .split('/')
+      .pop()
+      .replace(/\.svg$/, '')
+    // Skip invalid icon names (contains whitespace)
     if (iconName.indexOf(' ') !== -1) {
-      console.error(`icon ${iconName}.svg includes whitespace`)
+      console.error(`icon ${iconName}.svg includes whitespace in ${path}`)
       continue
     }
-    const iconComponent = createIconComponent(iconName)
+    const key = `${pluginName}${iconName}`
+    const iconComponent = createIconComponent(key)
     config.logs.push({
-      'key': iconName,
-      'label': iconName,
+      key: key,
+      label: key
     })
-    app.component(iconName, iconComponent)
+    app.component(key, iconComponent)
+
+    // In dev mode, list all icons for easy copy/paste
+    allKeys.push(key)
   }
+
+  import.meta.env.MODE == 'development' &&
+    console.log(`All available local icons: ${allKeys.join(', ')}`)
 }
 
 export const register = (app) => {
-  // 统一注册el-icon图标
+  // Register Element Plus icons
   for (const iconName in ElIconModules) {
     app.component(iconName, ElIconModules[iconName])
   }

@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	model "github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/pkg/errors"
 	"go/token"
@@ -12,21 +13,28 @@ import (
 type AutoCode struct {
 	Package             string                 `json:"package"`
 	PackageT            string                 `json:"-"`
-	TableName           string                 `json:"tableName" example:"表名"`              // 表名
-	BusinessDB          string                 `json:"businessDB" example:"业务数据库"`          // 业务数据库
-	StructName          string                 `json:"structName" example:"Struct名称"`       // Struct名称
-	PackageName         string                 `json:"packageName" example:"文件名称"`          // 文件名称
-	Description         string                 `json:"description" example:"Struct中文名称"`    // Struct中文名称
-	Abbreviation        string                 `json:"abbreviation" example:"Struct简称"`     // Struct简称
-	HumpPackageName     string                 `json:"humpPackageName" example:"go文件名称"`    // go文件名称
-	GvaModel            bool                   `json:"gvaModel" example:"false"`            // 是否使用gva默认Model
-	AutoMigrate         bool                   `json:"autoMigrate" example:"false"`         // 是否自动迁移表结构
-	AutoCreateResource  bool                   `json:"autoCreateResource" example:"false"`  // 是否自动创建资源标识
-	AutoCreateApiToSql  bool                   `json:"autoCreateApiToSql" example:"false"`  // 是否自动创建api
-	AutoCreateMenuToSql bool                   `json:"autoCreateMenuToSql" example:"false"` // 是否自动创建menu
+	TableName           string                 `json:"tableName" example:"table name"`              // table name
+	BusinessDB          string                 `json:"businessDB" example:"business database"`          // business database
+	StructName          string                 `json:"structName" example:"Structname"`       // Structname
+	PackageName         string                 `json:"packageName" example:"file name"`          // file name
+	Description         string                 `json:"description" example:"StructChinese name"`    // StructChinese name
+	Abbreviation        string                 `json:"abbreviation" example:"Structalias"`     // Structalias
+	HumpPackageName     string                 `json:"humpPackageName" example:"gofile name"`    // gofile name
+	GvaModel            bool                   `json:"gvaModel" example:"false"`            // whether to use gva default model
+	AutoMigrate         bool                   `json:"autoMigrate" example:"false"`         // whether to auto-migrate schema
+	AutoCreateResource  bool                   `json:"autoCreateResource" example:"false"`  // whether to auto-create resource id
+	AutoCreateApiToSql  bool                   `json:"autoCreateApiToSql" example:"false"`  // whether to auto-create APIs
+	AutoCreateMenuToSql bool                   `json:"autoCreateMenuToSql" example:"false"` // whether to auto-create menus
+	AutoCreateBtnAuth   bool                   `json:"autoCreateBtnAuth" example:"false"`   // whether to auto-create button permissions
+	OnlyTemplate        bool                   `json:"onlyTemplate" example:"false"`        // whether to generate template only
+	IsTree              bool                   `json:"isTree" example:"false"`              // whether tree structure
+	TreeJson            string                 `json:"treeJson" example:"JSON field for displayed tree"`       // JSON field for displayed tree
+	IsAdd               bool                   `json:"isAdd" example:"false"`               // whether add operation
 	Fields              []*AutoCodeField       `json:"fields"`
+	GenerateWeb         bool                   `json:"generateWeb" example:"true"`    // whether generate web
+	GenerateServer      bool                   `json:"generateServer" example:"true"` // whether generate server
+	Module              string                 `json:"-"`
 	DictTypes           []string               `json:"-"`
-	FrontFields         []*AutoCodeField       `json:"-"`
 	PrimaryField        *AutoCodeField         `json:"primaryField"`
 	DataSourceMap       map[string]*DataSource `json:"-"`
 	HasPic              bool                   `json:"-"`
@@ -37,50 +45,54 @@ type AutoCode struct {
 	HasRichText         bool                   `json:"-"`
 	HasDataSource       bool                   `json:"-"`
 	HasSearchTimer      bool                   `json:"-"`
+	HasArray            bool                   `json:"-"`
+	HasExcel            bool                   `json:"-"`
 }
 
 type DataSource struct {
-	Table       string `json:"table"`
-	Label       string `json:"label"`
-	Value       string `json:"value"`
-	Association int    `json:"association"` // 关联关系 1 一对一 2 一对多
+	DBName       string `json:"dbName"`
+	Table        string `json:"table"`
+	Label        string `json:"label"`
+	Value        string `json:"value"`
+	Association  int    `json:"association"` // association: 1 one-to-one, 2 one-to-many
+	HasDeletedAt bool   `json:"hasDeletedAt"`
 }
 
 func (r *AutoCode) Apis() []model.SysApi {
 	return []model.SysApi{
 		{
 			Path:        "/" + r.Abbreviation + "/" + "create" + r.StructName,
-			Description: "新增" + r.Description,
+			Description: "create" + r.Description,
 			ApiGroup:    r.Description,
 			Method:      "POST",
 		},
 		{
 			Path:        "/" + r.Abbreviation + "/" + "delete" + r.StructName,
-			Description: "删除" + r.Description,
+			Description: "delete" + r.Description,
 			ApiGroup:    r.Description,
 			Method:      "DELETE",
 		},
 		{
 			Path:        "/" + r.Abbreviation + "/" + "delete" + r.StructName + "ByIds",
-			Description: "批量删除" + r.Description,
+			Description: "batch delete" + r.Description,
 			ApiGroup:    r.Description,
 			Method:      "DELETE",
 		},
 		{
 			Path:        "/" + r.Abbreviation + "/" + "update" + r.StructName,
-			Description: "更新" + r.Description,
+			Description: "update" + r.Description,
 			ApiGroup:    r.Description,
 			Method:      "PUT",
 		},
 		{
 			Path:        "/" + r.Abbreviation + "/" + "find" + r.StructName,
-			Description: "根据ID获取" + r.Description,
+			Description: "get by ID" + r.Description,
 			ApiGroup:    r.Description,
 			Method:      "GET",
 		},
 		{
 			Path:        "/" + r.Abbreviation + "/" + "get" + r.StructName + "List",
-			Description: "获取" + r.Description + "列表",
+			Description: "get" + r.Description + "List",
 			ApiGroup:    r.Description,
 			Method:      "GET",
 		},
@@ -103,28 +115,28 @@ func (r *AutoCode) Menu(template string) model.SysBaseMenu {
 	}
 }
 
-// Pretreatment 预处理
+// Pretreatment preprocessing
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (r *AutoCode) Pretreatment() error {
+	r.Module = global.GVA_CONFIG.AutoCode.Module
 	if token.IsKeyword(r.Abbreviation) {
 		r.Abbreviation = r.Abbreviation + "_"
-	} // go 关键字处理
+	} // Go keyword handling
 	if strings.HasSuffix(r.HumpPackageName, "test") {
 		r.HumpPackageName = r.HumpPackageName + "_"
 	} // test
 	length := len(r.Fields)
 	dict := make(map[string]string, length)
-	r.FrontFields = make([]*AutoCodeField, 0, length)
 	r.DataSourceMap = make(map[string]*DataSource, length)
 	for i := 0; i < length; i++ {
+		if r.Fields[i].Excel {
+			r.HasExcel = true
+		}
 		if r.Fields[i].DictType != "" {
 			dict[r.Fields[i].DictType] = ""
 		}
 		if r.Fields[i].Sort {
 			r.NeedSort = true
-		}
-		if r.Fields[i].Front {
-			r.FrontFields = append(r.FrontFields, r.Fields[i])
 		}
 		switch r.Fields[i].FieldType {
 		case "file":
@@ -134,6 +146,7 @@ func (r *AutoCode) Pretreatment() error {
 			r.NeedJSON = true
 		case "array":
 			r.NeedJSON = true
+			r.HasArray = true
 		case "video":
 			r.HasPic = true
 		case "richtext":
@@ -145,7 +158,7 @@ func (r *AutoCode) Pretreatment() error {
 			r.NeedJSON = true
 		case "time.Time":
 			r.HasTimer = true
-			if r.Fields[i].FieldSearchType != "" {
+			if r.Fields[i].FieldSearchType != "" && r.Fields[i].FieldSearchType != "BETWEEN" && r.Fields[i].FieldSearchType != "NOT BETWEEN" {
 				r.HasSearchTimer = true
 			}
 		}
@@ -158,13 +171,13 @@ func (r *AutoCode) Pretreatment() error {
 		}
 		if !r.GvaModel && r.PrimaryField == nil && r.Fields[i].PrimaryKey {
 			r.PrimaryField = r.Fields[i]
-		} // 自定义主键
+		} // custom primary key
 	}
 	{
 		for key := range dict {
 			r.DictTypes = append(r.DictTypes, key)
 		}
-	} // DictTypes => 字典
+	} // DictTypes => dictionary
 	{
 		if r.GvaModel {
 			r.PrimaryField = &AutoCodeField{
@@ -173,21 +186,26 @@ func (r *AutoCode) Pretreatment() error {
 				FieldDesc:    "ID",
 				FieldJson:    "ID",
 				DataTypeLong: "20",
-				Comment:      "主键ID",
+				Comment:      "primary key ID",
 				ColumnName:   "id",
 			}
 		}
 	} // GvaModel
+	{
+		if r.IsAdd && r.PrimaryField == nil {
+			r.PrimaryField = new(AutoCodeField)
+		}
+	} // ignore primary key in add-field mode
 	if r.Package == "" {
-		return errors.New("Package为空!")
-	} // 增加判断：Package不为空
+		return errors.New("Package is empty!")
+	} // extra check: Package not empty
 	packages := []rune(r.Package)
 	if len(packages) > 0 {
 		if packages[0] >= 97 && packages[0] <= 122 {
 			packages[0] = packages[0] - 32
 		}
 		r.PackageT = string(packages)
-	} // PackageT 是 Package 的首字母大写
+	} // PackageT: capitalized Package
 	return nil
 }
 
@@ -204,38 +222,70 @@ func (r *AutoCode) History() SysAutoHistoryCreate {
 }
 
 type AutoCodeField struct {
-	FieldName       string      `json:"fieldName"`       // Field名
-	FieldDesc       string      `json:"fieldDesc"`       // 中文名
-	FieldType       string      `json:"fieldType"`       // Field数据类型
-	FieldJson       string      `json:"fieldJson"`       // FieldJson
-	DataTypeLong    string      `json:"dataTypeLong"`    // 数据库字段长度
-	Comment         string      `json:"comment"`         // 数据库字段描述
-	ColumnName      string      `json:"columnName"`      // 数据库字段
-	FieldSearchType string      `json:"fieldSearchType"` // 搜索条件
-	FieldSearchHide bool        `json:"fieldSearchHide"` // 是否隐藏查询条件
-	DictType        string      `json:"dictType"`        // 字典
-	Front           bool        `json:"front"`           // 是否前端可见
-	Require         bool        `json:"require"`         // 是否必填
-	DefaultValue    string      `json:"defaultValue"`    // 是否必填
-	ErrorText       string      `json:"errorText"`       // 校验失败文字
-	Clearable       bool        `json:"clearable"`       // 是否可清空
-	Sort            bool        `json:"sort"`            // 是否增加排序
-	PrimaryKey      bool        `json:"primaryKey"`      // 是否主键
-	DataSource      *DataSource `json:"dataSource"`      // 数据源
-	CheckDataSource bool        `json:"checkDataSource"` // 是否检查数据源
-	FieldIndexType  string      `json:"fieldIndexType"`  // 索引类型
+	FieldName       string `json:"fieldName"`       // FieldName
+	FieldDesc       string `json:"fieldDesc"`       // InTextName
+	FieldType       string `json:"fieldType"`       // FieldDatatype
+	FieldJson       string `json:"fieldJson"`       // FieldJson
+	DataTypeLong    string `json:"dataTypeLong"`    // DatabaseFieldLength
+	Comment         string `json:"comment"`         // DatabaseFielddescription
+	ColumnName      string `json:"columnName"`      // DatabaseField
+	FieldSearchType string `json:"fieldSearchType"` // search conditions
+	FieldSearchHide bool   `json:"fieldSearchHide"` // is hiddenQueryCondition
+	DictType        string `json:"dictType"`        // Dictionary
+	//Front           bool        `json:"front"`           // YesNoFrontendVisible
+	Form            bool        `json:"form"`            // YesNoFrontendcreate/edit
+	Table           bool        `json:"table"`           // YesNoFrontendTablegrid
+	Desc            bool        `json:"desc"`            // YesNoFrontendDetails
+	Excel           bool        `json:"excel"`           // YesNoimport/export
+	Require         bool        `json:"require"`         // YesNoRequired
+	DefaultValue    string      `json:"defaultValue"`    // YesNoRequired
+	ErrorText       string      `json:"errorText"`       // validation error text
+	Clearable       bool        `json:"clearable"`       // YesNoclearable
+	Sort            bool        `json:"sort"`            // YesNoIncreasesort
+	PrimaryKey      bool        `json:"primaryKey"`      // YesNoPrimary Key
+	DataSource      *DataSource `json:"dataSource"`      // data source
+	CheckDataSource bool        `json:"checkDataSource"` // YesNocheck data source
+	FieldIndexType  string      `json:"fieldIndexType"`  // Indextype
 }
 
 type AutoFunc struct {
 	Package         string `json:"package"`
-	FuncName        string `json:"funcName"`        // 方法名称
-	Router          string `json:"router"`          // 路由名称
-	BusinessDB      string `json:"businessDB"`      // 业务库
-	StructName      string `json:"structName"`      // Struct名称
-	PackageName     string `json:"packageName"`     // 文件名称
-	Description     string `json:"description"`     // Struct中文名称
-	Abbreviation    string `json:"abbreviation"`    // Struct简称
-	HumpPackageName string `json:"humpPackageName"` // go文件名称
-	Method          string `json:"method"`          // 方法
-	IsPlugin        bool   `json:"isPlugin"`        // 是否插件
+	FuncName        string `json:"funcName"`        // methodname
+	Router          string `json:"router"`          // route name
+	FuncDesc        string `json:"funcDesc"`        // methodIntroduction
+	BusinessDB      string `json:"businessDB"`      // business database
+	StructName      string `json:"structName"`      // Structname
+	PackageName     string `json:"packageName"`     // file name
+	Description     string `json:"description"`     // StructChinese name
+	Abbreviation    string `json:"abbreviation"`    // Structalias
+	HumpPackageName string `json:"humpPackageName"` // gofile name
+	Method          string `json:"method"`          // method
+	IsPlugin        bool   `json:"isPlugin"`        // YesNoPlugin
+	IsAuth          bool   `json:"isAuth"`          // YesNoAuthorization
+	IsPreview       bool   `json:"isPreview"`       // YesNoPreview
+	IsAi            bool   `json:"isAi"`            // YesNoAI
+	ApiFunc         string `json:"apiFunc"`         // APImethod
+	ServerFunc      string `json:"serverFunc"`      // Servicemethod
+	JsFunc          string `json:"jsFunc"`          // JSmethod
+}
+
+type InitMenu struct {
+	PlugName   string `json:"plugName"`
+	ParentMenu string `json:"parentMenu"`
+	Menus      []uint `json:"menus"`
+}
+
+type InitApi struct {
+	PlugName string `json:"plugName"`
+	APIs     []uint `json:"apis"`
+}
+
+type InitDictionary struct {
+	PlugName     string `json:"plugName"`
+	Dictionaries []uint `json:"dictionaries"`
+}
+
+type LLMAutoCode struct {
+	Prompt string `json:"prompt" form:"prompt" gorm:"column:prompt;comment:PromptLanguage;type:text;"` //PromptLanguage
+	Mode   string `json:"mode" form:"mode" gorm:"column:mode;comment:Mode;type:text;"`        //Mode
 }

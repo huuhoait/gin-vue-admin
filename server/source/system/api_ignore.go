@@ -17,7 +17,7 @@ func init() {
 	system.RegisterInit(initOrderApiIgnore, &initApiIgnore{})
 }
 
-func (i initApiIgnore) InitializerName() string {
+func (i *initApiIgnore) InitializerName() string {
 	return sysModel.SysIgnoreApi{}.TableName()
 }
 
@@ -49,14 +49,17 @@ func (i *initApiIgnore) InitializeData(ctx context.Context) (context.Context, er
 		{Method: "GET", Path: "/health"},
 		{Method: "HEAD", Path: "/uploads/file/*filepath"},
 		{Method: "POST", Path: "/autoCode/llmAuto"},
+		{Method: "POST", Path: "/autoCode/llmAutoSSE"},
 		{Method: "POST", Path: "/system/reloadSystem"},
 		{Method: "POST", Path: "/base/login"},
 		{Method: "POST", Path: "/base/captcha"},
 		{Method: "POST", Path: "/init/initdb"},
 		{Method: "POST", Path: "/init/checkdb"},
+		{Method: "GET", Path: "/info/getInfoDataSource"},
+		{Method: "GET", Path: "/info/getInfoPublic"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
-		return ctx, errors.Wrap(err, sysModel.SysIgnoreApi{}.TableName()+"表数据初始化失败!")
+		return ctx, errors.Wrap(err, sysModel.SysIgnoreApi{}.TableName()+"table data initialization failed!")
 	}
 	next := context.WithValue(ctx, i.InitializerName(), entities)
 	return next, nil

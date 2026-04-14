@@ -14,12 +14,12 @@ type CasbinApi struct{}
 
 // UpdateCasbin
 // @Tags      Casbin
-// @Summary   更新角色api权限
+// @Summary   Update role API permissions
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      request.CasbinInReceive        true  "权限id, 权限模型列表"
-// @Success   200   {object}  response.Response{msg=string}  "更新角色api权限"
+// @Param     data  body      request.CasbinInReceive        true  "Authority ID, permission model list"
+// @Success   200   {object}  response.Response{msg=string}  "Update role API permissions"
 // @Router    /casbin/UpdateCasbin [post]
 func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 	var cmr request.CasbinInReceive
@@ -33,23 +33,24 @@ func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = casbinService.UpdateCasbin(cmr.AuthorityId, cmr.CasbinInfos)
+	adminAuthorityID := utils.GetUserAuthorityId(c)
+	err = casbinService.UpdateCasbin(adminAuthorityID, cmr.AuthorityId, cmr.CasbinInfos)
 	if err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
-		response.FailWithMessage("更新失败", c)
+		global.GVA_LOG.Error("Failed to update!", zap.Error(err))
+		response.FailWithMessage("Failed to update", c)
 		return
 	}
-	response.OkWithMessage("更新成功", c)
+	response.OkWithMessage("Updated successfully", c)
 }
 
 // GetPolicyPathByAuthorityId
 // @Tags      Casbin
-// @Summary   获取权限列表
+// @Summary   Get permission list
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      request.CasbinInReceive                                          true  "权限id, 权限模型列表"
-// @Success   200   {object}  response.Response{data=systemRes.PolicyPathResponse,msg=string}  "获取权限列表,返回包括casbin详情列表"
+// @Param     data  body      request.CasbinInReceive                                          true  "Authority ID, permission model list"
+// @Success   200   {object}  response.Response{data=systemRes.PolicyPathResponse,msg=string}  "Get permission list, returns casbin detail list"
 // @Router    /casbin/getPolicyPathByAuthorityId [post]
 func (cas *CasbinApi) GetPolicyPathByAuthorityId(c *gin.Context) {
 	var casbin request.CasbinInReceive
@@ -64,5 +65,5 @@ func (cas *CasbinApi) GetPolicyPathByAuthorityId(c *gin.Context) {
 		return
 	}
 	paths := casbinService.GetPolicyPathByAuthorityId(casbin.AuthorityId)
-	response.OkWithDetailed(systemRes.PolicyPathResponse{Paths: paths}, "获取成功", c)
+	response.OkWithDetailed(systemRes.PolicyPathResponse{Paths: paths}, "Retrieved successfully", c)
 }

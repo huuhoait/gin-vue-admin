@@ -1,19 +1,19 @@
 package core
 
 import (
-	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/core/internal"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"os"
+    "fmt"
+    "github.com/flipped-aurora/gin-vue-admin/server/core/internal"
+    "github.com/flipped-aurora/gin-vue-admin/server/global"
+    "github.com/flipped-aurora/gin-vue-admin/server/utils"
+    "go.uber.org/zap"
+    "go.uber.org/zap/zapcore"
+    "os"
 )
 
-// Zap 获取 zap.Logger
+// Zap get zap.Logger
 // Author [SliverHorn](https://github.com/SliverHorn)
 func Zap() (logger *zap.Logger) {
-	if ok, _ := utils.PathExists(global.GVA_CONFIG.Zap.Director); !ok { // 判断是否有Director文件夹
+	if ok, _ := utils.PathExists(global.GVA_CONFIG.Zap.Director); !ok { // JudgeYesNoHaveDirectorFileclip
 		fmt.Printf("create %v directory\n", global.GVA_CONFIG.Zap.Director)
 		_ = os.Mkdir(global.GVA_CONFIG.Zap.Director, os.ModePerm)
 	}
@@ -24,9 +24,13 @@ func Zap() (logger *zap.Logger) {
 		core := internal.NewZapCore(levels[i])
 		cores = append(cores, core)
 	}
-	logger = zap.New(zapcore.NewTee(cores...))
+    // build base logger(Error LevelofInboundLogicAlreadyAtCustom ZapCore InHandle)
+    logger = zap.New(zapcore.NewTee(cores...))
+	// Enable Error AndByUpperLevelofheapStackcapture, ensure entry.Stack CanUse
+	opts := []zap.Option{zap.AddStacktrace(zapcore.ErrorLevel)}
 	if global.GVA_CONFIG.Zap.ShowLine {
-		logger = logger.WithOptions(zap.AddCaller())
+		opts = append(opts, zap.AddCaller())
 	}
+	logger = logger.WithOptions(opts...)
 	return logger
 }

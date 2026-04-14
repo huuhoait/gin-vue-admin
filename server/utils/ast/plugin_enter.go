@@ -6,20 +6,20 @@ import (
 	"io"
 )
 
-// PluginEnter 插件化入口
+// PluginEnter PlugintransformInPort
 // ModuleName := PackageName.GroupName.ServiceName
 type PluginEnter struct {
 	Base
-	Type            Type   // 类型
-	Path            string // 文件路径
-	ImportPath      string // 导包路径
-	RelativePath    string // 相对路径
-	StructName      string // 结构体名称
-	StructCamelName string // 结构体小驼峰名称
-	ModuleName      string // 模块名称
-	GroupName       string // 分组名称
-	PackageName     string // 包名
-	ServiceName     string // 服务名称
+	Type            Type   // type
+	Path            string // Filepath
+	ImportPath      string // GuidePackagepath
+	RelativePath    string // relative path
+	StructName      string // struct name
+	StructCamelName string // StructureBodySmallcamel casename
+	ModuleName      string // Modulename
+	GroupName       string // group name
+	PackageName     string // package name
+	ServiceName     string // Servicename
 }
 
 func (a *PluginEnter) Parse(filename string, writer io.Writer) (file *ast.File, err error) {
@@ -36,7 +36,7 @@ func (a *PluginEnter) Parse(filename string, writer io.Writer) (file *ast.File, 
 }
 
 func (a *PluginEnter) Rollback(file *ast.File) error {
-	//回滚结构体内内容
+	//rollbackStructureBodyInsidecontent
 	var structType *ast.StructType
 	ast.Inspect(file, func(n ast.Node) bool {
 		switch x := n.(type) {
@@ -62,7 +62,7 @@ func (a *PluginEnter) Rollback(file *ast.File) error {
 		return nil
 	}
 
-	//回滚变量内容
+	//rollbackVariablecontent
 	ast.Inspect(file, func(n ast.Node) bool {
 		genDecl, ok := n.(*ast.GenDecl)
 		if ok && genDecl.Tok == token.VAR {
@@ -91,7 +91,7 @@ func (a *PluginEnter) Injection(file *ast.File) error {
 	hasVar := false
 	var firstStruct *ast.StructType
 	var varSpec *ast.GenDecl
-	//寻找是否存在结构且定位
+	//SearchFindYesNoExistsStructureAndSetPosition
 	ast.Inspect(file, func(n ast.Node) bool {
 		switch x := n.(type) {
 		case *ast.TypeSpec:
@@ -120,7 +120,7 @@ func (a *PluginEnter) Injection(file *ast.File) error {
 		return nil
 	}
 
-	//寻找是否存在变量且定位
+	//SearchFindYesNoExistsVariableAndSetPosition
 	ast.Inspect(file, func(n ast.Node) bool {
 		genDecl, ok := n.(*ast.GenDecl)
 		if ok && genDecl.Tok == token.VAR {

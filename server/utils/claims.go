@@ -1,16 +1,18 @@
 package utils
 
 import (
+	"net"
+	"time"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/gin-gonic/gin"
-	"github.com/gofrs/uuid/v5"
-	"net"
+	"github.com/google/uuid"
 )
 
 func ClearToken(c *gin.Context) {
-	// 增加cookie x-token 向来源的web添加
+	// Increasecookie x-token to the originwebAdd
 	host, _, err := net.SplitHostPort(c.Request.Host)
 	if err != nil {
 		host = c.Request.Host
@@ -24,7 +26,7 @@ func ClearToken(c *gin.Context) {
 }
 
 func SetToken(c *gin.Context, token string, maxAge int) {
-	// 增加cookie x-token 向来源的web添加
+	// Increasecookie x-token to the originwebAdd
 	host, _, err := net.SplitHostPort(c.Request.Host)
 	if err != nil {
 		host = c.Request.Host
@@ -38,9 +40,16 @@ func SetToken(c *gin.Context, token string, maxAge int) {
 }
 
 func GetToken(c *gin.Context) string {
-	token, _ := c.Cookie("x-token")
+	token := c.Request.Header.Get("x-token")
 	if token == "" {
-		token = c.Request.Header.Get("x-token")
+		j := NewJWT()
+		token, _ = c.Cookie("x-token")
+		claims, err := j.ParseToken(token)
+		if err != nil {
+			global.GVA_LOG.Error("Re-WriteIncookie tokenfailed,NotAblesucceededParsetoken,check request headersYesNoExistsx-tokenAndclaimsYesNomust follow schema")
+			return token
+		}
+		SetToken(c, token, int(claims.ExpiresAt.Unix()-time.Now().Unix()))
 	}
 	return token
 }
@@ -50,12 +59,12 @@ func GetClaims(c *gin.Context) (*systemReq.CustomClaims, error) {
 	j := NewJWT()
 	claims, err := j.ParseToken(token)
 	if err != nil {
-		global.GVA_LOG.Error("从Gin的Context中获取从jwt解析信息失败, 请检查请求头是否存在x-token且claims是否为规定结构")
+		global.GVA_LOG.Error("FromGinofContextIngetFromjwtParseInformationfailed, check request headersYesNoExistsx-tokenAndclaimsYesNomust follow schema")
 	}
 	return claims, err
 }
 
-// GetUserID 从Gin的Context中获取从jwt解析出来的用户ID
+// GetUserID FromGinofContextIngetFromjwtparsed userID
 func GetUserID(c *gin.Context) uint {
 	if claims, exists := c.Get("claims"); !exists {
 		if cl, err := GetClaims(c); err != nil {
@@ -69,7 +78,7 @@ func GetUserID(c *gin.Context) uint {
 	}
 }
 
-// GetUserUuid 从Gin的Context中获取从jwt解析出来的用户UUID
+// GetUserUuid FromGinofContextIngetFromjwtparseduser UUID
 func GetUserUuid(c *gin.Context) uuid.UUID {
 	if claims, exists := c.Get("claims"); !exists {
 		if cl, err := GetClaims(c); err != nil {
@@ -83,7 +92,7 @@ func GetUserUuid(c *gin.Context) uuid.UUID {
 	}
 }
 
-// GetUserAuthorityId 从Gin的Context中获取从jwt解析出来的用户角色id
+// GetUserAuthorityId FromGinofContextIngetFromjwtparsed userRoleid
 func GetUserAuthorityId(c *gin.Context) uint {
 	if claims, exists := c.Get("claims"); !exists {
 		if cl, err := GetClaims(c); err != nil {
@@ -97,7 +106,7 @@ func GetUserAuthorityId(c *gin.Context) uint {
 	}
 }
 
-// GetUserInfo 从Gin的Context中获取从jwt解析出来的用户角色id
+// GetUserInfo FromGinofContextIngetFromjwtparsed userRoleid
 func GetUserInfo(c *gin.Context) *systemReq.CustomClaims {
 	if claims, exists := c.Get("claims"); !exists {
 		if cl, err := GetClaims(c); err != nil {
@@ -111,7 +120,7 @@ func GetUserInfo(c *gin.Context) *systemReq.CustomClaims {
 	}
 }
 
-// GetUserName 从Gin的Context中获取从jwt解析出来的用户名
+// GetUserName FromGinofContextIngetFromjwtparsedusername
 func GetUserName(c *gin.Context) string {
 	if claims, exists := c.Get("claims"); !exists {
 		if cl, err := GetClaims(c); err != nil {
@@ -126,7 +135,7 @@ func GetUserName(c *gin.Context) string {
 }
 
 func LoginToken(user system.Login) (token string, claims systemReq.CustomClaims, err error) {
-	j := &JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)} // 唯一签名
+	j := NewJWT()
 	claims = j.CreateClaims(systemReq.BaseClaims{
 		UUID:        user.GetUUID(),
 		ID:          user.GetUserId(),
@@ -135,8 +144,5 @@ func LoginToken(user system.Login) (token string, claims systemReq.CustomClaims,
 		AuthorityId: user.GetAuthorityId(),
 	})
 	token, err = j.CreateToken(claims)
-	if err != nil {
-		return
-	}
 	return
 }

@@ -1,33 +1,18 @@
-// 权限按钮展示指令
+// Permission-based button display directive
 import { useUserStore } from '@/pinia/modules/user'
 export default {
   install: (app) => {
     const userStore = useUserStore()
     app.directive('auth', {
-      // 当被绑定的元素插入到 DOM 中时……
-      mounted: function(el, binding) {
+      // When the bound element is inserted into the DOM...
+      mounted: function (el, binding) {
         const userInfo = userStore.userInfo
-        let type = ''
-        switch (Object.prototype.toString.call(binding.value)) {
-          case '[object Array]':
-            type = 'Array'
-            break
-          case '[object String]':
-            type = 'String'
-            break
-          case '[object Number]':
-            type = 'Number'
-            break
-          default:
-            type = ''
-            break
-        }
-        if (type === '') {
+        if (!binding.value){
           el.parentNode.removeChild(el)
           return
         }
         const waitUse = binding.value.toString().split(',')
-        let flag = waitUse.some(item => Number(item) === userInfo.authorityId)
+        let flag = waitUse.some((item) => Number(item) === userInfo.authorityId)
         if (binding.modifiers.not) {
           flag = !flag
         }
@@ -38,4 +23,3 @@ export default {
     })
   }
 }
-

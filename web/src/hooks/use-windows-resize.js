@@ -1,4 +1,4 @@
-// 监听 window 的 resize 事件，返回当前窗口的宽高
+// Listen to window resize; return width/height
 import { shallowRef } from 'vue'
 import { tryOnMounted, useEventListener } from '@vueuse/core'
 
@@ -18,6 +18,6 @@ export const useWindowResize = (cb) => {
   useEventListener('resize', onResize, { passive: true })
   return {
     width,
-    height,
+    height
   }
 }

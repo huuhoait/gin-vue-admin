@@ -1,0 +1,63 @@
+# SkyAgent Admin — Vietnamese message bundle
+# Convention: keys are lowercase, dot-separated: admin.<domain>.<action>
+# Use named placeholders: "Hello {{.name}}". Keep keys ASCII-only.
+# Story reference: 8.3 — Việt hoá và cấu hình đa ngôn ngữ (i18n)
+
+# --- Common CRUD / generic responses ----------------------------------------
+"admin.common.ok"               = "Thành công"
+"admin.common.fail"             = "Thất bại"
+"admin.common.create_success"   = "Tạo thành công"
+"admin.common.create_failed"    = "Tạo không thành công"
+"admin.common.update_success"   = "Cập nhật thành công"
+"admin.common.update_failed"    = "Cập nhật không thành công"
+"admin.common.delete_success"   = "Xoá thành công"
+"admin.common.delete_failed"    = "Xoá không thành công"
+"admin.common.get_success"      = "Lấy dữ liệu thành công"
+"admin.common.get_failed"       = "Lấy dữ liệu thất bại"
+"admin.common.not_found"        = "Không tìm thấy bản ghi"
+"admin.common.invalid_params"   = "Tham số không hợp lệ"
+"admin.common.unauthorized"     = "Không có quyền truy cập"
+"admin.common.forbidden"        = "Bị cấm truy cập"
+"admin.common.internal_error"   = "Lỗi máy chủ nội bộ"
+
+# --- Auth / session ---------------------------------------------------------
+"admin.auth.login_success"      = "Đăng nhập thành công"
+"admin.auth.login_failed"       = "Đăng nhập thất bại"
+"admin.auth.logout_success"     = "Đăng xuất thành công"
+"admin.auth.token_expired"      = "Phiên đăng nhập đã hết hạn"
+"admin.auth.token_invalid"      = "Token không hợp lệ"
+"admin.auth.captcha_invalid"    = "Mã xác thực không đúng"
+"admin.auth.password_incorrect" = "Mật khẩu không đúng"
+
+# --- RBAC / Casbin ----------------------------------------------------------
+"admin.rbac.permission_denied"  = "Không đủ quyền thực hiện thao tác này"
+"admin.rbac.role_not_found"     = "Không tìm thấy vai trò"
+"admin.rbac.role_created"       = "Đã tạo vai trò"
+"admin.rbac.role_updated"       = "Đã cập nhật vai trò"
+
+# --- Menus ------------------------------------------------------------------
+"admin.menu.skyagent"           = "SkyAgent"
+"admin.menu.kyc"                = "Quản lý KYC"
+"admin.menu.kyc_cases"          = "Danh sách hồ sơ"
+"admin.menu.commission"         = "Hoa hồng"
+
+# --- Epic 9 menu titles -------------------------------------------------------
+"admin.agent.list"              = "Danh sách Đại lý"
+"admin.agent.pending"           = "Chờ duyệt"
+"admin.catalog.products"        = "Sản phẩm"
+"admin.catalog.suppliers"       = "Nhà cung cấp"
+"admin.order.list"              = "Danh sách Đơn hàng"
+"admin.onboarding.title"        = "Onboarding Đại lý"
+"admin.onboarding.ticket_list"  = "Danh sách Ticket"
+"admin.onboarding.create_ticket"= "Tạo Ticket"
+"admin.onboarding.review_queue" = "Hàng đợi duyệt"
+"admin.onboarding.create_agent_l0" = "Đăng ký Đại lý L0"
+
+# --- Proxy (Story 9.1) -------------------------------------------------------
+"admin.proxy.upstream_unavailable" = "Dịch vụ không khả dụng"
+"admin.proxy.request_failed"       = "Yêu cầu dịch vụ thất bại"
+
+# --- Dashboard (Story 9.2) ----------------------------------------------------
+"admin.dashboard.load_failed"      = "Không tải được bảng điều khiển"
+"admin.dashboard.unavailable"      = "Dịch vụ bảng điều khiển không khả dụng"
+

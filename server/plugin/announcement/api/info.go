@@ -13,14 +13,14 @@ var Info = new(info)
 
 type info struct{}
 
-// CreateInfo 创建公告
+// CreateInfo create announcement
 // @Tags Info
-// @Summary 创建公告
+// @Summary create announcement
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Info true "创建公告"
-// @Success 200 {object} response.Response{msg=string} "创建成功"
+// @Param data body model.Info true "create announcement"
+// @Success 200 {object} response.Response{msg=string} "Created successfully"
 // @Router /info/createInfo [post]
 func (a *info) CreateInfo(c *gin.Context) {
 	var info model.Info
@@ -31,59 +31,59 @@ func (a *info) CreateInfo(c *gin.Context) {
 	}
 	err = serviceInfo.CreateInfo(&info)
 	if err != nil {
-		global.GVA_LOG.Error("创建失败!", zap.Error(err))
-		response.FailWithMessage("创建失败", c)
+		global.GVA_LOG.Error("Creation failed!", zap.Error(err))
+		response.FailWithMessage("Creation failed", c)
 		return
 	}
-	response.OkWithMessage("创建成功", c)
+	response.OkWithMessage("Created successfully", c)
 }
 
-// DeleteInfo 删除公告
+// DeleteInfo delete announcement
 // @Tags Info
-// @Summary 删除公告
+// @Summary delete announcement
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Info true "删除公告"
-// @Success 200 {object} response.Response{msg=string} "删除成功"
+// @Param data body model.Info true "delete announcement"
+// @Success 200 {object} response.Response{msg=string} "Deleted successfully"
 // @Router /info/deleteInfo [delete]
 func (a *info) DeleteInfo(c *gin.Context) {
 	ID := c.Query("ID")
 	err := serviceInfo.DeleteInfo(ID)
 	if err != nil {
-		global.GVA_LOG.Error("删除失败!", zap.Error(err))
-		response.FailWithMessage("删除失败", c)
+		global.GVA_LOG.Error("Deletion failed!", zap.Error(err))
+		response.FailWithMessage("Deletion failed", c)
 		return
 	}
-	response.OkWithMessage("删除成功", c)
+	response.OkWithMessage("Deleted successfully", c)
 }
 
-// DeleteInfoByIds 批量删除公告
+// DeleteInfoByIds batch delete announcements
 // @Tags Info
-// @Summary 批量删除公告
+// @Summary batch delete announcements
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Success 200 {object} response.Response{msg=string} "批量删除成功"
+// @Success 200 {object} response.Response{msg=string} "Batch delete succeeded"
 // @Router /info/deleteInfoByIds [delete]
 func (a *info) DeleteInfoByIds(c *gin.Context) {
 	IDs := c.QueryArray("IDs[]")
 	if err := serviceInfo.DeleteInfoByIds(IDs); err != nil {
-		global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
-		response.FailWithMessage("批量删除失败", c)
+		global.GVA_LOG.Error("Batch delete failed!", zap.Error(err))
+		response.FailWithMessage("Batch delete failed", c)
 		return
 	}
-	response.OkWithMessage("批量删除成功", c)
+	response.OkWithMessage("Batch delete succeeded", c)
 }
 
-// UpdateInfo 更新公告
+// UpdateInfo update announcement
 // @Tags Info
-// @Summary 更新公告
+// @Summary update announcement
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Info true "更新公告"
-// @Success 200 {object} response.Response{msg=string} "更新成功"
+// @Param data body model.Info true "update announcement"
+// @Success 200 {object} response.Response{msg=string} "Updated successfully"
 // @Router /info/updateInfo [put]
 func (a *info) UpdateInfo(c *gin.Context) {
 	var info model.Info
@@ -94,41 +94,41 @@ func (a *info) UpdateInfo(c *gin.Context) {
 	}
 	err = serviceInfo.UpdateInfo(info)
 	if err != nil {
-		global.GVA_LOG.Error("更新失败!", zap.Error(err))
-		response.FailWithMessage("更新失败", c)
+		global.GVA_LOG.Error("Update failed!", zap.Error(err))
+		response.FailWithMessage("Update failed", c)
 		return
 	}
-	response.OkWithMessage("更新成功", c)
+	response.OkWithMessage("Updated successfully", c)
 }
 
-// FindInfo 用id查询公告
+// FindInfo find announcement by ID
 // @Tags Info
-// @Summary 用id查询公告
+// @Summary find announcement by ID
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query model.Info true "用id查询公告"
-// @Success 200 {object} response.Response{data=model.Info,msg=string} "查询成功"
+// @Param data query model.Info true "find announcement by ID"
+// @Success 200 {object} response.Response{data=model.Info,msg=string} "Query succeeded"
 // @Router /info/findInfo [get]
 func (a *info) FindInfo(c *gin.Context) {
 	ID := c.Query("ID")
 	reinfo, err := serviceInfo.GetInfo(ID)
 	if err != nil {
-		global.GVA_LOG.Error("查询失败!", zap.Error(err))
-		response.FailWithMessage("查询失败", c)
+		global.GVA_LOG.Error("Query failed!", zap.Error(err))
+		response.FailWithMessage("Query failed", c)
 		return
 	}
 	response.OkWithData(reinfo, c)
 }
 
-// GetInfoList 分页获取公告列表
+// GetInfoList get paginated announcement list
 // @Tags Info
-// @Summary 分页获取公告列表
+// @Summary get paginated announcement list
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query request.InfoSearch true "分页获取公告列表"
-// @Success 200 {object} response.Response{data=response.PageResult,msg=string} "获取成功"
+// @Param data query request.InfoSearch true "get paginated announcement list"
+// @Success 200 {object} response.Response{data=response.PageResult,msg=string} "Retrieved successfully"
 // @Router /info/getInfoList [get]
 func (a *info) GetInfoList(c *gin.Context) {
 	var pageInfo request.InfoSearch
@@ -139,8 +139,8 @@ func (a *info) GetInfoList(c *gin.Context) {
 	}
 	list, total, err := serviceInfo.GetInfoInfoList(pageInfo)
 	if err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
+		global.GVA_LOG.Error("Retrieval failed!", zap.Error(err))
+		response.FailWithMessage("Retrieval failed", c)
 		return
 	}
 	response.OkWithDetailed(response.PageResult{
@@ -148,36 +148,36 @@ func (a *info) GetInfoList(c *gin.Context) {
 		Total:    total,
 		Page:     pageInfo.Page,
 		PageSize: pageInfo.PageSize,
-	}, "获取成功", c)
+	}, "Retrieved successfully", c)
 }
 
-// GetInfoDataSource 获取Info的数据源
+// GetInfoDataSource getInfodata source
 // @Tags Info
-// @Summary 获取Info的数据源
+// @Summary getInfodata source
 // @accept application/json
 // @Produce application/json
-// @Success 200 {object} response.Response{data=object,msg=string} "查询成功"
+// @Success 200 {object} response.Response{data=object,msg=string} "Query succeeded"
 // @Router /info/getInfoDataSource [get]
 func (a *info) GetInfoDataSource(c *gin.Context) {
-	// 此接口为获取数据源定义的数据
+	// This API retrieves data source definitions
 	dataSource, err := serviceInfo.GetInfoDataSource()
 	if err != nil {
-		global.GVA_LOG.Error("查询失败!", zap.Error(err))
-		response.FailWithMessage("查询失败", c)
+		global.GVA_LOG.Error("Query failed!", zap.Error(err))
+		response.FailWithMessage("Query failed", c)
 		return
 	}
 	response.OkWithData(dataSource, c)
 }
 
-// GetInfoPublic 不需要鉴权的公告接口
+// GetInfoPublic Public announcement API (no auth required)
 // @Tags Info
-// @Summary 不需要鉴权的公告接口
+// @Summary Public announcement API (no auth required)
 // @accept application/json
 // @Produce application/json
-// @Param data query request.InfoSearch true "分页获取公告列表"
-// @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
+// @Param data query request.InfoSearch true "get paginated announcement list"
+// @Success 200 {object} response.Response{data=object,msg=string} "Retrieved successfully"
 // @Router /info/getInfoPublic [get]
 func (a *info) GetInfoPublic(c *gin.Context) {
-	// 此接口不需要鉴权 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
-	response.OkWithDetailed(gin.H{"info": "不需要鉴权的公告接口信息"}, "获取成功", c)
+	// This API does not require authentication ExampleForReturnDoneOnePieceFixedofMessageAPI, GeneralThisAPIUsed forCEndService, NeedSelfImplementBusinessLogic
+	response.OkWithDetailed(gin.H{"info": "Public announcement API (no auth required)Information"}, "Retrieved successfully", c)
 }

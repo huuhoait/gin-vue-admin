@@ -1,0 +1,2980 @@
+# Translation Terms Mapping
+
+## Coverage (System Module)
+- Missing unique terms: 0
+- Total missing occurrences: 0
+
+## System Module Quick Additions
+- 所 -> of
+- 父 -> Parent
+- 绑 -> Bind
+- 能超过 -> Exceeds
+- 向 -> To
+- 一 -> One
+- 经 -> Via
+- 人 -> Person
+- 给 -> To
+- 重 -> Repeat
+- 所有 -> All
+- 所属 -> Belonging To
+- 父级 -> Parent
+- 绑定 -> Bind
+- 解绑 -> Unbind
+- 超过 -> Exceed
+- 不能超过 -> Must Not Exceed
+- 向上 -> Upward
+- 向下 -> Downward
+- 一次 -> Once
+- 一键 -> One-click
+- 经由 -> Via
+- 人员 -> Personnel
+- 给定 -> Given
+- 重新 -> Re-
+
+## Newly Added Missing Terms
+- 套餐 -> Package
+- 订阅 -> Subscription
+- 精简 -> Simplified
+- 被 -> By
+- 可 -> Can
+- 拥 -> Own
+- 条 -> Row
+- 效 -> Effect
+- 域 -> Domain
+- 们 -> Plural Suffix
+- 序 -> Sequence
+- 才 -> Only Then
+- 我 -> I
+- 仅 -> Only
+- 好 -> Good
+- 传 -> Transmit
+- 唯一 -> Unique
+- 考虑 -> Consider
+- 自动 -> Automatic
+- 暂 -> Temporary
+- 直接 -> Direct
+- 加载 -> Load
+- 如 -> Such As
+- 合法 -> Valid
+- 传递 -> Pass
+- 能 -> Able
+- 记 -> Record
+- 读 -> Read
+- 视 -> View
+- 唯一性 -> Uniqueness
+- 展示 -> Display
+- 筛选 -> Filter
+- 报告 -> Report
+- 输 -> Input
+- 密送 -> BCC
+- 问题 -> Issue
+- 可能 -> Possible
+- 效期 -> Validity Period
+- 含被 -> Include Enabled
+- 模拟 -> Simulate
+- 上 -> Upper
+- 会 -> Will
+- 正确性 -> Correctness
+- 腾讯云 -> Tencent Cloud
+- 处于 -> Be In
+- 批准 -> Approve
+- 一般 -> General
+- 刷新 -> Refresh
+- 自身 -> Itself
+- 链接 -> Link
+- 赋予 -> Grant
+- 序列 -> Sequence
+- 还 -> Still
+- 字 -> Character
+- 华 -> Hua
+- 见 -> See
+- 志 -> Log
+- 接 -> Connect
+- 缺失 -> Missing
+- 发货 -> Ship
+- 移除 -> Remove
+- 保证 -> Ensure
+- 界面 -> Interface
+- 效率 -> Efficiency
+- 登陆 -> Log In
+- 二维 -> 2D
+- 涉及 -> Involve
+- 土豆 -> Potato
+- 你好 -> Hello
+- 正 -> Positive
+- 找 -> Find
+- 要 -> Require
+- 候 -> Time
+- 及 -> And
+- 配 -> Match
+- 独 -> Exclusive
+- 流 -> Flow
+- 允许选择 -> Allow Selection
+- 保证本地 -> Ensure Local
+- 方便 -> Convenient
+- 最大 -> Maximum
+- 联系 -> Contact
+- 一些 -> Some
+- 附加 -> Additional
+- 原始 -> Original
+- 满足 -> Satisfy
+- 对于 -> For
+- 报错 -> Throw Error
+- 切换 -> Switch
+- 允许 -> Allow
+- 区 -> Area
+- 多 -> Multiple
+- 选 -> Choose
+- 本 -> This
+- 台 -> Device
+- 旧 -> Old
+- 原 -> Original
+- 掉 -> Drop
+- 空 -> Empty
+- 云 -> Cloud
+- 啦 -> La
+- 防止 -> Prevent
+- 芋 -> Yudao
+- 端口 -> Port
+- 样式 -> Style
+- 奥特曼 -> Ultraman
+- 字母 -> Letter
+- 适合 -> Suitable
+- 资源 -> Resource
+- 小土豆 -> Little Potato
+- 兜底 -> Fallback
+- 商城 -> Mall
+- 延迟 -> Delay
+- 防御性编程 -> Defensive Programming
+- 七牛云 -> Qiniu Cloud
+- 钉钉 -> DingTalk
+- 小写 -> Lowercase
+- 星语 -> Xingyu
+- 忽略 -> Ignore
+- 北京 -> Beijing
+- 必须都传递 -> Must Provide All
+- 哈哈哈 -> Hahaha
+- 好吃 -> Delicious
+- 必填 -> Required
+- 一般来说 -> Generally Speaking
+- 假设 -> Assume
+- 部 -> Department
+- 提升 -> Improve
+- 授予 -> Grant
+- 采用 -> Adopt
+- 正式版 -> Release Version
+- 开发版 -> Development Version
+- 选填 -> Optional
+- 三方 -> Third-party
+- 源 -> Source
+- 属于 -> Belong To
+- 因此 -> Therefore
+- 沈扬凯 -> Shen Yangkai
+- 转大写 -> Convert to Uppercase
+- 绘制干扰线 -> Draw Interference Lines
+- 里各种 -> All Kinds
+- 复杂 -> Complex
+- 营销 -> Marketing
+- 移动端 -> Mobile
+- 首页 -> Homepage
+- 哒哒哒 -> Da-da-da
+- 另外 -> Additionally
+- 它们 -> Them
+- 控制 -> Control
+- 简化 -> Simplify
+- 非 -> Non-
+- 研发部 -> R&D Department
+- 开发 -> Development
+- 必须填写 -> Must Fill In
+- 超过最大账户配额 -> Exceeds Maximum Account Quota
+- 全 -> All
+- 形如 -> Such As
+- 解除 -> Remove
+- 懒加载 -> Lazy Loading
+- 目前 -> Currently
+- 空串 -> Empty String
+- 回复 -> Reply
+- 里 -> Inside
+- 统一发货 -> Unified Shipping
+- 这里采用 -> Here We Use
+- 较多 -> Quite a Lot
+- 跳过 -> Skip
+- 唯一索引 -> Unique Index
+- 语句 -> Statement
+- 也允许传递 -> Also Allow Passing
+- 索引 -> Index
+- 保证唯一 -> Ensure Uniqueness
+- 用途 -> Usage
+- 吧 -> Well
+- 反正也没啥问题 -> Anyway No Big Problem
+- 接受 -> Accept
+- 盐 -> Salt
+- 配合 -> Cooperate
+- 特性 -> Feature
+- 透明底色 -> Transparent Background
+- 重置 -> Reset
+- 可重 -> Redirectable
+- 颜色 -> Color
+- 正确 -> Correct
+- 相同 -> Same
+- 全部 -> All
+- 开放 -> Open
+- 快乐 -> Happy
+- 小博 -> Xiao Bo
+- 它 -> It
+- 其 -> Its
+- 而 -> And
+- 改 -> Change
+- 这 -> This
+- 端 -> End
+- 都 -> All
+- 此 -> This
+- 购 -> Purchase
+- 者 -> Person
+- 确认收货提醒 -> Confirm Receipt Reminder
+- 用做任何 -> Any Handling
+- 小程订阅 -> Mini Program Subscription
+- 第三方 -> Third-party
+- 给外部 -> For External Use
+- 界面被 -> Interface Is
+- 防御性 -> Defensive
+- 被替换 -> Replaced
+- 收货 -> Receive Goods
+- 关系 -> Relationship
+- 变更 -> Change
+- 企业 -> Enterprise
+- 网页 -> Web Page
+- 积木 -> Jimu
+- 这里 -> Here
+- 变化 -> Variation
+- 内置 -> Built-in
+- 查找 -> Lookup
+- 手动 -> Manual
+- 此处 -> This Location
+- 符合 -> Comply
+- 必须 -> Must
+- 额外 -> Extra
+- 对比 -> Compare
+- 用 -> Use
+- 就 -> Then
+- 根 -> Root
+- 对 -> To
+- 内 -> Inside
+- 帐 -> Account
+- 方 -> Side
+- 否 -> No
+- 员 -> Member
+- 然 -> Then
+- 合 -> Combine
+- 称 -> Name
+- 隔 -> Separate
+- 由 -> By
+- 太 -> Too
+- 你长 -> You Look
+- 过于频繁 -> Too Frequent
+- 感兴趣可 -> If Interested, You Can
+- 允许传递 -> Allow Passing
+- 账户配合 -> Account Quota
+- 会传递 -> Will Pass
+- 套餐被 -> Package Is
+- 选择好 -> After Selecting
+- 领导者 -> Leader
+- 被其它 -> By Others
+- 任一一 -> Any One
+- 授予给 -> Grant To
+- 发件人 -> Sender
+- 全局都 -> Globally
+- 破坏原 -> Break the Original
+- 港澳台 -> Hong Kong Macau Taiwan
+- 序性 -> Orderliness
+- 什么 -> What
+- 独立 -> Independent
+- 阅读 -> Read
+- 一起 -> Together
+- 递增 -> Increment
+- 记所 -> Mark All
+- 真正 -> Truly
+- 仅仅 -> Only
+- 上限 -> Upper Limit
+- 快捷 -> Shortcut
+- 一致 -> Consistent
+- 最终 -> Final
+- 排除 -> Exclude
+- 要求 -> Requirement
+- 验版 -> Trial Version
+- 也会 -> Will Also
+- 所需 -> Required
+- 效性 -> Validity
+- 递归 -> Recursion
+- 环路 -> Loop
+- 继续 -> Continue
+- 开通 -> Activate
+- 通用 -> General
+- 尽量 -> As Much As Possible
+- 耦合 -> Coupling
+- 线程 -> Thread
+- 签收 -> Sign For
+- 宽度 -> Width
+- 虚拟 -> Virtual
+- 声明 -> Declaration
+- 复用 -> Reuse
+- 很好 -> Very Good
+- 空格 -> Space
+- 半生 -> Half-life
+- 忘记 -> Forget
+- 字符 -> Character
+- 构造 -> Construct
+- 频率 -> Frequency
+- 每日 -> Daily
+- 最小 -> Minimum
+- 顺序 -> Order
+- 方案 -> Plan
+- 阿里 -> Alibaba
+- 合适 -> Appropriate
+- 排列 -> Arrange
+- 也 -> Also
+- 姓 -> Surname
+- 储 -> Store
+- 看 -> See
+- 但 -> But
+- 哟 -> Yo
+- 优 -> Excellent
+- 再 -> Again
+- 需 -> Need
+- 含 -> Include
+- 同 -> Same
+- 简 -> Simple
+- 属 -> Belong
+- 卡 -> Card
+- 两 -> Two
+- 二 -> Two
+- 线 -> Line
+- 国 -> Country
+- 新 -> New
+- 取 -> Fetch
+- 刻 -> Instant
+- 加 -> Add
+- 请 -> Please
+- 某 -> Certain
+- 申请开发者资质 -> Apply for Developer Qualification
+- 去掉超过套餐 -> Remove Exceeding Package
+- 进而导致唯一 -> Thereby Causing Uniqueness
+- 我们放通用 -> We Place Common
+- 什么自身也 -> Why Itself Also
+- 尽量保证它 -> Try to Ensure It
+- 可能之前绑 -> May Have Previously Bound
+- 一次性订阅 -> One-time Subscription
+- 流配送采用 -> Logistics Delivery Uses
+- 流配送形式 -> Logistics Delivery Form
+- 腾讯云发放 -> Tencent Cloud Issues
+- 支撑上层 -> Support Upper Layers
+- 超过每日 -> Exceed Daily
+- 一些独立 -> Some Independent
+- 直接展示 -> Display Directly
+- 提前保证 -> Ensure in Advance
+- 方便刷新 -> Refresh Easily
+- 给第三方 -> For Third Parties
+- 也走这套 -> Also Follow This Flow
+- 采取这种 -> Take This Approach
+- 符合要求 -> Meet Requirements
+- 什么要做 -> What Needs To Be Done
+- 本比较大 -> This Is Relatively Large
+- 可能之前 -> Maybe Before
+- 考虑环路 -> Consider Loops
+- 继续递归 -> Continue Recursion
+- 可查看所 -> Can View All
+- 可能一些 -> Possibly Some
+- 采用严格 -> Use Strict
+- 会可能被 -> May Be
+- 移除多余 -> Remove Extra
+- 长期订阅 -> Long-term Subscription
+- 线条颜色 -> Line Color
+- 颜色依然 -> Color Still
+- 配送形式 -> Delivery Form
+- 能这么做 -> Can Do This
+- 相互之间 -> Between Each Other
+- 产生信任 -> Establish Trust
+- 过于复杂 -> Too Complex
+- 除非手动 -> Unless Manual
+- 剩余交给 -> Leave the Rest To
+- 正确传递 -> Pass Correctly
+- 区别较大 -> Difference Is Large
+- 相对通用 -> Relatively General
+- 放专属 -> Put Dedicated
+- 再尝试 -> Try Again
+- 给其它 -> Give to Others
+- 父资源 -> Parent Resource
+- 前台都 -> Frontend All
+- 些复杂 -> Some Complex
+- 两种行 -> Two Types of Actions
+- 第几条 -> Which Entry
+- 于排错 -> For Troubleshooting
+- 每一次 -> Every Time
+- 我们把 -> We Put
+- 赋予给 -> Assign To
+- 意味着 -> Means
+- 会展示 -> Will Display
+- 侧边栏 -> Sidebar
+- 强制注 -> Force Injection
+- 什么放 -> What to Put
+- 量一般 -> Amount Is Generally
+- 用筛选 -> Use Filter
+- 对它们 -> For Them
+- 直接跟 -> Directly Follow
+- 手动确 -> Manual Confirmation
+- 这么做 -> Do This
+- 开发者 -> Developer
+- 第一阶 -> First Level
+- 第二阶 -> Second Level
+- 经批准 -> Approved
+- 会移除 -> Will Remove
+- 被占用 -> Occupied
+- 要打开 -> Need to Open
+- 构造新 -> Construct New
+- 选择某 -> Select Certain
+- 会变动 -> Will Change
+- 一级父 -> First-level Parent
+- 每一层 -> Each Layer
+- 要考虑 -> Need to Consider
+- 一满足 -> Once Met
+- 要一次 -> Need Once
+- 会更快 -> Will Be Faster
+- 且这些 -> And These
+- 移除被 -> Remove the
+- 然就会 -> Then Will
+- 现递归 -> Current Recursion
+- 惰性求 -> Lazy Evaluation
+- 第一次 -> First Time
+- 保证可 -> Ensure It Can
+- 可能会 -> May
+- 新老两 -> New and Old Both
+- 相同父 -> Same Parent
+- 能携带 -> Can Carry
+- 仅限本 -> Only Within This
+- 流发货 -> Logistics Shipping
+- 流公司 -> Logistics Company
+- 再强制 -> Then Force
+- 断轮询 -> Break Polling
+- 效期内 -> Within Validity
+- 推送给 -> Push To
+- 及字母 -> And Letters
+- 传递如 -> Pass Such As
+- 夹缩进 -> With Indent
+- 用一次 -> Use Once
+- 背景色 -> Background Color
+- 字旋转 -> Rotate Text
+- 尝试取 -> Try to Get
+- 对接各 -> Integrate Each
+- 云发放 -> Cloud Issues
+- 规范化 -> Normalize
+- 字符代 -> Character Codes
+- 首字母 -> Initial Letter
+- 示国内 -> Indicate Domestic
+- 示国际 -> Indicate International
+- 核心 -> Core
+- 其它 -> Other
+- 统一 -> Unified
+- 配额 -> Quota
+- 请给 -> Please Provide
+- 过大 -> Too Large
+- 都要 -> Need All
+- 也可 -> Also Can
+- 太丑 -> Too Ugly
+- 兼容 -> Compatible
+- 结合 -> Combine
+- 排错 -> Debug
+- 明细 -> Detail
+- 今日 -> Today
+- 而对 -> And For
+- 编辑 -> Edit
+- 能用 -> Usable
+- 多余 -> Superfluous
+- 配其 -> Match Its
+- 其他 -> Others
+- 全量 -> Full Volume
+- 确实 -> Indeed
+- 才能 -> Can Then
+- 每小 -> Per Hour
+- 检测 -> Detect
+- 能力 -> Capability
+- 适配 -> Adapt
+- 导致 -> Cause
+- 然可 -> Then Can
+- 大多 -> Most
+- 毕竟 -> After All
+- 学习 -> Learn
+- 算上 -> Include
+- 保留 -> Retain
+- 至少 -> At Least
+- 及空 -> And Empty
+- 这种 -> This Kind
+- 储它 -> Store It
+- 覆盖 -> Cover
+- 基本 -> Basic
+- 配送 -> Delivery
+- 全局 -> Global
+- 过别 -> Other
+- 经绑 -> Already Bound
+- 且可 -> And Can
+- 两次 -> Twice
+- 续可 -> Subsequently
+- 几乎 -> Almost
+- 建立 -> Establish
+- 科室 -> Department
+- 及其 -> And Its
+- 超管 -> Super Admin
+- 也认 -> Also Recognizes
+- 交集 -> Intersection
+- 反倒 -> Instead
+- 且仅 -> And Only
+- 本身 -> Itself
+- 们拥 -> They Have
+- 知道 -> Know
+- 多少 -> How Many
+- 过被 -> Being
+- 经判 -> After Judging
+- 置空 -> Set Null
+- 负责 -> Responsible
+- 国外 -> Overseas
+- 请放 -> Please Put
+- 黑色 -> Black
+- 建议 -> Suggest
+- 色调 -> Tone
+- 话费 -> Phone Bill
+- 自提 -> Self Pickup
+- 选择 -> Select
+- 最新 -> Latest
+- 意义 -> Meaning
+- 查看 -> View
+- 外部 -> External
+- 能够 -> Able To
+- 大量 -> Large Amount
+- 一套 -> A Set
+- 新建 -> Create New
+- 公司 -> Company
+- 产生 -> Generate
+- 互通 -> Interoperate
+- 想做 -> Want to Do
+- 刚进 -> Just Entering
+- 历史 -> History
+- 经给 -> Already Given
+- 做过 -> Done Before
+- 申请 -> Apply
+- 这么 -> So
+- 向域 -> To Domain
+- 发放 -> Issue
+- 推送 -> Push
+- 本地 -> Local
+- 末班 -> Template
+- 强制 -> Force
+- 公众 -> Public
+- 网站 -> Website
+- 端扫 -> Client Scan
+- 专用 -> Dedicated
+- 滑块 -> Slider
+- 放开 -> Release
+- 预留 -> Reserve
+- 二次 -> Second Time
+- 绘制 -> Draw
+- 旋转 -> Rotate
+- 随机 -> Random
+- 官方 -> Official
+- 反射 -> Reflection
+- 理由 -> Reason
+- 我们 -> We
+- 通道 -> Channel
+- 验华 -> Verify Huawei
+- 两套 -> Two Sets
+- 腾讯 -> Tencent
+- 机制 -> Mechanism
+- 对特 -> For Specific
+- 替换 -> Replace
+- 规范 -> Specification
+- 波浪 -> Wave
+- 国际 -> International
+- 尚 -> Still
+- 又 -> Again
+- 整 -> Arrange
+- 关 -> Close
+- 适 -> Suitable
+- 置 -> Set
+- 大 -> Large
+- 今 -> Today
+- 每 -> Every
+- 若 -> If
+- 测 -> Test
+- 装 -> Install
+- 往 -> Toward
+- 写 -> Write
+- 呢 -> Ne
+- 钟 -> Clock
+- 且 -> And
+- 逐 -> Gradually
+- 注 -> Note
+- 续 -> Continue
+- 具 -> Tool
+- 过 -> Pass
+- 形 -> Shape
+- 死 -> Dead
+- 层 -> Layer
+- 来 -> Come
+- 额 -> Amount
+- 话 -> Speech
+- 三 -> Three
+- 四 -> Four
+- 五 -> Five
+- 匿 -> Anonymous
+- 串 -> String
+- 击 -> Click
+- 带 -> Carry
+- 填 -> Fill
+- 限 -> Limit
+- 直 -> Direct
+- 之 -> Of
+- 前 -> Before
+- 离 -> Leave
+- 略 -> Approximate
+- 页 -> Page
+- 你 -> You
+- 动 -> Move
+- 做 -> Do
+- 噪 -> Noise
+- 坐 -> Sit
+- 地 -> Location
+- 省 -> Province
+- 英 -> English
+- 星 -> Star
+- 代 -> Generation
+
+## BPM Module Terms
+- 准备 -> Prepare
+- 假 -> Leave
+- 支 -> Branch
+- 断言 -> Assert
+- 设计 -> Design
+- 连 -> Link
+- 级 -> Level
+- 目 -> Item
+- 行 -> Row
+- 仿 -> Imitate
+- 委派 -> Delegate
+- 第 -> No.
+- 自 -> Self
+- 预 -> Pre
+- 监听 -> Listener
+- 走 -> Proceed
+- 路 -> Path
+- 于 -> At
+- 意 -> Intention
+- 运行 -> Run
+- 口连 -> Port Connection
+- 起始 -> Start
+- 转派 -> Reassign
+- 工 -> Work
+- 待 -> Pending
+- 迭 -> Iterate
+- 容 -> Content
+- 待办 -> Todo
+- 飞书 -> Feishu
+- 比例 -> Ratio
+- 释 -> Explain
+- 样 -> Sample
+- 进 -> Progress
+- 赋 -> Assign
+- 普通 -> Normal
+- 间 -> Interval
+- 发现连 -> Detected Link
+- 临 -> Temporary
+- 种 -> Type
+- 示 -> Show
+- 排 -> Arrange
+- 孩 -> Child
+- 面 -> Page
+- 作 -> Do
+- 错 -> Error
+- 变 -> Change
+- 决 -> Decision
+- 依次 -> Sequentially
+- 支终 -> Branch End
+- 转交 -> Transfer
+- 精确 -> Precise
+- 进度 -> Progress Rate
+- 去 -> Go
+- 签 -> Sign
+- 程 -> Flow
+- 搞 -> Tackle
+- 转 -> Turn
+- 首 -> First
+- 说 -> Say
+- 帮忙瞅瞅 -> Help Take a Look
+- 疑问 -> Question
+- 差异 -> Difference
+- 各种 -> Various
+- 反馈 -> Feedback
+- 办理 -> Process
+- 撤销 -> Cancel
+- 精准 -> Accurate
+- 放 -> Place
+- 办 -> Do
+- 报 -> Report
+- 似 -> Similar
+- 反 -> Reverse
+- 口 -> Port
+- 断 -> Break
+- 划 -> Draw
+- 现 -> Appear
+- 比 -> Compare
+- 回 -> Return
+- 完 -> Complete
+- 风 -> Wind
+- 雾 -> Fog
+- 倒 -> Invert
+- 准 -> Ready
+- 让 -> Allow
+- 次 -> Time
+- 运算符左边 -> Left of Operator
+- 运算符右边 -> Right of Operator
+- 现更没 -> Even Fewer Approvers
+- 最高级 -> Highest Level
+- 运行符 -> Operator
+- 准确性 -> Accuracy
+- 希望 -> Hope
+- 互斥 -> Mutually Exclusive
+- 回退 -> Rollback
+- 丢失 -> Lost
+- 领导 -> Leader
+- 左边 -> Left Side
+- 右边 -> Right Side
+- 尝试 -> Try
+- 顺着 -> Along
+- 貌似 -> Seems
+- 排查 -> Troubleshoot
+- 首次 -> First Time
+- 比较 -> Compare
+- 期望 -> Expectation
+- 提醒 -> Reminder
+- 怎么 -> How
+- 指派 -> Assign
+- 演示 -> Demo
+- 维护 -> Maintain
+- 剩余 -> Remaining
+- 回答 -> Answer
+- 回撤 -> Withdraw
+- 哪些 -> Which
+- 没更 -> Not Updated
+- 识别 -> Identify
+- 想换 -> Want to Change
+- 质 -> Quality
+- 替 -> Replace
+- 相 -> Related
+- 认 -> Acknowledge
+- 命 -> Name
+- 应 -> Should
+- 把 -> Put
+- 常 -> Common
+- 手 -> Hand
+- 缀 -> Suffix
+- 哈 -> Ha
+- 持 -> Hold
+- 提 -> Raise
+- 老 -> Old
+- 达 -> Reach
+- 步 -> Step
+- 马 -> Ma
+- 别 -> Other
+- 没 -> No
+- 啥 -> What
+- 得 -> Need
+- 高 -> High
+- 午 -> Noon
+- 级比较少 -> Few Levels
+- 口处相连 -> Ports Connected
+- 比较高 -> Relatively High
+- 第几级 -> Which Level
+- 边界计 -> Boundary Count
+- 支嵌套 -> Branch Nesting
+- 似飞书 -> Like Feishu
+- 提醒次 -> Reminder Count
+- 放进去 -> Put In
+- 面嵌套 -> Inner Nesting
+- 现意想 -> Unexpected
+- 小盾 -> Little Shield
+- 解释 -> Explanation
+- 容易 -> Easy
+- 解答 -> Answer
+- 责任 -> Responsibility
+- 系列 -> Series
+- 于说 -> Speaking Of
+- 复核 -> Review
+- 最高 -> Highest
+- 扫描 -> Scan
+- 末尾 -> End
+- 布局 -> Layout
+- 举例 -> Example
+- 手工 -> Manual
+- 草稿 -> Draft
+- 左侧 -> Left Panel
+- 右侧 -> Right Panel
+- 紧挨 -> Adjacent
+- 任意 -> Any
+- 进程 -> Process
+- 拉框 -> Drag Box
+- 讨论 -> Discuss
+- 模糊 -> Fuzzy
+- 帮忙 -> Help
+- 变得 -> Become
+- 技术 -> Technology
+- 快搭 -> Quick Build
+- 缺少 -> Missing
+- 甚至 -> Even
+- 细节 -> Detail
+- 差别 -> Difference
+- 发现 -> Discover
+- 那边 -> That Side
+- 公共 -> Public
+- 相连 -> Connected
+- 晚于 -> Later Than
+- 调研 -> Research
+- 感觉 -> Feel
+- 快照 -> Snapshot
+- 拷贝 -> Copy
+- 进去 -> Enter
+- 心 -> Heart
+- 便 -> Convenient
+- 极 -> Extreme
+- 寻 -> Search
+- 抛 -> Throw
+- 弹 -> Popup
+- 附 -> Attach
+- 吗 -> Question Particle
+- 引 -> Reference
+- 符 -> Symbol
+- 住 -> Stay
+- 函 -> Function
+- 句 -> Sentence
+- 均 -> All
+- 交 -> Exchange
+- 长 -> Long
+- 挑 -> Pick
+- 案 -> Case
+- 日 -> Day
+- 更 -> Update
+- 理 -> Reason
+- 想 -> Think
+- 例 -> Example
+- 设 -> Set
+- 参 -> Refer
+- 节 -> Section
+- 性 -> Nature
+- 充 -> Fill
+- 深 -> Deep
+- 专 -> Special
+- 漏 -> Leak
+- 清 -> Clear
+- 底 -> Bottom
+- 除 -> Remove
+- 稍 -> Slight
+- 块 -> Block
+- 计 -> Count
+- 共 -> Total
+- 哇 -> Wow
+- 么 -> What
+- 事 -> Matter
+- 量 -> Amount
+- 果 -> Result
+- 截 -> Cut
+- 哪 -> Which
+- 移 -> Move
+- 机 -> Machine
+- 些 -> Some
+- 拓 -> Expand
+- 使 -> Make
+- 他 -> He
+- 半 -> Half
+- 很 -> Very
+- 各 -> Each
+- 起 -> Start
+
+## IoT Module Terms (Internet of Things)
+- 物模型 -> Thing Model
+- 功能导出 -> Function Export
+- 物模型功能 -> Thing Model Function
+- 物模型功能导出 -> Thing Model Function Export
+- 项目模型 -> Item Model
+- 项目模型功能 -> Item Model Function
+- 项目模型功能导出 -> Item Model Function Export
+- 设备物模型 -> Device Thing Model
+- 物模型属性 -> Thing Model Property
+- 物模型服务 -> Thing Model Service
+- 物模型事件 -> Thing Model Event
+- 设备属性 -> Device Property
+- 设备服务 -> Device Service
+- 设备事件 -> Device Event
+- 属性标识符 -> Property Identifier
+- 服务标识符 -> Service Identifier
+- 事件标识符 -> Event Identifier
+- 数据类型 -> Data Type
+- 访问模式 -> Access Mode
+- 只读 -> Read Only
+- 只写 -> Write Only
+- 读写 -> Read Write
+- 单位符号 -> Unit Symbol
+- 取值范围 -> Value Range
+- 步长 -> Step
+- 输入参数 -> Input Parameters
+- 输出参数 -> Output Parameters
+- 事件类型 -> Event Type
+- 信息 -> Info
+- 告警 -> Alert
+- 故障 -> Fault
+- 物模型导入 -> Thing Model Import
+- 物模型导出 -> Thing Model Export
+- 批量导入 -> Batch Import
+- 批量导出 -> Batch Export
+- 模型校验 -> Model Validation
+- 格式校验 -> Format Validation
+- 必填校验 -> Required Validation
+- 范围校验 -> Range Validation
+- 长度校验 -> Length Validation
+- 正则校验 -> Regex Validation
+- 设备上线 -> Device Online
+- 设备下线 -> Device Offline
+- 设备激活 -> Device Activate
+- 设备禁用 -> Device Disable
+- 设备绑定 -> Device Bind
+- 设备解绑 -> Device Unbind
+- 设备重置 -> Device Reset
+- 设备重启 -> Device Restart
+- 固件升级 -> Firmware Upgrade
+- 固件版本 -> Firmware Version
+- 设备状态 -> Device Status
+- 在线状态 -> Online Status
+- 离线状态 -> Offline Status
+- 数据上报 -> Data Report
+- 数据下发 -> Data Issue
+- 指令下发 -> Command Issue
+- 远程控制 -> Remote Control
+- 设备分组 -> Device Group
+- 设备标签 -> Device Tag
+- 设备位置 -> Device Location
+- 设备配置 -> Device Config
+- 配置参数 -> Config Parameter
+- 参数设置 -> Parameter Setting
+- 阈值设置 -> Threshold Setting
+- 告警规则 -> Alert Rule
+- 告警触发 -> Alert Trigger
+- 告警通知 -> Alert Notification
+- 数据流转 -> Data Flow
+- 规则引擎 -> Rule Engine
+- 数据存储 -> Data Storage
+- 数据分析 -> Data Analysis
+- 统计报表 -> Statistics Report
+- 设备监控 -> Device Monitor
+- 实时监控 -> Real-time Monitor
+- 历史数据 -> Historical Data
+- 数据查询 -> Data Query
+- 数据导出 -> Data Export
+- 协议解析 -> Protocol Parse
+- 协议适配 -> Protocol Adapter
+- 连接协议 -> Connection Protocol
+- 通信协议 -> Communication Protocol
+- MQTT协议 -> MQTT Protocol
+- CoAP协议 -> CoAP Protocol
+- HTTP协议 -> HTTP Protocol
+- TCP协议 -> TCP Protocol
+- UDP协议 -> UDP Protocol
+- WebSocket协议 -> WebSocket Protocol
+- 产品类型 -> Product Type
+- 产品分类 -> Product Category
+- 节点类型 -> Node Type
+- 网关设备 -> Gateway Device
+- 直连设备 -> Direct Device
+- 子设备 -> Sub Device
+- 设备认证 -> Device Authentication
+- 设备密钥 -> Device Key
+- 设备证书 -> Device Certificate
+- 安全认证 -> Security Authentication
+- 数据加密 -> Data Encryption
+- 传输加密 -> Transport Encryption
+
+## AI Module Terms
+- 言 -> Speech
+- 着 -> With
+- 景 -> Scene
+- 词 -> Word
+- 纲 -> Outline
+- 维导 -> Guided
+- 音 -> Audio
+- 绘 -> Drawing
+- 析 -> Analyze
+- 展 -> Showcase
+- 电商 -> E-commerce
+- 歌词 -> Lyrics
+- 语言 -> Language
+- 降 -> Lower
+- 社 -> Social
+- 创 -> Create
+- 求 -> Request
+- 硅 -> Silicon
+- 册 -> Plan
+- 温 -> Temperature
+- 评估 -> Assess
+- 语气 -> Tone
+- 帮 -> Help
+- 气 -> Weather
+- 召 -> Invoke
+- 讯飞 -> iFlytek
+- 领 -> Lead
+- 态 -> Status
+- 通 -> Pass
+- 混 -> Mixed
+- 透 -> Transparent
+- 疾病诊 -> Medical Diagnosis
+- 灵活 -> Flexible
+- 检索 -> Search
+- 槛 -> Threshold
+- 丰 -> Rich
+- 融 -> Blend
+- 歌曲 -> Song
+- 轮询 -> Polling
+- 秘钥 -> Secret Key
+- 豆 -> Bean
+- 业 -> Industry
+- 城 -> City
+- 落 -> Drop
+- 短 -> Short
+- 问 -> Ask
+- 诊 -> Diagnose
+- 火 -> Heat
+- 撰 -> Write
+- 导 -> Guide
+- 夜 -> Night
+- 亮 -> Bright
+- 语音 -> Voice
+- 繁荣 -> Prosperous
+- 欺诈 -> Fraud
+- 百川 -> Baichuan
+- 章 -> Section
+- 封 -> Seal
+- 强 -> Strong
+- 控 -> Control
+- 信 -> Trust
+- 辅 -> Assist
+- 指 -> Instruction
+- 轻松吉 -> QingSong Guitar
+- 育背景 -> Education Background
+- 兴趣爱 -> Interest Hobbies
+- 旋律 -> Melody
+- 职业 -> Career
+- 演讲 -> Speech
+- 商业 -> Business
+- 情感 -> Emotion
+- 训练 -> Training
+- 情绪 -> Sentiment
+- 问答 -> Q&A
+- 健康 -> Health
+- 背景 -> Background
+- 商店 -> Store
+- 谷歌 -> Google
+- 道歉 -> Apology
+- 夏 -> Summer
+- 滩 -> Beach
+- 宁 -> Peace
+- 奏 -> Play
+- 百 -> Hundred
+- 副 -> Vice
+- 站 -> Site
+- 药 -> Medicine
+- 监 -> Monitor
+- 博 -> Blog
+- 语 -> Language
+- 秀 -> Show
+- 携 -> Carry
+- 气趋势 -> Weather Trend
+- 田忌赛 -> Tian Ji Stakes
+- 巴巴 -> Baba
+- 软件 -> Software
+- 商务 -> Commerce
+- 介绍 -> Introduction
+- 气温 -> Temperature
+- 降水 -> Precipitation
+- 拖拽 -> Drag
+- 犯罪 -> Crime
+- 水平 -> Level
+- 伙伴 -> Partner
+- 欢迎 -> Welcome
+- 指南 -> Guidebook
+- 扮演 -> Roleplay
+- 词汇 -> Vocabulary
+- 帆 -> Sail
+- 莫 -> Mo
+- 科 -> Science
+- 万 -> Ten Thousand
+- 肥 -> Fertilizer
+- 活 -> Active
+- 幅 -> Width
+- 伸 -> Stretch
+- 稳 -> Stable
+- 满 -> Full
+- 产 -> Produce
+- 结 -> Structure
+- 络 -> Network
+- 队 -> Team
+- 张 -> Spread
+- 费 -> Cost
+- 谱 -> Score
+- 真 -> Real
+- 飞 -> Fly
+- 啊 -> Ah
+- 黄 -> Yellow
+- 维 -> Dimension
+- 敛 -> Converge
+- 雨 -> Rain
+- 雪 -> Snow
+- 慧农业领 -> Intelligent Agriculture Leader
+- 稀宇科技 -> Xiyu Technology
+- 科技园 -> Tech Park
+- 型团队 -> Teams
+- 慧医疗 -> Smart Healthcare
+- 医院医 -> Hospital Doctors
+- 慧农业 -> Smart Agriculture
+- 背景描 -> Background Description
+- 气状况 -> Weather Conditions
+- 赠费 -> Bonus Fee
+- 付费 -> Paid
+- 科技 -> Technology
+- 旅游 -> Travel
+- 摄影 -> Photography
+- 硕士 -> Master
+- 团队 -> Team
+- 展历 -> Experience
+- 探索 -> Explore
+- 随着 -> As
+- 活跃 -> Active
+- 疑资 -> Doubtful Info
+- 医疗 -> Medical
+- 短诊 -> Short Diagnosis
+- 益增 -> Increase
+- 医院 -> Hospital
+- 病历 -> Medical Record
+- 症状 -> Symptoms
+- 展望 -> Outlook
+- 农民 -> Farmer
+- 养殖 -> Breeding
+- 世界 -> World
+- 求索 -> Quest
+- 尺寸 -> Size
+- 灵感 -> Inspiration
+- 涵盖 -> Cover
+- 暗灭 -> Darkness
+- 微软 -> Microsoft
+- 辞职 -> Resign
+- 阳光 -> Sunshine
+- 奔跑 -> Run
+- 朋友 -> Friend
+- 笑声 -> Laughter
+- 灿烂 -> Brilliant
+- 甜蜜 -> Sweet
+- 庆祝 -> Celebrate
+- 卖糕 -> Cake Seller
+- 企鹅 -> Penguin
+- 神龙 -> Divine Dragon
+- 熟练 -> Skilled
+- 奇怪 -> Strange
+- 晴朗 -> Sunny
+- 雷雨 -> Thunderstorm
+- 摄氏 -> Celsius
+- 晚 -> Evening
+- 身 -> Body
+- 师 -> Teacher
+- 职 -> Occupation
+- 篮 -> Basket
+- 爱 -> Love
+- 宜 -> Suitable
+- 旨 -> Aim
+- 痛 -> Pain
+- 统 -> System
+- 力 -> Force
+- 技 -> Skill
+- 增 -> Hike
+- 渐 -> Gradually
+- 型 -> Type
+- 措 -> Measure
+- 护 -> Protect
+- 载 -> Carry
+- 势 -> Trend
+- 著 -> Writer
+- 疑 -> Suspect
+- 慧 -> Wisdom
+- 缓 -> Relieve
+- 堵 -> Blockage
+- 水 -> Water
+- 患 -> Patient
+- 医 -> Doctor
+- 模 -> Model
+- 吸 -> Inhale
+- 买 -> Buy
+- 植 -> Plant
+- 赢 -> Win
+- 狐 -> Fox
+- 治 -> Treat
+- 垫 -> Pad
+- 腾 -> Soar
+- 毕 -> Graduation
+- 色 -> Color
+- 情 -> Mood
+- 晰 -> Clear
+- 篇 -> Article
+- 批 -> Batch
+- 欢 -> Joy
+- 旁 -> Side
+- 忧 -> Concern
+- 虑 -> Worry
+- 旅 -> Journey
+- 轻 -> Light
+- 慢 -> Slow
+- 南 -> South
+- 画 -> Paint
+- 咋 -> How
+- 呀 -> Ya
+- 阴 -> Overcast
+- 州 -> State
+- 湿 -> Humidity
+
+## Pay Module Terms
+- 证书 -> Certificate
+- 扫 -> Scan
+- 扫码 -> QR Scan
+- 被扫 -> Scanned
+- 累计 -> Cumulative
+- 赠送 -> Giveaway
+- 退 -> Refund
+- 销售 -> Sales
+- 报销 -> Reimbursement
+- 免密 -> Passwordless
+- 密钥 -> Secret Key
+- 杂货铺 -> Grocery Store
+- 奖励 -> Reward
+- 扣减 -> Deduct
+- 扣款 -> Deduct Payment
+- 京东 -> JD.com
+- 备 -> Prepare
+- 账 -> Account
+- 概率 -> Probability
+- 小概率 -> Small Probability
+- 送 -> Deliver
+- 灿灿姐 -> Sister Cancan
+- 沙箱 -> Sandbox
+- 电脑 -> Computer
+- 咱 -> We
+- 付 -> Pay
+- 笔 -> Entry
+- 轮 -> Cycle
+- 彻底 -> Completely
+- 连贯 -> Consistent
+- 物品 -> Item
+- 敏敏姐 -> Sister Minmin
+- 冲冲冲 -> Go Go Go
+- 财付通 -> Tenpay
+- 吃饭 -> Eat
+- 小米电视 -> Xiaomi TV
+- 华硕笔记本 -> ASUS Laptop
+- 汽车 -> Car
+- 流畅 -> Smooth
+- 灰度 -> Gray Release
+- 刷卡 -> Swipe Card
+- 资金 -> Funds
+- 干预 -> Intervene
+- 空闲 -> Idle
+- 商 -> Business
+- 菜 -> Vegetable
+- 苹果 -> Apple
+- 蔚来汽车 -> NIO Car
+- 理论 -> In Theory
+- 恰巧 -> Coincidentally
+- 密 -> Secret
+- 弄 -> Handle
+- 丢了 -> Lost
+- 简介 -> Overview
+- 上述 -> Above
+- 分布式 -> Distributed
+- 扣除 -> Deduct
+- 佣金 -> Commission
+- 余额流水 -> Balance Ledger
+- 余 -> Remaining
+- 道 -> Way
+- 介入 -> Intervene
+- 介 -> Introduce
+- 分佣 -> Commission Sharing
+- 佣 -> Commission
+- 抵扣 -> Deduct
+- 受 -> Receive
+- 抽奖 -> Lottery
+- 邀 -> Invite
+- 获 -> Gain
+- 返 -> Return
+- 普陀 -> Putuo
+- 宋 -> Song
+- 奖 -> Prize
+- 阿巴阿巴 -> Aba Aba
+- 呵呵 -> Hehe
+- 桩 -> Post
+- 勿 -> Do Not
+- 友 -> Friend
+- 牌 -> Card
+- 丑 -> Ugly
+- 检 -> Check
+- 扣 -> Deduct
+
+## Common Terms
+- 用户类型 -> User Type
+- 系统状态 -> System Status
+- 用户性别 -> User Gender
+- 数据范围 -> Data Scope
+- 登录日志的类型 -> Login Log Type
+- 登录结果 -> Login Result
+- 短信渠道编码 -> SMS Channel Code
+- 短信模板类型 -> SMS Template Type
+- 短信发送状态 -> SMS Send Status
+- 短信接收状态 -> SMS Receive Status
+- 部门编号 -> Department ID
+- 用户编号 -> User ID
+- 表名 -> Table Name
+- 字段名 -> Column Name
+- 数据权限 -> Data Permission
+- 登陆用户 -> Logged-in User
+- 管理员类型 -> Administrator Type
+- 查看全部 -> View All
+- 查看自己 -> View Self
+- 部门 -> Department
+- 用户 -> User
+- 权限 -> Permission
+- 配置 -> Configuration
+- 条件 -> Condition
+- 拼接 -> Concatenate
+- 构建 -> Build
+- 执行 -> Execute
+- 解析 -> Parse
+- 请求 -> Request
+- 响应 -> Response
+- 结果 -> Result
+- 参数 -> Parameter
+- 字段 -> Field
+- 表 -> Table
+- 类 -> Class
+- 接口 -> API
+- 方法 -> Method
+- 属性 -> Property
+- 变量 -> Variable
+- 常量 -> Constant
+- 枚举 -> Enum
+- 注解 -> Annotation
+- 异常 -> Exception
+- 错误 -> Error
+- 成功 -> Success
+- 失败 -> Failure
+- 状态 -> State
+- 类型 -> Type
+- 编码 -> Code
+- 模板 -> Template
+- 渠道 -> Channel
+- 发送 -> Send
+- 接收 -> Receive
+- 时间 -> Time
+- 日期 -> Date
+- 时间戳 -> Timestamp
+- 签名 -> Sign
+- 访问 -> Access
+- 地址 -> Address
+- URL -> URL
+- URI -> URI
+- API -> API
+- 文档 -> Document
+- 说明 -> Description
+- 注意 -> Note
+- 警告 -> Warning
+- 示例 -> Example
+- 测试 -> Test
+- 验证 -> Verify
+- 校验 -> Validate
+- 检查 -> Check
+- 转换 -> Convert
+- 格式化 -> Format
+- 序列化 -> Serialize
+- 反序列化 -> Deserialize
+- 加密 -> Encrypt
+- 解密 -> Decrypt
+- 哈希 -> Hash
+- 认证 -> Authentication
+- 授权 -> Authorization
+- 登录 -> Login
+- 注册 -> Register
+- 退出 -> Logout
+- 会话 -> Session
+- 缓存 -> Cache
+- 数据库 -> Database
+- 记录 -> Record
+- 查询 -> Query
+- 插入 -> Insert
+- 更新 -> Update
+- 删除 -> Delete
+- 事务 -> Transaction
+- 连接 -> Connection
+- 池 -> Pool
+- 驱动 -> Driver
+- 客户端 -> Client
+- 服务端 -> Server
+- 服务器 -> Server
+- 客户 -> Customer
+- 商品 -> Product
+- 订单 -> Order
+- 支付 -> Payment
+- 退款 -> Refund
+- 通知 -> Notification
+- 消息 -> Message
+- 邮件 -> Email
+- 短信 -> SMS
+- 微信 -> WeChat
+- 支付宝 -> Alipay
+- 业务 -> Business
+- 模块 -> Module
+- 组件 -> Component
+- 框架 -> Framework
+- 工具 -> Utility
+- 工具类 -> Utility Class
+- 帮助类 -> Helper Class
+- 基础类 -> Base Class
+- 抽象类 -> Abstract Class
+- 实现类 -> Implementation Class
+- 接口实现 -> Interface Implementation
+- 扩展 -> Extension
+- 继承 -> Inheritance
+- 封装 -> Encapsulation
+- 多态 -> Polymorphism
+- 重载 -> Overload
+- 重写 -> Override
+- 静态 -> Static
+- 实例 -> Instance
+- 对象 -> Object
+- 数组 -> Array
+- 集合 -> Collection
+- 列表 -> List
+- 映射 -> Map
+- 队列 -> Queue
+- 栈 -> Stack
+- 链表 -> Linked List
+- 树 -> Tree
+- 图 -> Graph
+- 算法 -> Algorithm
+- 排序 -> Sort
+- 搜索 -> Search
+- 过滤 -> Filter
+- 归约 -> Reduce
+- 聚合 -> Aggregate
+- 分组 -> Group
+- 分页 -> Pagination
+- 日志 -> Log
+- 调试 -> Debug
+- 性能 -> Performance
+- 优化 -> Optimization
+- 监控 -> Monitoring
+- 统计 -> Statistics
+- 报表 -> Report
+- 图表 -> Chart
+- 导出 -> Export
+- 导入 -> Import
+- 上传 -> Upload
+- 下载 -> Download
+- 文件 -> File
+- 目录 -> Directory
+- 路径 -> Path
+- 配置文件 -> Configuration File
+- 环境 -> Environment
+- 部署 -> Deployment
+- 发布 -> Release
+- 版本 -> Version
+- 版本控制 -> Version Control
+- 依赖 -> Dependency
+- 包 -> Package
+- 库 -> Library
+- 插件 -> Plugin
+- 项目 -> Project
+- 应用 -> Application
+- 服务 -> Service
+- 微服务 -> Microservice
+- 端点 -> Endpoint
+- 路由 -> Route
+- 控制器 -> Controller
+- 服务层 -> Service Layer
+- 数据访问层 -> Data Access Layer
+- 持久层 -> Persistence Layer
+- 业务逻辑层 -> Business Logic Layer
+- 表示层 -> Presentation Layer
+- 视图 -> View
+- 模型 -> Model
+- 验证器 -> Validator
+- 过滤器 -> Filter
+- 拦截器 -> Interceptor
+- 监听器 -> Listener
+- 定时任务 -> Scheduled Task
+- 异步 -> Asynchronous
+- 同步 -> Synchronous
+- 并发 -> Concurrency
+- 多线程 -> Multithreading
+- 锁 -> Lock
+- 回滚 -> Rollback
+- 提交 -> Commit
+- 回调 -> Callback
+- 代理 -> Proxy
+- 适配器 -> Adapter
+- 装饰器 -> Decorator
+- 观察者 -> Observer
+- 单例 -> Singleton
+- 工厂 -> Factory
+- 建造者 -> Builder
+- 原型 -> Prototype
+- 模板方法 -> Template Method
+- 策略 -> Strategy
+- 命令 -> Command
+- 责任链 -> Chain of Responsibility
+- 迭代器 -> Iterator
+- 中介者 -> Mediator
+- 备忘录 -> Memento
+- 访问者 -> Visitor
+- 解释器 -> Interpreter
+- 桥接 -> Bridge
+- 组合 -> Composite
+- 享元 -> Flyweight
+- 外观 -> Facade
+
+## Auto-filled Common Terms
+- 编号 -> ID
+- 的 -> of
+- 芋道源码 -> Yudao Source
+- 管理后台 -> Admin Console
+- 创建 -> Create
+- 不能为空 -> cannot be empty
+- 获得 -> Get
+- 信息 -> Information
+- 单位 -> Unit
+- 关联 -> Association
+- 数据 -> Data
+- 存在 -> Exists
+- 设备 -> Device
+- 流程 -> Workflow
+- 用于 -> Used for
+- 数量 -> Quantity
+- 使用 -> Use
+- 备注 -> Remark
+- 等 -> etc.
+- 如果是 -> If it is
+- 名称 -> Name
+- 的主键自增 -> Auto-increment Primary Key
+- 可不写 -> Optional
+- 修改 -> Modify
+- 芋艿 -> Yunai
+- 项 -> Item
+- 操作 -> Operation
+- 名 -> Name
+- 获取 -> Obtain
+- 不存在 -> Does not exist
+- 元 -> Yuan
+- 码 -> Code
+- 处理 -> Handle
+- 钱 -> Money
+- 存 -> Save
+- 原因 -> Reason
+- 交易 -> Transaction
+- 产品 -> Product
+- 编号不能为空 -> ID cannot be empty
+- 参见 -> See
+- 例如说 -> For example
+- 返回 -> Return
+- 和 -> And
+- 金额 -> Amount
+- 基于 -> Based on
+
+## Discovered Terms (to translate)
+- 分 -> Part
+- 为 -> For
+- 时 -> When
+- 单 -> Document
+- 相关 -> Related
+- 内容 -> Content
+- 如果 -> If
+- 格式 -> Format
+- 中 -> In
+- 创建信息 -> Creation Info
+- 任务 -> Task
+- 设置 -> Settings
+- 对应 -> Corresponding
+- 达式 -> Expression
+- 特殊 -> Special
+- 是否 -> Whether
+- 批量 -> Batch
+- 字典 -> Dictionary
+- 名字 -> Name
+- 片 -> Slice
+- 生成 -> Generate
+- 产品编号 -> Product ID
+- 拼团 -> Group Buying
+- 知识 -> Knowledge
+- 仓 -> Warehouse
+- 会员 -> Member
+- 采购 -> Purchase
+- 通过 -> Through
+- 值 -> Value
+- 从 -> From
+- 芋道 -> Yudao
+- 商机 -> Opportunity
+- 范围 -> Scope
+- 为空 -> Empty
+- 活动 -> Activity
+- 开启 -> Enable
+- 出 -> Out
+- 产品分 -> Product Part
+- 转账 -> Transfer
+- 冗余 -> Redundant
+- 在 -> At
+- 是否存在 -> Exists or not
+- 负责人 -> Owner
+- 开始 -> Start
+- 描述 -> Description
+- 砍价 -> Bargain
+- 对应的 -> Corresponding
+- 公众号 -> WeChat Official Account
+- 号 -> Number
+- 社交 -> Social
+- 优惠劵 -> Coupon
+- 令牌 -> Token
+- 情况一 -> Case 1
+- 实现 -> Implement
+- 参考 -> Reference
+- 入 -> In
+- 情况二 -> Case 2
+- 到 -> To
+- 联系人 -> Contact
+- 调用 -> Invoke
+- 目的 -> Purpose
+- 模版 -> Template
+- 结束 -> End
+- 活动编号 -> Activity ID
+- 售后 -> After-sales
+- 根据 -> According to
+- 昵称 -> Nickname
+- 充值 -> Top-up
+- 项编号 -> Item ID
+- 则 -> Then
+- 节点 -> Node
+- 角色 -> Role
+- 数 -> Number
+- 第二步 -> Step Two
+- 手机号 -> Mobile Number
+- 手机 -> Mobile
+- 上下文 -> Context
+- 避免 -> Avoid
+- 随便 -> Random
+- 按 -> By
+- 进行 -> Perform
+- 第一步 -> Step One
+- 的编号 -> ID of
+- 系统 -> System
+- 需要 -> Need
+- 积分 -> Points
+- 总 -> Total
+- 你猜 -> You guess
+- 读取 -> Read
+- 过期 -> Expired
+- 子 -> Sub
+- 该 -> This
+- 管理员 -> Administrator
+- 定义 -> Define
+- 延迟加载 -> Lazy Load
+- 李四 -> Li Si
+- 密码 -> Password
+- 单号 -> Order No.
+- 必须是 -> Must be
+- 组 -> Group
+- 百分比 -> Percentage
+- 因为 -> Because
+- 合同 -> Contract
+- 将 -> Will
+- 销售出 -> Sales Out
+- 网关 -> Gateway
+- 如果子 -> If sub
+- 个字符 -> Characters
+- 采购入 -> Purchase In
+- 场景 -> Scenario
+- 默认 -> Default
+- 影响 -> Impact
+- 后 -> After
+- 请不要添加到这里 -> Do not add here
+- 提供给添加 -> Provide for adding
+- 存在差异的 -> Different
+- 详细的子 -> Detailed sub
+- 添加 -> Add
+- 学生 -> Student
+- 已 -> Already
+- 任务编号 -> Task ID
+- 模糊匹配 -> Fuzzy Match
+- 可参考 -> See also
+- 发起 -> Initiate
+- 新增 -> Create
+- 附件 -> Attachment
+- 客服 -> Customer Service
+- 退货 -> Return
+- 原因是 -> The reason is
+- 前端 -> Frontend
+- 菜单 -> Menu
+- 跟进 -> Follow-up
+- 数据源 -> Data Source
+- 并 -> And
+- 获得指定 -> Get specified
+- 避免循环 -> Avoid cycle
+- 角色编号 -> Role ID
+- 无法 -> Unable
+- 指定 -> Specify
+- 当前 -> Current
+- 增加 -> Increase
+- 只 -> Only
+- 邮箱 -> Email
+- 社交平台的 -> Of social platform
+- 会员等级 -> Member Level
+- 不正确 -> Incorrect
+- 来源 -> Source
+- 商户 -> Merchant
+- 分销 -> Distribution
+- 主子 -> Parent-child
+- 积分商城活动 -> Points Mall Activity
+- 优惠金额 -> Discount Amount
+- 工作流 -> Workflow
+- 头像 -> Avatar
+- 收件 -> Recipient
+- 请进行处理 -> Please handle
+- 提供 -> Provide
+- 器 -> Device
+- 砍价活动 -> Bargain Activity
+- 审批 -> Approval
+- 标题 -> Title
+- 回款 -> Collection
+- 秒杀 -> Flash Sale
+- 快递公司 -> Courier Company
+- 主键 -> Primary Key
+- 中的 -> In
+- 升级 -> Upgrade
+- 我的 -> My
+- 公众号账号的编号 -> Official Account ID
+- 秒杀活动 -> Flash Sale Activity
+- 拼团活动 -> Group Buying Activity
+- 提示 -> Prompt
+- 等级 -> Level
+- 设备编号 -> Device ID
+- 结算账户 -> Settlement Account
+- 小程序 -> Mini Program
+- 文章分 -> Article Part
+- 价格 -> Price
+- 标 -> Tag
+- 专属逻辑 -> Dedicated Logic
+- 站内信 -> Site Message
+- 数据是 -> Data is
+- 解决 -> Resolve
+- 计算 -> Calculate
+- 匹配 -> Match
+- 张三 -> Zhang San
+- 下单 -> Place Order
+- 装修 -> Decoration
+- 基本信息 -> Basic Info
+- 租户编号 -> Tenant ID
+- 流程分 -> Workflow Part
+- 由于 -> Due to
+- 规则 -> Rule
+- 自增 -> Auto-increment
+- 取消 -> Cancel
+- 岗位 -> Post
+- 平台 -> Platform
+- 未 -> Not
+- 是 -> Is
+- 头 -> Head
+- 名称不能为空 -> Name cannot be empty
+- 单位分 -> Unit Part
+- 标识 -> Identifier
+- 个 -> Piece
+- 主要用于前端的下拉选项 -> Mainly for frontend dropdown options
+- 直接返回 -> Return directly
+- 产品名称 -> Product Name
+- 下次联系 -> Next Contact
+- 创建人 -> Creator
+- 主题 -> Subject
+- 发生 -> Occurred
+- 级别 -> Level
+- 存调拨单 -> Inventory Transfer Order
+- 初始化 -> Initialize
+- 回复的 -> Reply of
+- 已审核 -> Approved
+- 基础 -> Basic
+- 租户 -> Tenant
+- 下 -> Down
+- 以 -> By
+- 是否匹配 -> Matches or not
+- 产品信息 -> Product Info
+- 触发器 -> Trigger
+- 遍历 -> Iterate
+- 账号 -> Account
+- 快递 -> Express
+- 了 -> Done
+- 升级任务 -> Upgrade Task
+- 获得产品 -> Get Product
+- 字符串 -> String
+- 动态 -> Dynamic
+- 逻辑 -> Logic
+- 签到 -> Check-in
+- 段 -> Segment
+- 体 -> Body
+- 数据编号 -> Data ID
+- 合同编号 -> Contract ID
+- 产品单价 -> Product Unit Price
+- 售后编号 -> After-sales ID
+- 合计数量 -> Total Quantity
+- 处理器 -> Processor
+- 其它出 -> Other Out
+- 只有 -> Only
+- 事件 -> Event
+- 关闭 -> Close
+- 详情 -> Details
+- 限制 -> Limit
+- 公告 -> Announcement
+- 音乐 -> Music
+- 结算账户编号 -> Settlement Account ID
+- 产品数量 -> Product Quantity
+- 是否有效 -> Valid or not
+- 聊天角色 -> Chat Role
+- 产品物 -> Product Item
+- 其它入 -> Other In
+- 王五 -> Wang Wu
+- 线索 -> Lead
+- 父分 -> Parent Part
+- 性别 -> Gender
+- 当 -> When
+- 位 -> Position
+- 积分商城 -> Points Mall
+- 快递运费 -> Shipping Fee
+- 已禁用 -> Disabled
+- 供应商 -> Supplier
+- 开头 -> Prefix
+- 非空 -> Not null
+- 支持 -> Support
+- 定 -> Set
+- 获得流程 -> Get Workflow
+- 获得商机 -> Get Opportunity
+- 字典数据 -> Dictionary Data
+- 赵六 -> Zhao Liu
+- 无需 -> No need
+- 品牌 -> Brand
+- 主 -> Main
+- 与 -> And
+- 不用比较是否为相同 -> No need to compare equality
+- 满减送活动 -> Discount & Giveaway Activity
+- 公众号账号 -> Official Account
+- 回款计划 -> Collection Plan
+- 装修页面 -> Decoration Page
+- 不匹配 -> Not match
+- 或者 -> Or
+- 按照 -> According to
+- 固件 -> Firmware
+- 余额 -> Balance
+- 税率 -> Tax Rate
+- 成 -> Become
+- 即 -> That is
+- 名不能为空 -> Name cannot be empty
+- 负责人的 -> Of owner
+- 秒杀时段 -> Flash Sale Time Slot
+- 学生班级 -> Student Class
+- 学生课程 -> Student Course
+- 重复 -> Duplicate
+- 前缀 -> Prefix
+- 超时 -> Timeout
+- 页面 -> Page
+- 或 -> Or
+- 邮 -> Mail
+- 公众号粉丝 -> Official Account Follower
+- 如果为空 -> If empty
+- 设备名称 -> Device Name
+- 设备信息 -> Device Info
+- 手机号码 -> Mobile Number
+- 采购退货 -> Purchase Return
+- 销售退货 -> Sales Return
+- 单编号 -> Order ID
+- 是否为 -> Whether
+- 相关的 -> Related
+- 转账单 -> Transfer Order
+- 则抛出 -> Then throw
+- 存数量 -> Stock Quantity
+- 没有 -> None
+- 流水 -> Ledger
+- 简介 -> Introduction
+- 正数 -> Positive Number
+- 不 -> Not
+- 获得设备 -> Get Device
+- 清空所有 -> Clear all
+- 自定义 -> Custom
+- 单项 -> Single Item
+- 拓展 -> Extend
+- 例如 -> For example
+- 元素 -> Element
+- 提现 -> Withdraw
+- 减少 -> Decrease
+- 括 -> Include
+- 无 -> None
+- 秒 -> Second
+- 文 -> Text
+- 数据流转规则 -> Data Flow Rule
+- 供应商编号 -> Supplier ID
+- 产品单位 -> Product Unit
+- 付款单 -> Payment Order
+- 收款单 -> Receipt Order
+- 判断 -> Judge
+- 实际 -> Actual
+- 保存 -> Save
+- 补充 -> Supplement
+- 情况 -> Situation
+- 不是 -> Not
+- 不同 -> Different
+- 最后 -> Final
+- 段落 -> Paragraph
+- 先 -> First
+- 点 -> Point
+- 获得产品分 -> Get Product Part
+- 流程定义 -> Process Definition
+- 产品标识 -> Product Identifier
+- 是否开启 -> Enabled or not
+- 充值套餐 -> Top-up Package
+- 聊天对话 -> Chat Conversation
+- 添加到 -> Add to
+- 市场价 -> Market Price
+- 反审核 -> Reverse Approval
+- 冲突 -> Conflict
+- 清理 -> Cleanup
+- 结构 -> Structure
+- 加签 -> Add Signature
+- 自己 -> Self
+- 功能 -> Function
+- 抛出 -> Throw
+- 转移 -> Transfer
+- 审核 -> Review
+
+## Additional Keywords
+- 身份验证 -> Authentication
+- 鉴权 -> Authorization
+- 访问令牌 -> Access Token
+- 刷新令牌 -> Refresh Token
+- 会话超时 -> Session Timeout
+- 组织 -> Organization
+- 权限点 -> Permission Point
+- 菜单权限 -> Menu Permission
+- 多租户 -> Multi-tenant
+- 国际化 -> Internationalization
+- 本地化 -> Localization
+- 分页大小 -> Page Size
+- 当前页码 -> Page Number
+- 总页数 -> Total Pages
+- 总记录数 -> Total Records
+- 偏移量 -> Offset
+- 排序字段 -> Sort Field
+- 排序方式 -> Sort Order
+- 升序 -> Ascending
+- 降序 -> Descending
+- 去重 -> Distinct
+- 去重查询 -> Distinct Query
+- 幂等 -> Idempotent
+- 幂等键 -> Idempotency Key
+- 限流 -> Rate Limit
+- 限流器 -> Rate Limiter
+- 重试 -> Retry
+- 熔断 -> Circuit Breaker
+- 降级 -> Fallback
+- 熔断器 -> Circuit Breaker
+- 断路器 -> Circuit Breaker
+- 监控指标 -> Metrics
+- 指标 -> Metric
+- 链路追踪 -> Tracing
+- 追踪 -> Trace
+- 跨域 -> CORS
+- 请求头 -> Request Header
+- 响应头 -> Response Header
+- 请求体 -> Request Body
+- 响应体 -> Response Body
+- 查询参数 -> Query Parameter
+- 路径参数 -> Path Parameter
+- 表单参数 -> Form Parameter
+- JSON -> JSON
+- YAML -> YAML
+- 属性文件 -> Properties File
+- 环境变量 -> Environment Variable
+- 配置属性 -> Configuration Property
+- 配置前缀 -> Configuration Prefix
+- 开发环境 -> Development Environment
+- 测试环境 -> Test Environment
+- 生产环境 -> Production Environment
+- 数据源名称 -> Data Source Name
+- 数据源URL -> Data Source URL
+- 用户名 -> Username
+- 连接池 -> Connection Pool
+- 最大连接数 -> Maximum Connections
+- 最小空闲连接 -> Minimum Idle Connections
+- 连接超时 -> Connection Timeout
+- 读取超时 -> Read Timeout
+- 写入超时 -> Write Timeout
+- 事务隔离级别 -> Transaction Isolation Level
+- 事务传播行为 -> Transaction Propagation
+- 声明式事务 -> Declarative Transaction
+- 回滚规则 -> Rollback Rule
+- 提交事务 -> Commit Transaction
+- 校验注解 -> Validation Annotation
+- 非空 -> Not Null
+- 最小长度 -> Min Length
+- 最大长度 -> Max Length
+- 正则匹配 -> Pattern
+- 邮箱格式 -> Email Format
+- 全局异常 -> Global Exception
+- 异常处理器 -> Exception Handler
+- 统一返回 -> Unified Response
+- 统一错误码 -> Unified Error Code
+- 日志级别 -> Log Level
+- 调试级别 -> Debug Level
+- 信息级别 -> Info Level
+- 警告级别 -> Warn Level
+- 错误级别 -> Error Level
+- 追踪级别 -> Trace Level
+- 审计日志 -> Audit Log
+- 访问日志 -> Access Log
+- 错误日志 -> Error Log
+- 健康检查 -> Health Check
+- 存活检查 -> Liveness Probe
+- 就绪检查 -> Readiness Probe
+- 管理端点 -> Actuator Endpoint
+- 文档 -> Documentation
+- 开放API -> OpenAPI
+- 接口文档 -> API Documentation
+- 接口示例 -> API Example
+- 请求示例 -> Request Example
+- 响应示例 -> Response Example
+- 模式定义 -> Schema Definition
+- 标签 -> Tag
+- 摘要 -> Summary
+- DTO -> DTO
+- VO -> VO
+- DO -> DO
+- BO -> BO
+- 实体 -> Entity
+- 数据传输对象 -> Data Transfer Object
+- 视图对象 -> View Object
+- 业务对象 -> Business Object
+- 数据对象 -> Data Object
+- 仓储 -> Repository
+- 映射器 -> Mapper
+- 服务实现 -> Service Implementation
+- 切面 -> Aspect
+- 切点 -> Pointcut
+- 通知 -> Advice
+- 消息队列 -> Message Queue
+- 主题 -> Topic
+- 分区 -> Partition
+- 生产者 -> Producer
+- 消费者 -> Consumer
+- 重平衡 -> Rebalance
+- 死信队列 -> Dead Letter Queue
+- 调度 -> Scheduling
+- 表达式 -> Expression
+- Cron表达式 -> Cron Expression
+- 线程池 -> Thread Pool
+- 执行器 -> Executor
+- 分布式锁 -> Distributed Lock
+- 乐观锁 -> Optimistic Lock
+- 悲观锁 -> Pessimistic Lock
+- Redis -> Redis
+- 键 -> Key
+- 过期时间 -> TTL
+- 位图 -> Bitmap
+- 布隆过滤器 -> Bloom Filter
+- 速率限制器 -> Rate Limiter
+- 对象存储 -> Object Storage
+- 桶 -> Bucket
+- 区域 -> Region
+- 端点地址 -> Endpoint Address
+- 对象键 -> Object Key
+- 支付订单 -> Payment Order
+- 交易编号 -> Transaction ID
+- 支付金额 -> Paid Amount
+- 退款编号 -> Refund ID
+- 回调地址 -> Callback URL
+- 通知地址 -> Notify URL
+- 签名校验 -> Signature Verification
+- 模板编号 -> Template ID
+- 模板参数 -> Template Parameter
+- 签名名称 -> Sign Name
+- 短信供应商 -> SMS Vendor
+- 邮件主题 -> Email Subject
+- 邮件正文 -> Email Content
+- 采购订单 -> Purchase Order
+- 销售订单 -> Sales Order
+- 入库单 -> Stock In Order
+- 出库单 -> Stock Out Order
+- 库存 -> Inventory
+- 仓库 -> Warehouse
+- 付款单 -> Payment Voucher
+- 账户余额 -> Account Balance
+- 对账 -> Reconciliation
+- 发票 -> Invoice
+- 税号 -> Tax Number
+
+## BPM Module (流程管理)
+- 流程引擎 -> Process Engine
+- 流程模型 -> Process Model
+- 流程实例 -> Process Instance
+- 流程版本 -> Process Version
+- 流程分类 -> Process Category
+- 流程表单 -> Process Form
+- 动态表单 -> Dynamic Form
+- 表单字段 -> Form Field
+- 表单组件 -> Form Component
+- 业务主键 -> Business Key
+- 流程变量 -> Process Variable
+- 任务变量 -> Task Variable
+- 发起人 -> Initiator
+- 审批人 -> Approver
+- 候选人 -> Candidate User
+- 候选组 -> Candidate Group
+- 用户任务 -> User Task
+- 服务任务 -> Service Task
+- 排他网关 -> Exclusive Gateway
+- 并行网关 -> Parallel Gateway
+- 包容网关 -> Inclusive Gateway
+- 事件网关 -> Event-based Gateway
+- 开始事件 -> Start Event
+- 结束事件 -> End Event
+- 边界事件 -> Boundary Event
+- 定时事件 -> Timer Event
+- 信号事件 -> Signal Event
+- 消息事件 -> Message Event
+- 错误事件 -> Error Event
+- 待办任务 -> Todo Task
+- 已办任务 -> Done Task
+- 任务办理 -> Task Handle
+- 任务认领 -> Task Claim
+- 任务委派 -> Task Delegate
+- 退回 -> Reject
+- 驳回 -> Refuse
+- 撤回 -> Withdraw
+- 转办 -> Transfer Task
+- 加签 -> Add Signatory
+- 减签 -> Remove Signatory
+- 会签 -> Countersign
+- 或签 -> Or-sign
+- 审批意见 -> Approval Comment
+- 审批记录 -> Approval Record
+- 历史活动 -> Historic Activity
+- 历史任务 -> Historic Task
+- 跟踪 -> Track
+- 流转记录 -> Flow Record
+- 挂起 -> Suspend
+- 激活 -> Activate
+- 终止 -> Terminate
+- 作废 -> Void
+- 催办 -> Urge
+- 抄送 -> CC
+- 抄送人 -> CC User
+- 办理人 -> Assignee
+- 网关条件 -> Gateway Condition
+- 条件表达式 -> Condition Expression
+- 多实例 -> Multi-instance
+- 顺序会签 -> Sequential Multi-instance
+- 并发会签 -> Parallel Multi-instance
+- 跳转 -> Jump
+- 路由条件 -> Route Condition
+- 审批流 -> Approval Flow
+- 流程图 -> Process Diagram
+- 高亮轨迹 -> Highlighted Path
+- 运行中 -> Running
+- 已完成 -> Finished
+- 已终止 -> Terminated
+- 被拒绝 -> Rejected
+- 发起 -> Start
+- 通过 -> Approved
+- 不通过 -> Rejected
+- 升级规则 -> Escalation Rule
+- 升级 -> Escalation
+- 逾期待办 -> Overdue Task
+- 截止时间 -> Due Date
+- 优先级 -> Priority
+- SLA -> SLA
+- 表单绑定 -> Form Binding
+- 业务数据 -> Business Data
+- 业务状态 -> Business Status
+- 业务处理 -> Business Handling
+- 改派 -> Reassign
+- 委托 -> Delegate
+- 认领 -> Claim
+- 取消认领 -> Unclaim
+- 会签规则 -> Countersign Rule
+- 跳过表达式 -> Skip Expression
+- 自动完成 -> Auto Complete
+- 可调用元素 -> Callable Element
+- 子流程 -> Subprocess
+- 事件子流程 -> Event Subprocess
+- 边界定时 -> Boundary Timer
+- 补偿 -> Compensation
+- 升级事件 -> Escalation Event
+- 抛出信号 -> Signal Throw
+- 捕获信号 -> Signal Catch
+- 抛出消息 -> Message Throw
+- 捕获消息 -> Message Catch
+- 表单键 -> Form Key
+- 办理人表达式 -> Assignee Expression
+- 候选表达式 -> Candidate Expression
+- 监听器类型 -> Listener Type
+- 任务监听器 -> Task Listener
+- 执行监听器 -> Execution Listener
+- 跳过监听器 -> Skip Listener
+- 历史级别 -> History Level
+- 数据保留 -> Data Retention
+- 历史清理 -> History Cleanup
+- 孤儿实例 -> Orphan Instance
+- 异常实例 -> Incident
+- 重试策略 -> Retry Policy
+- 作业执行器 -> Job Executor
+- 外部任务 -> External Task
+- BPMN模型 -> BPMN Model
+- BPMN文件 -> BPMN XML
+- 重新部署 -> Redeploy
+- 租户标识 -> Tenant ID
+- 挂起状态 -> Suspension State
+- 运行时 -> Runtime
+- 存档 -> Archive
+
+## System Module (系统管理)
+# System Module Additions
+# Department/Menu/Role/Post
+# Dictionary/Config/Notice
+# OAuth2 Client
+# Job/Scheduler
+- 用户管理 -> User Management
+- 角色管理 -> Role Management
+- 菜单管理 -> Menu Management
+- 部门管理 -> Department Management
+- 岗位管理 -> Post Management
+- 租户管理 -> Tenant Management
+- 租户套餐 -> Tenant Package
+- 字典管理 -> Dictionary Management
+- 字典类型 -> Dictionary Type
+- 参数设置 -> Config Management
+- 系统参数 -> System Parameter
+- 操作日志 -> Operation Log
+- 登录日志 -> Login Log
+- 异常日志 -> Error Log
+- API访问日志 -> API Access Log
+- 在线用户 -> Online User
+- 文件管理 -> File Management
+- 文件配置 -> File Config
+- 文件存储 -> File Storage
+- 通知公告 -> Notice
+- 定时任务 -> Job
+- 任务日志 -> Job Log
+- 服务监控 -> Service Monitor
+- 缓存监控 -> Cache Monitor
+- 数据源管理 -> Data Source Management
+- 数据字典 -> Data Dictionary
+- 应用管理 -> Application Management
+- 客户端管理 -> Client Management
+- 授权管理 -> Authorization Management
+- 权限分配 -> Permission Assign
+- 用户授权 -> User Grant
+- 角色授权 -> Role Grant
+- 组织架构 -> Organization Structure
+- 系统配置 -> System Configuration
+- 系统信息 -> System Info
+- 版本信息 -> Version Info
+- 个人中心 -> Profile
+- 修改密码 -> Change Password
+- 重置密码 -> Reset Password
+- 启用 -> Enable
+- 禁用 -> Disable
+- 冻结 -> Freeze
+- 解冻 -> Unfreeze
+- 锁定 -> Locked
+- 解锁 -> Unlock
+- 生效 -> Effective
+- 失效 -> Expired
+- 启用状态 -> Enabled Status
+- 显示顺序 -> Display Order
+- 上级部门 -> Parent Department
+- 上级菜单 -> Parent Menu
+- 路由路径 -> Route Path
+- 组件路径 -> Component Path
+- 组件名称 -> Component Name
+- 权限标识 -> Permission Code
+- 外链菜单 -> External Link
+- 缓存页面 -> Keep-alive
+- 可见 -> Visible
+- 隐藏 -> Hide
+- 图标 -> Icon
+- 单点登录 -> SSO
+- LDAP -> LDAP
+- OAuth2 -> OAuth2
+- JWT -> JWT
+- RBAC -> RBAC
+- ABAC -> ABAC
+- 多因素认证 -> MFA
+- 验证码 -> CAPTCHA
+- 白名单 -> Whitelist
+- 黑名单 -> Blacklist
+- IP限制 -> IP Restriction
+- 密码策略 -> Password Policy
+- 密码过期 -> Password Expiration
+- 密码历史 -> Password History
+- 账户锁定 -> Account Lockout
+- 登录失败次数 -> Login Attempts
+- 会话管理 -> Session Management
+- 记住我 -> Remember Me
+- CSRF防护 -> CSRF Protection
+- XSS防护 -> XSS Protection
+- SQL注入防护 -> SQL Injection Protection
+- 审计追踪 -> Audit Trail
+- 数据脱敏 -> Data Masking
+- 导出权限 -> Export Permission
+- 导入权限 -> Import Permission
+- 文件类型白名单 -> File Type Whitelist
+- 最大上传大小 -> Max Upload Size
+- 存储提供者 -> Storage Provider
+- CDN域名 -> CDN Domain
+- 水印 -> Watermark
+- 缩略图 -> Thumbnail
+- 静态加密 -> Encryption at Rest
+- 传输加密 -> Encryption in Transit
+- 密钥轮换 -> Key Rotation
+- 功能开关 -> Feature Toggle
+- 维护模式 -> Maintenance Mode
+- 系统横幅 -> System Banner
+- 意见反馈 -> Feedback
+- 帮助中心 -> Help Center
+- 许可证 -> License
+- 调度集群 -> Scheduler Cluster
+- Quartz集群 -> Quartz Cluster
+- 链路追踪ID -> Trace ID
+- 租户隔离 -> Tenant Isolation
+- 资源配额 -> Resource Quota
+- 下载中心 -> Download Center
+- 操作确认 -> Action Confirmation
+- 二次确认 -> Secondary Confirmation
+- 用户状态 -> User Status
+- 正常 -> Normal
+- 停用 -> Disabled
+- 锁定原因 -> Lock Reason
+- 登录地点 -> Login Location
+- 登录IP -> Login IP
+- 登录设备 -> Login Device
+- 浏览器 -> Browser
+- 操作系统 -> OS
+- 用户代理 -> User Agent
+- 登录时间 -> Login Time
+- 最后登录时间 -> Last Login Time
+- 密码强度 -> Password Strength
+- 密码盐 -> Password Salt
+- 初始密码 -> Initial Password
+- 重置为初始密码 -> Reset to Initial Password
+- 图形验证码 -> Image CAPTCHA
+- 短信验证码 -> SMS CAPTCHA
+- 邮箱验证码 -> Email CAPTCHA
+- 验证码开关 -> CAPTCHA Enabled
+- 验证码超时 -> CAPTCHA Timeout
+- 机构树 -> Organization Tree
+- 部门树 -> Department Tree
+- 下级部门 -> Sub Department
+- 联系电话 -> Phone
+- 展示顺序 -> Display Order
+- 显示 -> Show
+- 菜单类型 -> Menu Type
+- 按钮 -> Button
+- 外链 -> External Link
+- 内嵌 -> IFrame
+- 路由缓存 -> Keep-alive
+- 是否外链 -> Is External
+- 是否缓存 -> Cacheable
+- 是否可见 -> Visible
+- 路由名称 -> Route Name
+- 权限说明 -> Permission Description
+- 角色代码 -> Role Code
+- 角色名称 -> Role Name
+- 角色类型 -> Role Type
+- 超级管理员 -> Super Admin
+- 系统内置 -> System Built-in
+- 分配权限 -> Assign Permissions
+- 分配用户 -> Assign Users
+- 角色用户数 -> Role User Count
+- 数据权限范围 -> Data Scope
+- 仅本人数据 -> Self Only
+- 本部门数据 -> Department Only
+- 本部门及以下数据 -> Department and Sub
+- 全部数据 -> All Data
+- 自定义数据 -> Custom Data
+- 岗位代码 -> Post Code
+- 岗位名称 -> Post Name
+- 岗位排序 -> Post Sort
+- 字典编码 -> Dict Code
+- 字典标签 -> Dict Label
+- 字典键值 -> Dict Value
+- 字典状态 -> Dict Status
+- 参数键 -> Config Key
+- 参数值 -> Config Value
+- 参数分组 -> Config Group
+- 是否系统内置 -> System Built-in
+- 国际化语言 -> Locale
+- 语言代码 -> Language Code
+- 语言名称 -> Language Name
+- 时区 -> Time Zone
+- 地区 -> Area
+- 省份 -> Province
+- 城市 -> City
+- 区县 -> District
+- 街道 -> Street
+- 客户端ID -> Client ID
+- 客户端密钥 -> Client Secret
+- 授权范围 -> Scopes
+- 令牌有效期 -> Token TTL
+- 刷新令牌有效期 -> Refresh TTL
+- 授权类型 -> Grant Type
+- 授权码模式 -> Authorization Code
+- 简化模式 -> Implicit
+- 密码模式 -> Password
+- 客户端模式 -> Client Credentials
+- 撤销令牌 -> Revoke Token
+- 令牌校验 -> Introspect Token
+- 在线会话 -> Online Session
+- 强退 -> Force Logout
+- 操作类型 -> Operation Type
+- 修改 -> Update
+- 清理 -> Clean
+- 操作模块 -> Operation Module
+- 操作人员 -> Operator
+- 操作结果 -> Operation Result
+- 操作明细 -> Operation Detail
+- 错误消息 -> Error Message
+- 异常堆栈 -> Exception Stack
+- 请求方式 -> HTTP Method
+- 请求URL -> Request URL
+- 请求参数 -> Request Params
+- 返回结果 -> Response Body
+- 耗时 -> Elapsed
+- 执行状态 -> Execute Status
+- 用户账号 -> User Account
+- 用户ID -> User ID
+- 用户昵称 -> Nickname
+- 出生日期 -> Birthday
+- 身份证号 -> ID Card Number
+- 工号 -> Employee No.
+- 入职日期 -> Hire Date
+- 归属部门 -> Belong Department
+- 关联角色 -> Associated Roles
+- 关联岗位 -> Associated Posts
+- 邮箱地址 -> Email Address
+- 启用标志 -> Enable Flag
+- 删除标志 -> Delete Flag
+- 是否默认 -> Is Default
+- 创建时间 -> Create Time
+- 更新时间 -> Update Time
+- 创建者 -> Created By
+- 更新者 -> Updated By
+- 登录账号 -> Login Account
+- 登录状态 -> Login Status
+- 登录信息 -> Login Info
+- 错误次数 -> Error Count
+- 解锁时间 -> Unlock Time
+- 操作IP -> Operation IP
+- 操作地点 -> Operation Location
+- 方法名称 -> Method Name
+- 返回值 -> Return Value
+- 异常信息 -> Exception Message
+- 异常位置 -> Exception Location
+- 请求耗时 -> Request Duration
+- 部门编码 -> Department Code
+- 部门名称 -> Department Name
+- 部门状态 -> Department Status
+- 菜单权限标识 -> Permission Identifier
+- 是否显示 -> Show or Not
+- 路由参数 -> Route Params
+- 打开方式 -> Open Mode
+- 新窗口 -> New Window
+- 组件缓存 -> Component Cache
+- 角色备注 -> Role Remark
+- 岗位状态 -> Post Status
+- 字典描述 -> Dict Description
+- 字典备注 -> Dict Remark
+- 参数名称 -> Config Name
+- 公告标题 -> Notice Title
+- 公告类型 -> Notice Type
+- 公告内容 -> Notice Content
+- 发布状态 -> Publish Status
+- 发布时间 -> Publish Time
+- 客户端名称 -> Client Name
+- 授权重定向地址 -> Redirect URI
+- 允许授权类型 -> Allowed Grant Types
+- 允许授权范围 -> Allowed Scopes
+- 访问令牌时长 -> Access Token TTL
+- 刷新令牌时长 -> Refresh Token TTL
+- 令牌格式 -> Token Format
+- 公钥 -> Public Key
+- 私钥 -> Private Key
+- 任务名称 -> Job Name
+- 任务组名 -> Job Group
+- 任务状态 -> Job Status
+- 任务负责人 -> Job Owner
+- 任务参数 -> Job Param
+- 触发器名称 -> Trigger Name
+- 触发器状态 -> Trigger Status
+- 执行策略 -> Misfire Policy
+- 并发执行 -> Concurrent
+- 上次执行时间 -> Last Fire Time
+- 下次执行时间 -> Next Fire Time
+
+## ERP Module (企业资源计划)
+- 物料 -> Material
+- 物料编码 -> Material Code
+- 物料名称 -> Material Name
+- 条码 -> Barcode
+- 批次 -> Batch
+- 批次号 -> Batch No.
+- 批次管理 -> Batch Management
+- 单位换算 -> Unit Conversion
+- 基本单位 -> Base Unit
+- 辅助单位 -> Auxiliary Unit
+- 库存冻结 -> Inventory Freeze
+- 安全库存 -> Safety Stock
+- 预警库存 -> Warning Stock
+- 可用库存 -> Available Stock
+- 锁定库存 -> Locked Stock
+- 占用库存 -> Reserved Stock
+- 库存调整 -> Inventory Adjustment
+- 库存盘点 -> Stocktaking
+- 盘点单 -> Stock Check Order
+- 盈亏 -> Profit and Loss
+- 仓库编码 -> Warehouse Code
+- 仓库名称 -> Warehouse Name
+- 仓位 -> Bin Location
+- 入库 -> Inbound
+- 其它入库 -> Other Inbound
+- 出库 -> Outbound
+- 其它出库 -> Other Outbound
+- 调拨 -> Transfer
+- 调拨单 -> Transfer Order
+- 采购单 -> Purchase Order
+- 采购入库 -> Purchase Inbound
+- 销售单 -> Sales Order
+- 销售出库 -> Sales Outbound
+- 供应商编码 -> Supplier Code
+- 供应商名称 -> Supplier Name
+- 客户编码 -> Customer Code
+- 客户名称 -> Customer Name
+- 结算方式 -> Settlement Method
+- 付款条件 -> Payment Term
+- 折扣 -> Discount
+- 优惠 -> Preferential
+- 含税价 -> Tax-inclusive Price
+- 未税价 -> Tax-exclusive Price
+- 金额小计 -> Subtotal Amount
+- 税额 -> Tax Amount
+- 含税金额 -> Tax-inclusive Amount
+- 未税金额 -> Tax-exclusive Amount
+- 合计金额 -> Total Amount
+- 预计到货 -> Expected Arrival
+- 预计发货 -> Expected Shipment
+- 交期 -> Delivery Date
+- 采购员 -> Buyer
+- 销售员 -> Salesperson
+- 制单人 -> Creator
+- 审核人 -> Auditor
+- 审核时间 -> Audit Time
+
+## CRM Module (客户关系)
+- 线索来源 -> Lead Source
+- 线索状态 -> Lead Status
+- 客户池 -> Customer Pool
+- 公海池 -> Public Sea
+- 私海 -> Private Pool
+- 商机阶段 -> Opportunity Stage
+- 商机金额 -> Opportunity Amount
+- 赢单 -> Won
+- 输单 -> Lost
+- 跟进方式 -> Follow-up Method
+- 下次跟进 -> Next Follow-up
+- 联系方式 -> Contact Method
+- 职务 -> Position
+- 行业 -> Industry
+- 地区 -> Region
+
+## Finance Module (财务)
+- 科目 -> Account Subject
+- 会计科目 -> Accounting Subject
+- 凭证 -> Voucher
+- 凭证号 -> Voucher No.
+- 核算 -> Accounting
+- 往来单位 -> Counterparty
+- 银行账户 -> Bank Account
+- 收款 -> Receipt
+- 付款 -> Payment
+- 预收 -> Advance Receipt
+- 预付 -> Advance Payment
+- 期初余额 -> Opening Balance
+- 期末余额 -> Closing Balance
+- 核销 -> Write-off
+- 发票抬头 -> Invoice Title
+- 含税 -> Tax Included
+- 未税 -> Tax Excluded
+- 开票 -> Invoicing
+- 结算 -> Settlement
+
+## Auth/Security (认证与安全)
+- 登出 -> Logout
+- 找回密码 -> Forgot Password
+- 账户锁定 -> Account Lock
+- 二次验证 -> Two-factor Verification
+- 动态口令 -> OTP
+- 访问控制 -> Access Control
+- 授权码 -> Authorization Code
+- 过期时间 -> Expiration Time
+
+## Logging/Monitoring (日志与监控)
+- 操作状态 -> Operation Status
+- 操作时间 -> Operation Time
+- 请求方法 -> Request Method
+- 请求URI -> Request URI
+- 响应结果 -> Response Result
+- 异常栈 -> Exception Stack
+- 业务耗时 -> Business Elapsed
+- 慢接口 -> Slow API
+- 阈值 -> Threshold
+
+## Messaging/SMS (消息与短信)
+- 模板内容 -> Template Content
+- 模板参数 -> Template Param
+- 短信签名 -> SMS Sign
+- 短信渠道 -> SMS Channel
+- 发送成功 -> Send Success
+- 发送失败 -> Send Failed
+- 回执 -> Receipt
+- 上行 -> MO (Mobile Originated)
+- 下行 -> MT (Mobile Terminated)
+- 发送时间 -> Send Time
+- 到达时间 -> Arrival Time
+
+## File/Storage (文件与存储)
+# System Module Additions (2)
+- 存储配置 -> Storage Config
+- 存储类型 -> Storage Type
+- 存储路径 -> Storage Path
+- 访问域名 -> Access Domain
+- 删除文件 -> Delete File
+- 预签名URL -> Presigned URL
+- 疯狂 -> Crazy
+- 评价 -> Review
+- 经验 -> Experience
+- 任务节点 -> Task Node
+- 菜单编号 -> Menu ID
+- 批量添加 -> Batch Add
+- 会员标签 -> Member Tag
+- 的情况 -> In this case
+- 不通过 -> Not approved
+- 为空时 -> When empty
+- 提现单 -> Withdrawal Order
+- 优惠券 -> Coupon
+- 发生的 -> Occurred
+- 完成 -> Complete
+- 作为 -> As
+- 方式 -> Method
+- 评论 -> Comment
+- 多个 -> Multiple
+- 每个 -> Each
+- 上行 -> Uplink
+- 下行 -> Downlink
+- 启动 -> Start
+- 成交 -> Deal
+- 文章 -> Article
+- 优惠 -> Discount
+- 有 -> Have
+- 物 -> Item
+- 数据流转目的 -> Data Flow Destination
+- 拼团活动编号 -> Group Buying Activity ID
+- 码不能为空 -> Code cannot be empty
+- 流程任务 -> Workflow Task
+- 基于指定 -> Based on specified
+- 是否启用 -> Enabled
+- 数据格式 -> Data Format
+- 固件编号 -> Firmware ID
+- 租户套餐 -> Tenant Plan
+- 获得社交 -> Get Social
+- 获得交易 -> Get Transaction
+- 佣金提现 -> Commission Withdrawal
+- 自提门店 -> Self-pickup Store
+- 中获取 -> Get from
+- 存明细 -> Save Detail
+- 单的 -> Of the order
+- 占位 -> Placeholder
+- 固定 -> Fixed
+- 单个 -> Single
+- 协议 -> Protocol
+- 管理 -> Manage
+- 详细 -> Details
+- 电话 -> Phone
+- 模式 -> Mode
+- 负数 -> Negative Number
+- 收藏 -> Favorite
+- 浏览 -> Browse
+- 绘画 -> Drawing
+- 天 -> Day
+- 找不到对应的 -> Cannot find corresponding
+- 对比新老数据 -> Compare old and new data
+- 产品单位单位 -> Product Unit
+- 最终合计价格 -> Final Total Price
+- 项的有效性 -> Item Validity
+- 数据目的 -> Data Purpose
+- 你说的对 -> You are right
+- 主键自增 -> Auto-increment Primary Key
+- 最后跟进 -> Last Follow-up
+- 获得会员 -> Get Member
+- 活动结束 -> Activity End
+- 团长编号 -> Group Leader ID
+- 获得添加 -> Get Added
+- 签到规则 -> Check-in Rules
+- 允许空 -> Allow empty
+- 阿里云 -> Alibaba Cloud
+- 优惠率 -> Discount Rate
+- 部分 -> Part
+- 触发 -> Trigger
+- 针对 -> For
+- 长度 -> Length
+- 循环 -> Loop
+- 打印 -> Print
+- 产品数量不能为空 -> Product quantity cannot be empty
+- 砍价活动编号 -> Bargain Activity ID
+- 站内信模版 -> Site Message Template
+- 公众号标签 -> WeChat Tag
+- 是否可见 -> Visible or not
+- 第三方登录 -> Social Login
+- 绑定账号 -> Bind Account
+- 解绑账号 -> Unbind Account
+- 授权登录 -> Authorized Login
+- 二维码登录 -> QR Login
+- 登录失败 -> Login Failed
+- 登录成功 -> Login Success
+- 退出成功 -> Logout Success
+- IP黑名单 -> IP Blacklist
+- IP白名单 -> IP Whitelist
+- 访问频率 -> Access Frequency
+- 最大会话数 -> Max Sessions
+- 单设备登录 -> Single Device Login
+- 跨设备登录 -> Multi-device Login
+- 设备指纹 -> Device Fingerprint
+- 通知方式 -> Notify Type
+- 邮件通知 -> Email Notify
+- 短信通知 -> SMS Notify
+- 站内信通知 -> Inbox Notify
+- 模板变量 -> Template Variable
+- 账号状态 -> Account Status
+- 账号来源 -> Account Source
+- 实名认证 -> Real-name Authentication
+- 审核状态 -> Review Status
+- 通过时间 -> Approved Time
+- 驳回时间 -> Rejected Time
+- 驳回原因 -> Rejection Reason
+- 标签组 -> Tag Group
+- 关联标签 -> Related Tags
+- 导入模板 -> Import Template
+- 导入结果 -> Import Result
+- 失败原因 -> Failure Reason
+- 生效时间 -> Effective Time
+- 失效时间 -> Expire Time
+- 配置项 -> Config Item
+- 配置组 -> Config Group
+- 操作确认文案 -> Confirm Message
+- 归档 -> Archive
+- 还原 -> Restore
+- 逻辑删除 -> Soft Delete
+- 物理删除 -> Hard Delete
+- 开关 -> Toggle
+- 关闭 -> Disable
+- 维护窗口 -> Maintenance Window
+- 公告类型-通知 -> Notice (Notification)
+- 公告类型-公告 -> Announcement
+- 公告类型-提醒 -> Reminder
+
+## BPM Additions (2)
+# System Module Additions (3)
+- 审批节点 -> Approval Node
+- 人员选择器 -> User Picker
+- 角色选择器 -> Role Picker
+- 部门选择器 -> Department Picker
+- 岗位选择器 -> Post Picker
+- 网关条件脚本 -> Gateway Script
+- 优先路径 -> Preferred Path
+- 会签通过比例 -> Countersign Pass Ratio
+- 审批超时 -> Approval Timeout
+- 自动催办 -> Auto Urge
+- 自动跳过 -> Auto Skip
+- 条件跳转 -> Conditional Jump
+- 回退节点 -> Return Node
+- 回退策略 -> Return Policy
+- 回退到发起人 -> Return to Initiator
+- 加签人 -> Added Signatory
+- 减签人 -> Removed Signatory
+- 审批抄送 -> CC on Approval
+- 业务主表 -> Business Main Table
+- 业务子表 -> Business Sub Table
+- 表单权限 -> Form Permission
+- 表单校验 -> Form Validation
+- 表单联动 -> Form Linkage
+- 表单默认值 -> Form Default Value
+- 自定义节点 -> Custom Node
+- 自定义脚本 -> Custom Script
+- 网关分支 -> Gateway Branch
+- 网关合并 -> Gateway Merge
+- 触发条件 -> Trigger Condition
+- 触发脚本 -> Trigger Script
+- 审批路径 -> Approval Path
+- 重新提交 -> Resubmit
+- 补交材料 -> Supply Materials
+- 按钮权限 -> Button Permission
+- 只读字段 -> Readonly Field
+- 可编辑字段 -> Editable Field
+- 隐藏字段 -> Hidden Field
+- 审批摘要 -> Approval Summary
+- 业务编号 -> Business No.
+- 业务标题 -> Business Title
+- 业务备注 -> Business Remark
+- 审批通过 -> Approved
+- 审批拒绝 -> Rejected
+- 审批撤回 -> Withdrawn
+- 是/否 -> Yes/No
+- 显示/隐藏 -> Show/Hide
+- 启用/禁用 -> Enable/Disable
+- 男 -> Male
+- 女 -> Female
+- 未知 -> Unknown
+- 排序号 -> Sort Order
+- 父级ID -> Parent ID
+- 面包屑 -> Breadcrumb
+- I18N键 -> I18N Key
+- 显示名称 -> Display Name
+- 路由重定向 -> Route Redirect
+- 路由别名 -> Route Alias
+- 固定标签 -> Affix Tag
+- 外链地址 -> External URL
+- 打开目标 -> Target
+- 需要认证 -> Require Auth
+- 允许匿名 -> Allow Anonymous
+- CORS允许域 -> CORS Allowed Origins
+- CORS允许方法 -> CORS Allowed Methods
+- CORS允许头 -> CORS Allowed Headers
+- CORS缓存时长 -> CORS Max Age
+- 密码过期时间 -> Password Expire Time
+- 重置链接有效期 -> Reset Link TTL
+- 登录失败锁定阈值 -> Lock Threshold
+- 锁定时长 -> Lock Duration
+- 操作模块编码 -> Operation Module Code
+- 操作对象 -> Operation Target
+- 旧值 -> Old Value
+- 新值 -> New Value
+- 变更类型 -> Change Type
+- 变更时间 -> Change Time
+- 变更人 -> Changed By
+- 多租户策略 -> Multi-tenant Strategy
+- 数据隔离级别 -> Data Isolation Level
+- 数据保留策略 -> Data Retention Policy
+- 备份 -> Backup
+- 还原备份 -> Restore Backup
+- 特性开关 -> Feature Flag
+- 租户名称 -> Tenant Name
+- 租户编码 -> Tenant Code
+- 租户域名 -> Tenant Domain
+- 租户状态 -> Tenant Status
+- 租户到期时间 -> Tenant Expire Time
+- 归属租户 -> Belong Tenant
+- OAuth2同意页 -> Consent Screen
+- 同意 -> Consent
+- 拒绝 -> Deny
+- Webhook地址 -> Webhook URL
+- Webhook密钥 -> Webhook Secret
+- 速率限制窗口 -> Rate Limit Window
+- 速率限制上限 -> Rate Limit Limit
+- 请求唯一键 -> Request Idempotency Key
+- 资源标识符 -> Resource Identifier
+- 标签键 -> Tag Key
+- 标签值 -> Tag Value
+
+## BPM Additions (3)
+- 指派规则 -> Assignment Rule
+- 候选用户 -> Candidate Users
+- 候选组 -> Candidate Groups
+- 任务到期提醒 -> Task Due Reminder
+- 催办间隔 -> Urge Interval
+- 逾期升级 -> Overdue Escalation
+- 超时策略 -> Timeout Policy
+- 退回原因 -> Return Reason
+- 退回到节点 -> Return To Node
+- 顺序多实例 -> Sequential Multi-instance
+- 并行多实例 -> Parallel Multi-instance
+- 多实例完成条件 -> Multi-instance Completion Condition
+- 实例业务键 -> Instance Business Key
+- 业务数据快照 -> Business Data Snapshot
+- 表单版本 -> Form Version
+- 表单发布 -> Form Publish
+- 执行监听脚本 -> Execution Listener Script
+- 任务监听脚本 -> Task Listener Script
+- 外部任务主题 -> External Task Topic
+- 外部任务锁时长 -> External Task Lock Duration
+- 重试次数 -> Retry Count
+- 退避时间 -> Backoff Time
+- 死信任务 -> Dead Letter Job
+- 事故 -> Incident
+- 事故类型 -> Incident Type
+- 事故消息 -> Incident Message
+- 清理策略 -> Cleanup Policy
+- 历史保留天数 -> History Retention Days
+- 流程定时启动 -> Scheduled Start
+- 定时表达式 -> Schedule Expression
+- 替换办理人 -> Replace Assignee
+- 代理办理人 -> Proxy Assignee
+- 任务意见必填 -> Comment Required
+- 审批附件 -> Approval Attachment
+- 审批抄送人 -> CC Users
+- 审批传阅 -> Circulate
+- 挂起原因 -> Suspend Reason
+- 激活原因 -> Activate Reason
+- 终止原因 -> Terminate Reason
+- 财务 -> Finance
+- 公海 -> Pool
+- 推广P -> Promotion
+- 显隐 -> Visibility
+- 轨迹 -> Track
+- 小 -> Small
+- 七牛 ->
+- 换 -> Change
+- 山 -> Mountain
+- 几 -> Few
+- 圳 -> Shenzhen
+- 沙 -> Sand
+- 门 -> Door
+- 市场 -> Market
+- 财务 -> Finance
+- 运 -> Transport
+- 顶 -> Top
+- 停 -> Stop
+- 删 -> Delete
+- 查 -> Check
+- 病 -> Disease
+- 婚 -> Marriage
+- 减 -> Reduce
+- 磁盘 -> Disk
+- 收 -> Receive
+- 期 -> Period
+- 劵 -> Coupon
+- 促销 -> Promotion
+
+

@@ -16,10 +16,10 @@ const (
 	Pgsql           = "pgsql"
 	Sqlite          = "sqlite"
 	Mssql           = "mssql"
-	InitSuccess     = "\n[%v] --> 初始数据成功!\n"
-	InitDataExist   = "\n[%v] --> %v 的初始数据已存在!\n"
-	InitDataFailed  = "\n[%v] --> %v 初始数据失败! \nerr: %+v\n"
-	InitDataSuccess = "\n[%v] --> %v 初始数据成功!\n"
+	InitSuccess     = "\n[%v] --> Initial data setup succeeded!\n"
+	InitDataExist   = "\n[%v] --> Initial data for %v already exists!\n"
+	InitDataFailed  = "\n[%v] --> %v initial data setup failed! \nerr: %+v\n"
+	InitDataSuccess = "\n[%v] --> %v initial data setup succeeded!\n"
 )
 
 const (
@@ -34,30 +34,30 @@ var (
 	ErrDBTypeMismatch          = errors.New("db type mismatch")
 )
 
-// SubInitializer 提供 source/*/init() 使用的接口，每个 initializer 完成一个初始化过程
+// SubInitializer provides the interface used by source/*/init(), each initializer completes one initialization process
 type SubInitializer interface {
-	InitializerName() string // 不一定代表单独一个表，所以改成了更宽泛的语义
+	InitializerName() string // does not necessarily represent a single table, hence the broader semantics
 	MigrateTable(ctx context.Context) (next context.Context, err error)
 	InitializeData(ctx context.Context) (next context.Context, err error)
 	TableCreated(ctx context.Context) bool
 	DataInserted(ctx context.Context) bool
 }
 
-// TypedDBInitHandler 执行传入的 initializer
+// TypedDBInitHandler executes the provided initializers
 type TypedDBInitHandler interface {
-	EnsureDB(ctx context.Context, conf *request.InitDB) (context.Context, error) // 建库，失败属于 fatal error，因此让它 panic
-	WriteConfig(ctx context.Context) error                                       // 回写配置
-	InitTables(ctx context.Context, inits initSlice) error                       // 建表 handler
-	InitData(ctx context.Context, inits initSlice) error                         // 建数据 handler
+	EnsureDB(ctx context.Context, conf *request.InitDB) (context.Context, error) // create database; failure is a fatal error
+	WriteConfig(ctx context.Context) error                                       // write back configuration
+	InitTables(ctx context.Context, inits initSlice) error                       // create tables handler
+	InitData(ctx context.Context, inits initSlice) error                         // seed data handler
 }
 
-// orderedInitializer 组合一个顺序字段，以供排序
+// orderedInitializer combines an order field for sorting
 type orderedInitializer struct {
 	order int
 	SubInitializer
 }
 
-// initSlice 供 initializer 排序依赖时使用
+// initSlice used for sorting initializer dependencies
 type initSlice []*orderedInitializer
 
 var (
@@ -65,7 +65,7 @@ var (
 	cache        map[string]*orderedInitializer
 )
 
-// RegisterInit 注册要执行的初始化过程，会在 InitDB() 时调用
+// RegisterInit registers an initialization process to be executed when InitDB() is called
 func RegisterInit(order int, i SubInitializer) {
 	if initializers == nil {
 		initializers = initSlice{}
@@ -86,17 +86,17 @@ func RegisterInit(order int, i SubInitializer) {
 
 type InitDBService struct{}
 
-// InitDB 创建数据库并初始化 总入口
+// InitDB creates the database and initializes data - main entry point
 func (initDBService *InitDBService) InitDB(conf request.InitDB) (err error) {
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, "adminPassword", conf.AdminPassword)
 	if len(initializers) == 0 {
-		return errors.New("无可用初始化过程，请检查初始化是否已执行完成")
+		return errors.New("no available initialization process, please check if initialization has already completed")
 	}
-	sort.Sort(&initializers) // 保证有依赖的 initializer 排在后面执行
-	// Note: 若 initializer 只有单一依赖，可以写为 B=A+1, C=A+1; 由于 BC 之间没有依赖关系，所以谁先谁后并不影响初始化
-	// 若存在多个依赖，可以写为 C=A+B, D=A+B+C, E=A+1;
-	// C必然>A|B，因此在AB之后执行，D必然>A|B|C，因此在ABC后执行，而E只依赖A，顺序与CD无关，因此E与CD哪个先执行并不影响
+	sort.Sort(&initializers) // ensure initializers with dependencies are executed later
+	// Note: if an initializer has a single dependency, e.g. B=A+1, C=A+1; since BC have no dependency on each other, order doesn't matter
+	// For multiple dependencies, e.g. C=A+B, D=A+B+C, E=A+1;
+	// C is necessarily > A|B so it runs after AB, D > A|B|C so after ABC, E only depends on A so its order relative to CD doesn't matter
 	var initHandler TypedDBInitHandler
 	switch conf.DBType {
 	case "mysql":
@@ -138,7 +138,7 @@ func (initDBService *InitDBService) InitDB(conf request.InitDB) (err error) {
 	return nil
 }
 
-// createDatabase 创建数据库（ EnsureDB() 中调用 ）
+// createDatabase creates a database (called from EnsureDB())
 func createDatabase(dsn string, driver string, createSql string) error {
 	db, err := sql.Open(driver, dsn)
 	if err != nil {
@@ -157,10 +157,10 @@ func createDatabase(dsn string, driver string, createSql string) error {
 	return err
 }
 
-// createTables 创建表（默认 dbInitHandler.initTables 行为）
+// createTables creates tables (default dbInitHandler.initTables behavior)
 func createTables(ctx context.Context, inits initSlice) error {
 	next, cancel := context.WithCancel(ctx)
-	defer func(c func()) { c() }(cancel)
+	defer cancel()
 	for _, init := range inits {
 		if init.TableCreated(next) {
 			continue

@@ -1,10 +1,17 @@
 package internal
 
 import (
+	"context"
+	"fmt"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"github.com/flipped-aurora/gin-vue-admin/server/service"
+	astutil "github.com/flipped-aurora/gin-vue-admin/server/utils/ast"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils/stacktrace"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -60,7 +67,65 @@ func (z *ZapCore) Write(entry zapcore.Entry, fields []zapcore.Field) error {
 			z.Core = zapcore.NewCore(global.GVA_CONFIG.Zap.Encoder(), syncer, z.level)
 		}
 	}
-	return z.Core.Write(entry, fields)
+	// FirstWriteInOriginalLogItemTag
+	err := z.Core.Write(entry, fields)
+
+	// capture Error AndByUpperLevelLogAndInbound, And CanRaiseFetch zap.Error(err) ofErrorcontent
+	if entry.Level >= zapcore.ErrorLevel {
+		// AvoidAnd GORM zap WriteInmutualRelatedRecursion:SkipBy gorm logger writer TriggerofLog
+		if strings.Contains(entry.Caller.File, "gorm_logger_writer.go") {
+			return err
+		}
+
+		form := "AfterEnd"
+		level := entry.Level.String()
+		// GenerateBasicInformation
+		info := entry.Message
+
+		// RaiseFetch zap.Error(err) content
+		var errStr string
+		for i := 0; i < len(fields); i++ {
+			f := fields[i]
+			if f.Type == zapcore.ErrorType || f.Key == "error" || f.Key == "err" {
+				if f.Interface != nil {
+					errStr = fmt.Sprintf("%v", f.Interface)
+				} else if f.String != "" {
+					errStr = f.String
+				}
+				break
+			}
+		}
+		if errStr != "" {
+			info = fmt.Sprintf("%s | Error: %s", info, errStr)
+		}
+
+		// AdditionalSourceAndheapStackInformation
+		if entry.Caller.File != "" {
+			info = fmt.Sprintf("%s \n SourceFile:%s:%d", info, entry.Caller.File, entry.Caller.Line)
+		}
+		stack := entry.Stack
+		if stack != "" {
+			info = fmt.Sprintf("%s \n InvokeStack:%s", info, stack)
+			// ParseFinalBusinessInvokeSide, AndRaiseFetchItsmethodSourceCode
+			if frame, ok := stacktrace.FindFinalCaller(stack); ok {
+				fnName, fnSrc, sLine, eLine, exErr := astutil.ExtractFuncSourceByPosition(frame.File, frame.Line)
+				if exErr == nil {
+					info = fmt.Sprintf("%s \n final callermethod:%s:%d (%s lines %d-%d)\n----- GenerateLogofmethodGenerationCodeSuch AsDown -----\n%s", info, frame.File, frame.Line, fnName, sLine, eLine, fnSrc)
+				} else {
+					info = fmt.Sprintf("%s \n final callermethod:%s:%d (%s) | extract_err=%v", info, frame.File, frame.Line, fnName, exErr)
+				}
+			}
+		}
+
+		// UseAfterDeviceContext, AvoidDependency gin.Context
+		ctx := context.Background()
+		_ = service.ServiceGroupApp.SystemServiceGroup.SysErrorService.CreateSysError(ctx, &system.SysError{
+			Form:  &form,
+			Info:  &info,
+			Level: level,
+		})
+	}
+	return err
 }
 
 func (z *ZapCore) Sync() error {

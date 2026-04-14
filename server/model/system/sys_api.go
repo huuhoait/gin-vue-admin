@@ -6,10 +6,10 @@ import (
 
 type SysApi struct {
 	global.GVA_MODEL
-	Path        string `json:"path" gorm:"comment:api路径"`             // api路径
-	Description string `json:"description" gorm:"comment:api中文描述"`    // api中文描述
-	ApiGroup    string `json:"apiGroup" gorm:"comment:api组"`          // api组
-	Method      string `json:"method" gorm:"default:POST;comment:方法"` // 方法:创建POST(默认)|查看GET|更新PUT|删除DELETE
+	Path        string `json:"path" gorm:"comment:API path"`             // API path
+	Description string `json:"description" gorm:"comment:API description"`    // API description
+	ApiGroup    string `json:"apiGroup" gorm:"comment:API group"`          // API group
+	Method      string `json:"method" gorm:"default:POST;comment:method"` // method:CreatePOST(default)|viewGET|updatePUT|deleteDELETE
 }
 
 func (SysApi) TableName() string {
@@ -18,9 +18,9 @@ func (SysApi) TableName() string {
 
 type SysIgnoreApi struct {
 	global.GVA_MODEL
-	Path   string `json:"path" gorm:"comment:api路径"`             // api路径
-	Method string `json:"method" gorm:"default:POST;comment:方法"` // 方法:创建POST(默认)|查看GET|更新PUT|删除DELETE
-	Flag   bool   `json:"flag" gorm:"-"`                         // 是否忽略
+	Path   string `json:"path" gorm:"comment:API path"`             // API path
+	Method string `json:"method" gorm:"default:POST;comment:method"` // method:CreatePOST(default)|viewGET|updatePUT|deleteDELETE
+	Flag   bool   `json:"flag" gorm:"-"`                         // YesNoIgnore
 }
 
 func (SysIgnoreApi) TableName() string {

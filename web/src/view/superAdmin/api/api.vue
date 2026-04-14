@@ -1,28 +1,18 @@
 <template>
   <div>
     <div class="gva-search-box">
-      <el-form
-        ref="searchForm"
-        :inline="true"
-        :model="searchInfo"
-      >
-        <el-form-item label="路径">
-          <el-input
-            v-model="searchInfo.path"
-            placeholder="路径"
-          />
+      <el-form ref="searchForm" :inline="true" :model="searchInfo">
+        <el-form-item :label="t('admin.superadmin.api.fields.path')">
+          <el-input v-model="searchInfo.path" :placeholder="t('admin.superadmin.api.fields.path')" />
         </el-form-item>
-        <el-form-item label="描述">
-          <el-input
-            v-model="searchInfo.description"
-            placeholder="描述"
-          />
+        <el-form-item :label="t('admin.superadmin.api.fields.description')">
+          <el-input v-model="searchInfo.description" :placeholder="t('admin.superadmin.api.fields.description')" />
         </el-form-item>
-        <el-form-item label="API分组">
+        <el-form-item :label="t('admin.superadmin.api.fields.group')">
           <el-select
             v-model="searchInfo.apiGroup"
             clearable
-            placeholder="请选择"
+            :placeholder="t('admin.common.select')"
           >
             <el-option
               v-for="item in apiGroupOptions"
@@ -32,12 +22,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="请求">
-          <el-select
-            v-model="searchInfo.method"
-            clearable
-            placeholder="请选择"
-          >
+        <el-form-item :label="t('admin.superadmin.api.fields.method')">
+          <el-select v-model="searchInfo.method" clearable :placeholder="t('admin.common.select')">
             <el-option
               v-for="item in methodOptions"
               :key="item.value"
@@ -47,77 +33,33 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            icon="search"
-            @click="onSubmit"
-          >
-            查询
+          <el-button type="primary" icon="search" @click="onSubmit">
+            {{ t('admin.common.search') }}
           </el-button>
-          <el-button
-            icon="refresh"
-            @click="onReset"
-          >
-            重置
-          </el-button>
+          <el-button icon="refresh" @click="onReset">{{ t('admin.common.reset') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="gva-table-box">
       <div class="gva-btn-list">
-        <el-button
-          type="primary"
-          icon="plus"
-          @click="openDialog('addApi')"
-        >
-          新增
+        <el-button type="primary" icon="plus" @click="openDialog('addApi')">
+          {{ t('admin.common.add') }}
         </el-button>
-        <el-icon
-          class="cursor-pointer"
-          @click="toDoc('https://www.bilibili.com/video/BV1kv4y1g7nT?p=7&vd_source=f2640257c21e3b547a790461ed94875e')"
-        >
-          <VideoCameraFilled />
-        </el-icon>
-        <el-button
-          icon="delete"
-          :disabled="!apis.length"
-          @click="onDelete"
-        >
-          删除
+        <el-button icon="delete" :disabled="!apis.length" @click="onDelete">
+          {{ t('admin.common.delete') }}
         </el-button>
-        <el-button
-          icon="Refresh"
-          @click="onFresh"
-        >
-          刷新缓存
-        </el-button>
-        <el-button
-          icon="Compass"
-          @click="onSync"
-        >
-          同步API
-        </el-button>
-        <ExportTemplate
-          template-id="api"
-        />
-        <ExportExcel
-          template-id="api"
-          :limit="9999"
-        />
-        <ImportExcel
-          template-id="api"
-          @on-success="getTableData"
-        />
+        <el-button icon="Refresh" @click="onFresh">{{ t('admin.superadmin.api.actions.refresh_cache') }}</el-button>
+        <el-button icon="Compass" @click="onSync">{{ t('admin.superadmin.api.actions.sync_api') }}</el-button>
+        <ExportTemplate template-id="api" />
+        <ExportExcel template-id="api" :limit="9999" />
+        <ImportExcel template-id="api" @on-success="getTableData" />
       </div>
       <el-table
         :data="tableData"
         @sort-change="sortChange"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-        />
+        <el-table-column type="selection" width="55" />
         <el-table-column
           align="left"
           label="id"
@@ -127,28 +69,28 @@
         />
         <el-table-column
           align="left"
-          label="API路径"
+          :label="t('admin.superadmin.api.columns.api_path')"
           min-width="150"
           prop="path"
           sortable="custom"
         />
         <el-table-column
           align="left"
-          label="API分组"
+          :label="t('admin.superadmin.api.columns.api_group')"
           min-width="150"
           prop="apiGroup"
           sortable="custom"
         />
         <el-table-column
           align="left"
-          label="API简介"
+          :label="t('admin.superadmin.api.columns.api_desc')"
           min-width="150"
           prop="description"
           sortable="custom"
         />
         <el-table-column
           align="left"
-          label="请求"
+          :label="t('admin.superadmin.api.columns.method')"
           min-width="150"
           prop="method"
           sortable="custom"
@@ -160,30 +102,31 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          align="left"
-          fixed="right"
-          label="操作"
-          width="200"
-        >
+        <el-table-column align="left" fixed="right" :label="t('admin.common.operation')" :min-width="appStore.operateMinWith">
           <template #default="scope">
             <el-button
               icon="edit"
-
               type="primary"
               link
               @click="editApiFunc(scope.row)"
             >
-              编辑
+              {{ t('admin.common.edit') }}
+            </el-button>
+            <el-button
+              icon="user"
+              type="primary"
+              link
+              @click="openAssignRoleDrawer(scope.row)"
+            >
+              {{ t('admin.superadmin.api.actions.assign_roles') }}
             </el-button>
             <el-button
               icon="delete"
-
               type="primary"
               link
               @click="deleteApiFunc(scope.row)"
             >
-              删除
+              {{ t('admin.common.delete') }}
             </el-button>
           </template>
         </el-table-column>
@@ -203,50 +146,67 @@
 
     <el-drawer
       v-model="syncApiFlag"
-      size="80%"
+      :size="appStore.drawerSize"
       :before-close="closeSyncDialog"
       :show-close="false"
     >
-      <warning-bar title="同步API，不输入路由分组将不会被自动同步" />
+      <warning-bar
+        title="Sync APIs. If no route group is provided, it will not be auto-synced. Use Ignore for routes that do not require auth."
+      />
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">同步路由</span>
+          <span class="text-lg">Sync routes</span>
           <div>
-            <el-button @click="closeSyncDialog">
-              取 消
+            <el-button :loading="apiCompletionLoading" @click="closeSyncDialog">
+              {{ t('admin.common.cancel') }}
             </el-button>
             <el-button
               type="primary"
-              :loading="syncing"
+              :loading="syncing || apiCompletionLoading"
               @click="enterSyncDialog"
             >
-              确 定
+              {{ t('admin.common.confirm') }}
             </el-button>
           </div>
         </div>
       </template>
 
-      <h4>新增路由 <span class="text-xs text-gray-500 ml-2 font-normal">存在于当前路由中，但是不存在于api表</span></h4>
+      <h4>
+        New routes
+        <span class="text-xs text-gray-500 mx-2 font-normal"
+          >Present in current routes but missing in the API table</span
+        >
+        <el-button type="primary" size="small" @click="apiCompletion">
+          <el-icon size="18">
+            <ai-gva />
+          </el-icon>
+          Auto fill
+        </el-button>
+      </h4>
       <el-table
+        v-loading="syncing || apiCompletionLoading"
+        element-loading-text="Working..."
         :data="syncApiData.newApis"
       >
         <el-table-column
           align="left"
-          label="API路径"
+          label="API path"
           min-width="150"
           prop="path"
         />
         <el-table-column
           align="left"
-          label="API分组"
+          label="API group"
           min-width="150"
           prop="apiGroup"
         >
-          <template #default="{row}">
+          <template #default="{ row }">
             <el-select
               v-model="row.apiGroup"
-              placeholder="请选择或新增"
-              allow-create filterable default-first-option
+              placeholder="Select or create"
+              allow-create
+              filterable
+              default-first-option
             >
               <el-option
                 v-for="item in apiGroupOptions"
@@ -259,20 +219,17 @@
         </el-table-column>
         <el-table-column
           align="left"
-          label="API简介"
+          label="API description"
           min-width="150"
           prop="description"
         >
-          <template #default="{row}">
-            <el-input
-              v-model="row.description"
-              autocomplete="off"
-            />
+          <template #default="{ row }">
+            <el-input v-model="row.description" autocomplete="off" />
           </template>
         </el-table-column>
         <el-table-column
           align="left"
-          label="请求"
+          label="Method"
           min-width="150"
           prop="method"
         >
@@ -282,44 +239,51 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          min-width="150"
-          fixed="right"
-        >
-          <template #default="{row}">
-            <el-button type="primary" text @click="ignoreApiFunc(row,true)">
-              忽略
+        <el-table-column :label="t('admin.common.operation')" min-width="150" fixed="right">
+          <template #default="{ row }">
+            <el-button icon="plus" type="primary" link @click="addApiFunc(row)">
+              Add one
+            </el-button>
+            <el-button
+              icon="sunrise"
+              type="primary"
+              link
+              @click="ignoreApiFunc(row, true)"
+            >
+              Ignore
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <h4>已删除路由 <span class="text-xs text-gray-500 ml-2 font-normal">已经不存在于当前项目的路由中，确定同步后会自动从apis表删除</span></h4>
-      <el-table
-        :data="syncApiData.deleteApis"
-      >
+      <h4>
+        Removed routes
+        <span class="text-xs text-gray-500 ml-2 font-normal"
+          >No longer exists in current project routes. Sync will remove it from the API table</span
+        >
+      </h4>
+      <el-table :data="syncApiData.deleteApis">
         <el-table-column
           align="left"
-          label="API路径"
+          label="API path"
           min-width="150"
           prop="path"
         />
         <el-table-column
           align="left"
-          label="API分组"
+          label="API group"
           min-width="150"
           prop="apiGroup"
         />
         <el-table-column
           align="left"
-          label="API简介"
+          label="API description"
           min-width="150"
           prop="description"
         />
         <el-table-column
           align="left"
-          label="请求"
+          label="Method"
           min-width="150"
           prop="method"
         >
@@ -331,31 +295,34 @@
         </el-table-column>
       </el-table>
 
-      <h4>忽略路由 <span class="text-xs text-gray-500 ml-2 font-normal">忽略路由不参与api同步，常见为不需要进行鉴权行为的路由</span></h4>
-      <el-table
-        :data="syncApiData.ignoreApis"
-      >
+      <h4>
+        Ignored routes
+        <span class="text-xs text-gray-500 ml-2 font-normal"
+          >Ignored routes do not participate in API sync (typically routes that do not require auth)</span
+        >
+      </h4>
+      <el-table :data="syncApiData.ignoreApis">
         <el-table-column
           align="left"
-          label="API路径"
+          label="API path"
           min-width="150"
           prop="path"
         />
         <el-table-column
           align="left"
-          label="API分组"
+          label="API group"
           min-width="150"
           prop="apiGroup"
         />
         <el-table-column
           align="left"
-          label="API简介"
+          label="API description"
           min-width="150"
           prop="description"
         />
         <el-table-column
           align="left"
-          label="请求"
+          label="Method"
           min-width="150"
           prop="method"
         >
@@ -365,14 +332,15 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          min-width="150"
-          fixed="right"
-        >
-          <template #default="{row}">
-            <el-button type="primary" text @click="ignoreApiFunc(row,false)">
-              取消忽略
+        <el-table-column :label="t('admin.common.operation')" min-width="150" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              icon="sunny"
+              type="primary"
+              link
+              @click="ignoreApiFunc(row, false)"
+            >
+              Unignore
             </el-button>
           </template>
         </el-table-column>
@@ -381,7 +349,7 @@
 
     <el-drawer
       v-model="dialogFormVisible"
-      size="60%"
+      :size="appStore.drawerSize"
       :before-close="closeDialog"
       :show-close="false"
     >
@@ -389,43 +357,22 @@
         <div class="flex justify-between items-center">
           <span class="text-lg">{{ dialogTitle }}</span>
           <div>
-            <el-button @click="closeDialog">
-              取 消
-            </el-button>
-            <el-button
-              type="primary"
-              @click="enterDialog"
-            >
-              确 定
-            </el-button>
+            <el-button @click="closeDialog">{{ t('admin.common.cancel') }}</el-button>
+            <el-button type="primary" @click="enterDialog">{{ t('admin.common.confirm') }}</el-button>
           </div>
         </div>
       </template>
 
-      <warning-bar title="新增API，需要在角色管理内配置权限才可使用" />
-      <el-form
-        ref="apiForm"
-        :model="form"
-        :rules="rules"
-        label-width="80px"
-      >
-        <el-form-item
-          label="路径"
-          prop="path"
-        >
-          <el-input
-            v-model="form.path"
-            autocomplete="off"
-          />
+      <warning-bar title="Adding an API requires assigning permissions in Role management" />
+      <el-form ref="apiForm" :model="form" :rules="rules" label-width="80px">
+        <el-form-item :label="t('admin.superadmin.api.fields.path')" prop="path">
+          <el-input v-model="form.path" autocomplete="off" />
         </el-form-item>
-        <el-form-item
-          label="请求"
-          prop="method"
-        >
+        <el-form-item :label="t('admin.superadmin.api.fields.method')" prop="method">
           <el-select
             v-model="form.method"
-            placeholder="请选择"
-            style="width:100%"
+            :placeholder="t('admin.common.select')"
+            style="width: 100%"
           >
             <el-option
               v-for="item in methodOptions"
@@ -435,13 +382,13 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="api分组"
-          prop="apiGroup"
-        >
+        <el-form-item :label="t('admin.superadmin.api.fields.group')" prop="apiGroup">
           <el-select
             v-model="form.apiGroup"
-            placeholder="请选择或新增" allow-create filterable default-first-option
+            placeholder="Select or create"
+            allow-create
+            filterable
+            default-first-option
           >
             <el-option
               v-for="item in apiGroupOptions"
@@ -451,361 +398,434 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="api简介"
-          prop="description"
-        >
-          <el-input
-            v-model="form.description"
-            autocomplete="off"
-          />
+        <el-form-item :label="t('admin.superadmin.api.fields.description')" prop="description">
+          <el-input v-model="form.description" autocomplete="off" />
         </el-form-item>
       </el-form>
+    </el-drawer>
+
+    <!-- Assign to roles drawer -->
+    <el-drawer
+      v-model="assignRoleDrawerVisible"
+      :size="appStore.drawerSize"
+      :show-close="false"
+      destroy-on-close
+    >
+      <template #header>
+        <div class="flex justify-between items-center">
+          <span class="text-lg">{{ t('admin.superadmin.api.actions.assign_roles') }} - {{ assignApiRow.description }}</span>
+          <div>
+            <el-button @click="assignRoleDrawerVisible = false">{{ t('admin.common.cancel') }}</el-button>
+            <el-button type="primary" :loading="assignRoleSubmitting" @click="confirmAssignRole">{{ t('admin.common.confirm') }}</el-button>
+          </div>
+        </div>
+      </template>
+      <warning-bar title="Note: saving overwrites all role relations for this API and refreshes Casbin cache" />
+      <el-tree
+        ref="roleTreeRef"
+        v-loading="assignRoleLoading"
+        :data="authorityTreeData"
+        :props="{ label: 'authorityName', children: 'children' }"
+        node-key="authorityId"
+        show-checkbox
+        check-strictly
+        default-expand-all
+      />
     </el-drawer>
   </div>
 </template>
 
 <script setup>
-import {
-  getApiById,
-  getApiList,
-  createApi,
-  updateApi,
-  deleteApi,
-  deleteApisByIds,
-  freshCasbin,
-  syncApi,
-  getApiGroups,
-  ignoreApi,
-  enterSyncApi
-} from '@/api/api'
-import { toSQLLine } from '@/utils/stringFun'
-import WarningBar from '@/components/warningBar/warningBar.vue'
-import { ref } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { VideoCameraFilled } from '@element-plus/icons-vue'
-import { toDoc } from '@/utils/doc'
-import ExportExcel from '@/components/exportExcel/exportExcel.vue'
-import ExportTemplate from '@/components/exportExcel/exportTemplate.vue'
-import ImportExcel from '@/components/exportExcel/importExcel.vue'
+  import {
+    getApiById,
+    getApiList,
+    createApi,
+    updateApi,
+    deleteApi,
+    deleteApisByIds,
+    freshCasbin,
+    syncApi,
+    getApiGroups,
+    ignoreApi,
+    enterSyncApi,
+    getApiRoles,
+    setApiRoles
+  } from '@/api/api'
+  import { getAuthorityList } from '@/api/authority'
+  import { toSQLLine } from '@/utils/stringFun'
+  import WarningBar from '@/components/warningBar/warningBar.vue'
+  import { ref, nextTick } from 'vue'
+  import { useI18n } from 'vue-i18n'
+  import { ElMessage, ElMessageBox } from 'element-plus'
+  import ExportExcel from '@/components/exportExcel/exportExcel.vue'
+  import ExportTemplate from '@/components/exportExcel/exportTemplate.vue'
+  import ImportExcel from '@/components/exportExcel/importExcel.vue'
+  import { llmAuto } from '@/api/autoCode'
+  import { useAppStore } from "@/pinia";
 
-defineOptions({
-  name: 'Api',
-})
-
-const methodFilter = (value) => {
-  const target = methodOptions.value.filter(item => item.value === value)[0]
-  return target && `${target.label}`
-}
-
-const apis = ref([])
-const form = ref({
-  path: '',
-  apiGroup: '',
-  method: '',
-  description: ''
-})
-const methodOptions = ref([
-  {
-    value: 'POST',
-    label: '创建',
-    type: 'success'
-  },
-  {
-    value: 'GET',
-    label: '查看',
-    type: ''
-  },
-  {
-    value: 'PUT',
-    label: '更新',
-    type: 'warning'
-  },
-  {
-    value: 'DELETE',
-    label: '删除',
-    type: 'danger'
-  }
-])
-
-const type = ref('')
-const rules = ref({
-  path: [{ required: true, message: '请输入api路径', trigger: 'blur' }],
-  apiGroup: [
-    { required: true, message: '请输入组名称', trigger: 'blur' }
-  ],
-  method: [
-    { required: true, message: '请选择请求方式', trigger: 'blur' }
-  ],
-  description: [
-    { required: true, message: '请输入api介绍', trigger: 'blur' }
-  ]
-})
-
-const page = ref(1)
-const total = ref(0)
-const pageSize = ref(10)
-const tableData = ref([])
-const searchInfo = ref({})
-const apiGroupOptions = ref([])
-const apiGroupMap = ref({})
-
-const getGroup = async() => {
-  const res = await getApiGroups()
-  if (res.code === 0) {
-    const groups = res.data.groups
-    apiGroupOptions.value = groups.map(item => ({ label: item, value: item }))
-    apiGroupMap.value = res.data.apiGroupMap
-  }
-}
-
-const ignoreApiFunc = async (row,flag) =>{
-  const res = await ignoreApi({path:row.path,method:row.method,flag})
-  if (res.code === 0) {
-    ElMessage({
-      type: 'success',
-      message: res.msg
-    })
-    if(flag){
-      syncApiData.value.newApis = syncApiData.value.newApis.filter(item => !(item.path === row.path && item.method === row.method))
-      syncApiData.value.ignoreApis.push(row)
-      return
-    }
-    syncApiData.value.ignoreApis = syncApiData.value.ignoreApis.filter(item => !(item.path === row.path && item.method === row.method))
-    syncApiData.value.newApis.push(row)
-  }
-}
-
-const closeSyncDialog = () => {
-  syncApiFlag.value = false
-}
-
-const syncing = ref(false)
-
-
-const enterSyncDialog = async() => {
-  syncing.value = true
-  const res = await enterSyncApi(syncApiData.value)
-  syncing.value = false
-  if (res.code === 0) {
-    ElMessage({
-      type: 'success',
-      message: res.msg
-    })
-    syncApiFlag.value = false
-    getTableData()
-  }
-}
-
-const onReset = () => {
-  searchInfo.value = {}
-}
-// 搜索
-
-const onSubmit = () => {
-  page.value = 1
-  pageSize.value = 10
-  getTableData()
-}
-
-// 分页
-const handleSizeChange = (val) => {
-  pageSize.value = val
-  getTableData()
-}
-
-const handleCurrentChange = (val) => {
-  page.value = val
-  getTableData()
-}
-
-// 排序
-const sortChange = ({ prop, order }) => {
-  if (prop) {
-    if (prop === 'ID') {
-      prop = 'id'
-    }
-    searchInfo.value.orderKey = toSQLLine(prop)
-    searchInfo.value.desc = order === 'descending'
-  }
-  getTableData()
-}
-
-// 查询
-const getTableData = async() => {
-  const table = await getApiList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
-  if (table.code === 0) {
-    tableData.value = table.data.list
-    total.value = table.data.total
-    page.value = table.data.page
-    pageSize.value = table.data.pageSize
-  }
-}
-
-getTableData()
-getGroup()
-// 批量操作
-const handleSelectionChange = (val) => {
-  apis.value = val
-}
-
-const onDelete = async() => {
-  ElMessageBox.confirm('确定要删除吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async() => {
-    const ids = apis.value.map(item => item.ID)
-    const res = await deleteApisByIds({ ids })
-    if (res.code === 0) {
-      ElMessage({
-        type: 'success',
-        message: res.msg
-      })
-      if (tableData.value.length === ids.length && page.value > 1) {
-        page.value--
-      }
-      getTableData()
-    }
+  defineOptions({
+    name: 'Api'
   })
-}
-const onFresh = async() => {
-  ElMessageBox.confirm('确定要刷新缓存吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async() => {
-    const res = await freshCasbin()
-    if (res.code === 0) {
-      ElMessage({
-        type: 'success',
-        message: res.msg
-      })
-    }
-  })
-}
 
-const syncApiData = ref({
-  newApis:[],
-  deleteApis:[],
-  ignoreApis:[]
-})
+  const appStore = useAppStore()
+  const { t } = useI18n()
 
-const syncApiFlag = ref(false)
-
-const onSync = async() => {
-  const res = await syncApi()
-  if (res.code === 0) {
-    res.data.newApis.forEach(item => {
-      item.apiGroup = apiGroupMap.value[item.path.split('/')[1]]
-      console.log(apiGroupMap.value)
-    })
-
-    syncApiData.value = res.data
-    syncApiFlag.value = true
+  const methodFilter = (value) => {
+    const target = methodOptions.value.filter((item) => item.value === value)[0]
+    return target && `${target.label}`
   }
-}
 
-// 弹窗相关
-const apiForm = ref(null)
-const initForm = () => {
-  apiForm.value.resetFields()
-  form.value = {
+  const apis = ref([])
+  const form = ref({
     path: '',
     apiGroup: '',
     method: '',
     description: ''
-  }
-}
-
-const dialogTitle = ref('新增Api')
-const dialogFormVisible = ref(false)
-const openDialog = (key) => {
-  switch (key) {
-    case 'addApi':
-      dialogTitle.value = '新增Api'
-      break
-    case 'edit':
-      dialogTitle.value = '编辑Api'
-      break
-    default:
-      break
-  }
-  type.value = key
-  dialogFormVisible.value = true
-}
-const closeDialog = () => {
-  initForm()
-  dialogFormVisible.value = false
-}
-
-const editApiFunc = async(row) => {
-  const res = await getApiById({ id: row.ID })
-  form.value = res.data.api
-  openDialog('edit')
-}
-
-const enterDialog = async() => {
-  apiForm.value.validate(async valid => {
-    if (valid) {
-      switch (type.value) {
-        case 'addApi':
-          {
-            const res = await createApi(form.value)
-            if (res.code === 0) {
-              ElMessage({
-                type: 'success',
-                message: '添加成功',
-                showClose: true
-              })
-            }
-            getTableData()
-            getGroup()
-            closeDialog()
-          }
-
-          break
-        case 'edit':
-          {
-            const res = await updateApi(form.value)
-            if (res.code === 0) {
-              ElMessage({
-                type: 'success',
-                message: '编辑成功',
-                showClose: true
-              })
-            }
-            getTableData()
-            closeDialog()
-          }
-          break
-        default:
-          // eslint-disable-next-line no-lone-blocks
-          {
-            ElMessage({
-              type: 'error',
-              message: '未知操作',
-              showClose: true
-            })
-          }
-          break
-      }
+  })
+  const methodOptions = ref([
+    {
+      value: 'POST',
+      label: 'Create',
+      type: 'success'
+    },
+    {
+      value: 'GET',
+      label: 'Read',
+      type: ''
+    },
+    {
+      value: 'PUT',
+      label: 'Update',
+      type: 'warning'
+    },
+    {
+      value: 'DELETE',
+      label: 'Delete',
+      type: 'danger'
     }
-  })
-}
+  ])
 
-const deleteApiFunc = async(row) => {
-  ElMessageBox.confirm('此操作将永久删除所有角色下该api, 是否继续?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
+  const type = ref('')
+  const rules = ref({
+    path: [{ required: true, message: 'API path is required', trigger: 'blur' }],
+    apiGroup: [{ required: true, message: 'API group is required', trigger: 'blur' }],
+    method: [{ required: true, message: 'Method is required', trigger: 'blur' }],
+    description: [{ required: true, message: 'Description is required', trigger: 'blur' }]
   })
-    .then(async() => {
+
+  const page = ref(1)
+  const total = ref(0)
+  const pageSize = ref(10)
+  const tableData = ref([])
+  const searchInfo = ref({})
+  const apiGroupOptions = ref([])
+  const apiGroupMap = ref({})
+
+  const getGroup = async () => {
+    const res = await getApiGroups()
+    if (res.code === 0) {
+      const groups = res.data.groups
+      apiGroupOptions.value = groups.map((item) => ({
+        label: item,
+        value: item
+      }))
+      apiGroupMap.value = res.data.apiGroupMap
+    }
+  }
+
+  const ignoreApiFunc = async (row, flag) => {
+    const res = await ignoreApi({ path: row.path, method: row.method, flag })
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: res.msg
+      })
+      if (flag) {
+        syncApiData.value.newApis = syncApiData.value.newApis.filter(
+          (item) => !(item.path === row.path && item.method === row.method)
+        )
+        syncApiData.value.ignoreApis.push(row)
+        return
+      }
+      syncApiData.value.ignoreApis = syncApiData.value.ignoreApis.filter(
+        (item) => !(item.path === row.path && item.method === row.method)
+      )
+      syncApiData.value.newApis.push(row)
+    }
+  }
+
+  const addApiFunc = async (row) => {
+    if (!row.apiGroup) {
+      ElMessage({
+        type: 'error',
+        message: 'Please select an API group first'
+      })
+      return
+    }
+    if (!row.description) {
+      ElMessage({
+        type: 'error',
+        message: 'Please fill in API description first'
+      })
+      return
+    }
+    const res = await createApi(row)
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: 'Added. Go to Role management to assign permissions',
+        showClose: true
+      })
+      syncApiData.value.newApis = syncApiData.value.newApis.filter(
+        (item) => !(item.path === row.path && item.method === row.method)
+      )
+    }
+    getTableData()
+    getGroup()
+  }
+
+  const closeSyncDialog = () => {
+    syncApiFlag.value = false
+  }
+
+  const syncing = ref(false)
+
+  const enterSyncDialog = async () => {
+    if (
+      syncApiData.value.newApis.some(
+        (item) => !item.apiGroup || !item.description
+      )
+    ) {
+      ElMessage({
+        type: 'error',
+        message: 'Some APIs are missing group or description'
+      })
+      return
+    }
+
+    syncing.value = true
+    const res = await enterSyncApi(syncApiData.value)
+    syncing.value = false
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: res.msg
+      })
+      syncApiFlag.value = false
+      getTableData()
+    }
+  }
+
+  const onReset = () => {
+    searchInfo.value = {}
+    getTableData()
+  }
+  // Search
+
+  const onSubmit = () => {
+    page.value = 1
+    getTableData()
+  }
+
+  // Pagination
+  const handleSizeChange = (val) => {
+    pageSize.value = val
+    getTableData()
+  }
+
+  const handleCurrentChange = (val) => {
+    page.value = val
+    getTableData()
+  }
+
+  // Sorting
+  const sortChange = ({ prop, order }) => {
+    if (prop) {
+      if (prop === 'ID') {
+        prop = 'id'
+      }
+      searchInfo.value.orderKey = toSQLLine(prop)
+      searchInfo.value.desc = order === 'descending'
+    }
+    getTableData()
+  }
+
+  // Query
+  const getTableData = async () => {
+    const table = await getApiList({
+      page: page.value,
+      pageSize: pageSize.value,
+      ...searchInfo.value
+    })
+    if (table.code === 0) {
+      tableData.value = table.data.list
+      total.value = table.data.total
+      page.value = table.data.page
+      pageSize.value = table.data.pageSize
+    }
+  }
+
+  getTableData()
+  getGroup()
+  // Batch operations
+  const handleSelectionChange = (val) => {
+    apis.value = val
+  }
+
+  const onDelete = async () => {
+    ElMessageBox.confirm('Delete selected items?', 'Confirm', {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
+      type: 'warning'
+    }).then(async () => {
+      const ids = apis.value.map((item) => item.ID)
+      const res = await deleteApisByIds({ ids })
+      if (res.code === 0) {
+        ElMessage({
+          type: 'success',
+          message: res.msg
+        })
+        if (tableData.value.length === ids.length && page.value > 1) {
+          page.value--
+        }
+        getTableData()
+      }
+    })
+  }
+  const onFresh = async () => {
+    ElMessageBox.confirm('Refresh cache?', 'Confirm', {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
+      type: 'warning'
+    }).then(async () => {
+      const res = await freshCasbin()
+      if (res.code === 0) {
+        ElMessage({
+          type: 'success',
+          message: res.msg
+        })
+      }
+    })
+  }
+
+  const syncApiData = ref({
+    newApis: [],
+    deleteApis: [],
+    ignoreApis: []
+  })
+
+  const syncApiFlag = ref(false)
+
+  const onSync = async () => {
+    const res = await syncApi()
+    if (res.code === 0) {
+      res.data.newApis.forEach((item) => {
+        item.apiGroup = apiGroupMap.value[item.path.split('/')[1]]
+      })
+
+      syncApiData.value = res.data
+      syncApiFlag.value = true
+    }
+  }
+
+  // Dialog
+  const apiForm = ref(null)
+  const initForm = () => {
+    apiForm.value.resetFields()
+    form.value = {
+      path: '',
+      apiGroup: '',
+      method: '',
+      description: ''
+    }
+  }
+
+  const dialogTitle = ref('Add API')
+  const dialogFormVisible = ref(false)
+  const openDialog = (key) => {
+    switch (key) {
+      case 'addApi':
+        dialogTitle.value = 'Add API'
+        break
+      case 'edit':
+        dialogTitle.value = 'Edit API'
+        break
+      default:
+        break
+    }
+    type.value = key
+    dialogFormVisible.value = true
+  }
+  const closeDialog = () => {
+    initForm()
+    dialogFormVisible.value = false
+  }
+
+  const editApiFunc = async (row) => {
+    const res = await getApiById({ id: row.ID })
+    form.value = res.data.api
+    openDialog('edit')
+  }
+
+  const enterDialog = async () => {
+    apiForm.value.validate(async (valid) => {
+      if (valid) {
+        switch (type.value) {
+          case 'addApi':
+            {
+              const res = await createApi(form.value)
+              if (res.code === 0) {
+                ElMessage({
+                  type: 'success',
+                  message: 'Added',
+                  showClose: true
+                })
+              }
+              getTableData()
+              getGroup()
+              closeDialog()
+            }
+
+            break
+          case 'edit':
+            {
+              const res = await updateApi(form.value)
+              if (res.code === 0) {
+                ElMessage({
+                  type: 'success',
+                  message: 'Updated',
+                  showClose: true
+                })
+              }
+              getTableData()
+              closeDialog()
+            }
+            break
+          default:
+            {
+              ElMessage({
+                type: 'error',
+                message: 'Unknown operation',
+                showClose: true
+              })
+            }
+            break
+        }
+      }
+    })
+  }
+
+  const deleteApiFunc = async (row) => {
+    ElMessageBox.confirm('This will remove the API from all roles. Continue?', 'Confirm', {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
+      type: 'warning'
+    }).then(async () => {
       const res = await deleteApi(row)
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: '删除成功!'
+          message: 'Deleted'
         })
         if (tableData.value.length === 1 && page.value > 1) {
           page.value--
@@ -814,12 +834,87 @@ const deleteApiFunc = async(row) => {
         getGroup()
       }
     })
-}
+  }
+  const apiCompletionLoading = ref(false)
+  const apiCompletion = async () => {
+    apiCompletionLoading.value = true
+    const routerPaths = syncApiData.value.newApis
+      .filter((item) => !item.apiGroup || !item.description)
+      .map((item) => item.path)
+    const res = await llmAuto({ data: String(routerPaths), mode: 'apiCompletion' })
+    apiCompletionLoading.value = false
+    if (res.code === 0) {
+      try {
+        const data = JSON.parse(res.data)
+        syncApiData.value.newApis.forEach((item) => {
+          const target = data.find((d) => d.path === item.path)
+          if (target) {
+            if (!item.apiGroup) {
+              item.apiGroup = target.apiGroup
+            }
+            if (!item.description) {
+              item.description = target.description
+            }
+          }
+        })
+      } catch (_) {
+        ElMessage({
+          type: 'error',
+          message: 'Auto fill failed, please retry'
+        })
+      }
+    }
+  }
 
+  // Assign roles
+  const assignRoleDrawerVisible = ref(false)
+  const assignApiRow = ref({})
+  const authorityTreeData = ref([])
+  const assignRoleLoading = ref(false)
+  const assignRoleSubmitting = ref(false)
+  const roleTreeRef = ref(null)
+
+  const openAssignRoleDrawer = async (row) => {
+    assignApiRow.value = row
+    assignRoleDrawerVisible.value = true
+    assignRoleLoading.value = true
+    const [authRes, rolesRes] = await Promise.all([
+      getAuthorityList(),
+      getApiRoles(row.path, row.method)
+    ])
+    if (authRes.code === 0) {
+      authorityTreeData.value = authRes.data
+    }
+    if (rolesRes.code === 0 && rolesRes.data) {
+      nextTick(() => {
+        roleTreeRef.value?.setCheckedKeys(rolesRes.data)
+      })
+    }
+    assignRoleLoading.value = false
+  }
+
+  const confirmAssignRole = async () => {
+    assignRoleSubmitting.value = true
+    try {
+      const checkedKeys = roleTreeRef.value?.getCheckedKeys(false) || []
+      const res = await setApiRoles({
+        path: assignApiRow.value.path,
+        method: assignApiRow.value.method,
+        authorityIds: checkedKeys
+      })
+      if (res.code === 0) {
+        ElMessage({ type: 'success', message: 'Assigned' })
+        assignRoleDrawerVisible.value = false
+      }
+    } catch {
+      ElMessage({ type: 'error', message: 'Assign failed, please retry' })
+    }
+    assignRoleSubmitting.value = false
+  }
 </script>
 
 <style scoped lang="scss">
-.warning {
-  color: #dc143c;
-}
+  .warning {
+    color: #dc143c;
+  }
 </style>

@@ -1,44 +1,128 @@
-<template>
-  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 py-2 gap-4 md:gap-2 gva-container2">
-    <gva-card custom-class="col-span-1 lg:col-span-2 h-32">
-      <gva-chart :type="1" title="访问人数" />
-    </gva-card>
-    <gva-card custom-class="col-span-1 lg:col-span-2 h-32 ">
-      <gva-chart :type="2" title="新增客户" />
-    </gva-card>
-    <gva-card custom-class="col-span-1 lg:col-span-2 h-32">
-      <gva-chart :type="3" title="解决数量" />
-    </gva-card>
-    <gva-card title="快捷功能" show-action custom-class="col-start-1 md:col-start-3 lg:col-start-7 row-span-2 h-38">
-      <gva-quick-link />
-    </gva-card>
-    <gva-card title="内容数据" custom-class="col-span-1 md:col-span-2 md:row-start-2 lg:col-span-6 col-start-1 row-span-2">
-      <gva-chart :type="4" />
-    </gva-card>
-    <gva-card title="文档" show-action custom-class="md:row-start-8 md:col-start-3 lg:row-start-3 lg:col-start-7">
-      <gva-wiki />
-    </gva-card>
+﻿<template>
+  <div class="h-full gva-container2 overflow-auto bg-slate-50/60 dark:bg-slate-900">
+    <div class="space-y-4 p-4 lg:p-6">
+      <section
+        class="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white px-5 py-6 shadow-sm dark:border-slate-700 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+      >
+        
+        <div class="relative flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p class="text-xs tracking-[0.2em] text-slate-500 dark:text-slate-400">DASHBOARD</p>
+            <h1 class="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100 lg:text-2xl">
+              Welcome back — let's ship today
+            </h1>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              {{ today }} · Overview of core metrics, plugins, and announcements
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <el-button type="primary" @click="goLicense">Buy license</el-button>
+            <el-button @click="goPluginMarket">Plugin market</el-button>
+          </div>
+        </div>
+      </section>
 
-    <gva-card title="最新更新" custom-class="col-span-1 md:col-span-3 row-span-2">
-      <gva-table />
-    </gva-card>
-    <gva-card title="最新插件" custom-class="col-span-1 md:col-span-3 row-span-2">
-      <gva-plugin-table />
-    </gva-card>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <gva-card>
+          <gva-chart :type="1" title="Visitors" />
+        </gva-card>
+        <gva-card>
+          <gva-chart :type="2" title="New customers" />
+        </gva-card>
+        <gva-card>
+          <gva-chart :type="3" title="Resolved" />
+        </gva-card>
+      </div>
 
-    <gva-card title="公告" show-action custom-class="col-span-1 lg:col-start-7">
-      <gva-notice />
-    </gva-card>
+      <div class="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
+        <div class="grid grid-cols-1 gap-4 content-start xl:col-span-8 xl:h-full">
+          <gva-card title="Content">
+            <gva-chart :type="4" />
+          </gva-card>
 
-    <gva-card without-padding custom-class="overflow-hidden lg:h-40 col-span-1 md:col-start-2 md:col-span-1 lg:col-start-7">
-      <gva-banner />
-    </gva-card>
+          <gva-card title="Latest plugins">
+            <gva-plugin-table />
+          </gva-card>
+
+          <gva-card title="Latest updates">
+            <gva-table />
+          </gva-card>
+        </div>
+
+        <div class="flex flex-col gap-4 xl:col-span-4 xl:h-full">
+          <gva-card title="Quick actions" show-action custom-class="min-h-[300px]">
+            <gva-quick-link />
+          </gva-card>
+          <gva-card title="Announcements" show-action custom-class="min-h-[300px]">
+            <gva-notice />
+          </gva-card>
+          <gva-card title="Docs" show-action custom-class="min-h-[120px]">
+            <gva-wiki />
+          </gva-card>
+          <div
+            class="relative min-h-[200px] flex-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-900 p-5 text-white shadow-sm dark:border-slate-700"
+          >
+            
+            <div class="relative">
+              <div class="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs">License</div>
+              <h3 class="mt-3 text-lg font-semibold">Unlock commercial support</h3>
+              <p class="mt-2 text-sm text-slate-200/90">
+                Get priority support, plugin discounts, and compliance coverage to help your team deliver more reliably.
+              </p>
+              <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                <span class="rounded-full bg-white/10 px-2.5 py-1">Priority support</span>
+                <span class="rounded-full bg-white/10 px-2.5 py-1">Plugin discounts</span>
+                <span class="rounded-full bg-white/10 px-2.5 py-1">Commercial license</span>
+              </div>
+              <div class="mt-5 flex items-center gap-3">
+                <el-button type="primary" @click="goLicense">Buy now</el-button>
+                <el-button link class="!text-cyan-300" @click="goPluginMarket">Browse plugins</el-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { GvaPluginTable,GvaTable, GvaChart, GvaWiki , GvaNotice , GvaQuickLink , GvaCard , GvaBanner } from "./componenst"
+  import { computed } from 'vue'
+  import {
+    GvaPluginTable,
+    GvaTable,
+    GvaChart,
+    GvaWiki,
+    GvaNotice,
+    GvaQuickLink,
+    GvaCard
+  } from './components'
+
+  const today = computed(() => {
+    try {
+      const d = new Date()
+      return d.toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      })
+    } catch (e) {
+      return new Date().toISOString().slice(0, 10)
+    }
+  })
+
+  const goLicense = () => {
+    window.open('https://plugin.gin-vue-admin.com/license', '_blank', 'noopener,noreferrer')
+  }
+
+  const goPluginMarket = () => {
+    window.open('https://plugin.gin-vue-admin.com', '_blank', 'noopener,noreferrer')
+  }
+
+  defineOptions({
+    name: 'Dashboard'
+  })
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
+

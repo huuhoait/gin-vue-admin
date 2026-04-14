@@ -15,12 +15,12 @@ type AutoCodePackageApi struct{}
 
 // Create
 // @Tags      AutoCodePackage
-// @Summary   创建package
+// @Summary   Create package
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      request.SysAutoCodePackageCreate                                         true  "创建package"
-// @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "创建package成功"
+// @Param     data  body      request.SysAutoCodePackageCreate                                         true  "Create package"
+// @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "Successfully created package"
 // @Router    /autoCode/createPackage [post]
 func (a *AutoCodePackageApi) Create(c *gin.Context) {
 	var info request.SysAutoCodePackageCreate
@@ -30,71 +30,71 @@ func (a *AutoCodePackageApi) Create(c *gin.Context) {
 		return
 	}
 	if strings.Contains(info.PackageName, "\\") || strings.Contains(info.PackageName, "/") || strings.Contains(info.PackageName, "..") {
-		response.FailWithMessage("包名不合法", c)
+		response.FailWithMessage("Invalid package name", c)
 		return
-	} // PackageName可能导致路径穿越的问题 / 和 \ 都要防止
+	} // PackageName may cause path traversal issues, prevent both / and \
 	err := autoCodePackageService.Create(c.Request.Context(), &info)
 	if err != nil {
-		global.GVA_LOG.Error("创建失败!", zap.Error(err))
-		response.FailWithMessage("创建失败", c)
+		global.GVA_LOG.Error("Failed to create!", zap.Error(err))
+		response.FailWithMessage("Failed to create", c)
 		return
 	}
-	response.OkWithMessage("创建成功", c)
+	response.OkWithMessage("Created successfully", c)
 }
 
 // Delete
 // @Tags      AutoCode
-// @Summary   删除package
+// @Summary   Delete package
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      common.GetById                                         true  "创建package"
-// @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "删除package成功"
+// @Param     data  body      common.GetById                                         true  "Delete package"
+// @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "Successfully deleted package"
 // @Router    /autoCode/delPackage [post]
 func (a *AutoCodePackageApi) Delete(c *gin.Context) {
 	var info common.GetById
 	_ = c.ShouldBindJSON(&info)
 	err := autoCodePackageService.Delete(c.Request.Context(), info)
 	if err != nil {
-		global.GVA_LOG.Error("删除失败!", zap.Error(err))
-		response.FailWithMessage("删除失败", c)
+		global.GVA_LOG.Error("Failed to delete!", zap.Error(err))
+		response.FailWithMessage("Failed to delete", c)
 		return
 	}
-	response.OkWithMessage("删除成功", c)
+	response.OkWithMessage("Deleted successfully", c)
 }
 
 // All
 // @Tags      AutoCodePackage
-// @Summary   获取package
+// @Summary   Get all packages
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "创建package成功"
+// @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "Successfully retrieved packages"
 // @Router    /autoCode/getPackage [post]
 func (a *AutoCodePackageApi) All(c *gin.Context) {
 	data, err := autoCodePackageService.All(c.Request.Context())
 	if err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
+		global.GVA_LOG.Error("Failed to retrieve!", zap.Error(err))
+		response.FailWithMessage("Failed to retrieve", c)
 		return
 	}
-	response.OkWithDetailed(gin.H{"pkgs": data}, "获取成功", c)
+	response.OkWithDetailed(gin.H{"pkgs": data}, "Retrieved successfully", c)
 }
 
 // Templates
 // @Tags      AutoCodePackage
-// @Summary   获取package
+// @Summary   Get templates
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "创建package成功"
+// @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "Successfully retrieved templates"
 // @Router    /autoCode/getTemplates [get]
 func (a *AutoCodePackageApi) Templates(c *gin.Context) {
 	data, err := autoCodePackageService.Templates(c.Request.Context())
 	if err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
+		global.GVA_LOG.Error("Failed to retrieve!", zap.Error(err))
+		response.FailWithMessage("Failed to retrieve", c)
 		return
 	}
-	response.OkWithDetailed(data, "获取成功", c)
+	response.OkWithDetailed(data, "Retrieved successfully", c)
 }

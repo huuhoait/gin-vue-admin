@@ -5,10 +5,16 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 )
 
-// Add menu authority info structure
+// AddMenuAuthorityInfo Add menu authority info structure
 type AddMenuAuthorityInfo struct {
 	Menus       []system.SysBaseMenu `json:"menus"`
-	AuthorityId uint                 `json:"authorityId"` // 角色ID
+	AuthorityId uint                 `json:"authorityId"` // role ID
+}
+
+// SetMenuAuthorities Approvedmenu IDfull overwriteAssociationRoleList
+type SetMenuAuthorities struct {
+	MenuId       uint   `json:"menuId" form:"menuId"`             // menu ID
+	AuthorityIds []uint `json:"authorityIds" form:"authorityIds"` // role IDList
 }
 
 func DefaultMenu() []system.SysBaseMenu {
@@ -20,7 +26,7 @@ func DefaultMenu() []system.SysBaseMenu {
 		Component: "view/dashboard/index.vue",
 		Sort:      1,
 		Meta: system.Meta{
-			Title: "仪表盘",
+			Title: "Dashboard",
 			Icon:  "setting",
 		},
 	}}

@@ -1,12 +1,12 @@
 import service from '@/utils/request'
 
 // @Tags Info
-// @Summary 创建公告
+// @Summary Create announcement
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Info true "创建公告"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
+// @Param data body model.Info true "Create announcement"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Created"}"
 // @Router /info/createInfo [post]
 export const createInfo = (data) => {
   return service({
@@ -17,12 +17,12 @@ export const createInfo = (data) => {
 }
 
 // @Tags Info
-// @Summary 删除公告
+// @Summary Delete announcement
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Info true "删除公告"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
+// @Param data body model.Info true "Delete announcement"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Deleted"}"
 // @Router /info/deleteInfo [delete]
 export const deleteInfo = (params) => {
   return service({
@@ -33,12 +33,12 @@ export const deleteInfo = (params) => {
 }
 
 // @Tags Info
-// @Summary 批量删除公告
+// @Summary Delete announcements in bulk
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.IdsReq true "批量删除公告"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
+// @Param data body request.IdsReq true "Bulk delete announcements"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Deleted"}"
 // @Router /info/deleteInfo [delete]
 export const deleteInfoByIds = (params) => {
   return service({
@@ -49,12 +49,12 @@ export const deleteInfoByIds = (params) => {
 }
 
 // @Tags Info
-// @Summary 更新公告
+// @Summary Update announcement
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Info true "更新公告"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
+// @Param data body model.Info true "Update announcement"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Updated"}"
 // @Router /info/updateInfo [put]
 export const updateInfo = (data) => {
   return service({
@@ -65,12 +65,12 @@ export const updateInfo = (data) => {
 }
 
 // @Tags Info
-// @Summary 用id查询公告
+// @Summary Find announcement by id
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query model.Info true "用id查询公告"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
+// @Param data query model.Info true "Find announcement by id"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"OK"}"
 // @Router /info/findInfo [get]
 export const findInfo = (params) => {
   return service({
@@ -81,12 +81,12 @@ export const findInfo = (params) => {
 }
 
 // @Tags Info
-// @Summary 分页获取公告列表
+// @Summary Paginated announcement list
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query request.PageInfo true "分页获取公告列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Param data query request.PageInfo true "Paginated announcement list"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"OK"}"
 // @Router /info/getInfoList [get]
 export const getInfoList = (params) => {
   return service({
@@ -96,15 +96,15 @@ export const getInfoList = (params) => {
   })
 }
 // @Tags Info
-// @Summary 获取数据源
+// @Summary Get data source
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"OK"}"
 // @Router /info/findInfoDataSource [get]
 export const getInfoDataSource = () => {
   return service({
     url: '/info/getInfoDataSource',
-    method: 'get',
+    method: 'get'
   })
 }

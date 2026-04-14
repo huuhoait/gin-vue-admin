@@ -5,10 +5,17 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 )
 
-// api分页条件查询及排序结构体
+// apiPaginationConditionQueryAndsortStructureBody
 type SearchApiParams struct {
 	system.SysApi
 	request.PageInfo
-	OrderKey string `json:"orderKey"` // 排序
-	Desc     bool   `json:"desc"`     // 排序方式:升序false(默认)|降序true
+	OrderKey string `json:"orderKey"` // sort
+	Desc     bool   `json:"desc"`     // sortMethod:Ascendingfalse(default)|Descendingtrue
+}
+
+// SetApiAuthorities ApprovedAPIpathAndmethodfull overwriteAssociationRoleList
+type SetApiAuthorities struct {
+	Path         string `json:"path" form:"path"`                     // APIpath
+	Method       string `json:"method" form:"method"`                 // request method
+	AuthorityIds []uint `json:"authorityIds" form:"authorityIds"`     // role IDList
 }

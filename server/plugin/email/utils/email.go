@@ -13,7 +13,7 @@ import (
 
 //@author: [maplepie](https://github.com/maplepie)
 //@function: Email
-//@description: Email发送方法
+//@description: Emailsendmethod
 //@param: subject string, body string
 //@return: error
 
@@ -24,13 +24,13 @@ func Email(To, subject string, body string) error {
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
 //@function: ErrorToEmail
-//@description: 给email中间件错误发送邮件到指定邮箱
+//@description: ToemailInIntervalpieceErrorsend emailToSpecifyEmail
 //@param: subject string, body string
 //@return: error
 
 func ErrorToEmail(subject string, body string) error {
 	to := strings.Split(global.GlobalConfig.To, ",")
-	if to[len(to)-1] == "" { // 判断切片的最后一个元素是否为空,为空则移除
+	if to[len(to)-1] == "" { // JudgecutSliceofFinalOnePieceElementYesNoEmpty,EmptyThenRemove
 		to = to[:len(to)-1]
 	}
 	return send(to, subject, body)
@@ -38,7 +38,7 @@ func ErrorToEmail(subject string, body string) error {
 
 //@author: [maplepie](https://github.com/maplepie)
 //@function: EmailTest
-//@description: Email测试方法
+//@description: Emailtestmethod
 //@param: subject string, body string
 //@return: error
 
@@ -49,7 +49,7 @@ func EmailTest(subject string, body string) error {
 
 //@author: [maplepie](https://github.com/maplepie)
 //@function: send
-//@description: Email发送方法
+//@description: Emailsendmethod
 //@param: subject string, body string
 //@return: error
 
@@ -60,8 +60,14 @@ func send(to []string, subject string, body string) error {
 	host := global.GlobalConfig.Host
 	port := global.GlobalConfig.Port
 	isSSL := global.GlobalConfig.IsSSL
+	isLoginAuth := global.GlobalConfig.IsLoginAuth
 
-	auth := smtp.PlainAuth("", from, secret, host)
+	var auth smtp.Auth
+	if isLoginAuth {
+		auth = LoginAuth(from, secret)
+	} else {
+		auth = smtp.PlainAuth("", from, secret, host)
+	}
 	e := email.NewEmail()
 	if nickname != "" {
 		e.From = fmt.Sprintf("%s <%s>", nickname, from)
@@ -79,4 +85,38 @@ func send(to []string, subject string, body string) error {
 		err = e.Send(hostAddr, auth)
 	}
 	return err
+}
+
+// LoginAuth Used forIBM, MicrosoftEmailServerofLOGINAuthenticationMethod
+type loginAuth struct {
+	username, password string
+}
+
+func LoginAuth(username, password string) smtp.Auth {
+	return &loginAuth{username, password}
+}
+
+func (a *loginAuth) Start(server *smtp.ServerInfo) (string, []byte, error) {
+	return "LOGIN", []byte{}, nil
+}
+
+func (a *loginAuth) Next(fromServer []byte, more bool) ([]byte, error) {
+	if more {
+		switch string(fromServer) {
+		case "Username:":
+			return []byte(a.username), nil
+		case "Password:":
+			return []byte(a.password), nil
+		default:
+			// EmailServerPossiblesendofOthersPromptInformation
+			prompt := strings.ToLower(string(fromServer))
+			if strings.Contains(prompt, "username") || strings.Contains(prompt, "user") {
+				return []byte(a.username), nil
+			}
+			if strings.Contains(prompt, "password") || strings.Contains(prompt, "pass") {
+				return []byte(a.password), nil
+			}
+		}
+	}
+	return nil, nil
 }

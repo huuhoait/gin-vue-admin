@@ -1,60 +1,56 @@
 <template>
   <div>
     <div class="gva-table-box">
-      <div class="gva-btn-list justify-between">
-        <span class="text font-bold">字典详细内容</span>
-        <el-button
-          type="primary"
-          icon="plus"
-          @click="openDrawer"
-        >
-          新增字典项
-        </el-button>
+      <div class="gva-btn-list justify-between flex items-center">
+        <span class="text font-bold">Dictionary details</span>
+        <div class="flex items-center gap-2">
+          <el-input
+            placeholder="Search display label"
+            v-model="searchName"
+            clearable
+            class="!w-64"
+            @clear="clearSearchInput"
+            :prefix-icon="Search"
+            v-click-outside="handleCloseSearchInput"
+            @keydown="handleInputKeyDown"
+          >
+            <template #append>
+              <el-button
+                :type="searchName ? 'primary' : 'info'"
+                @click="applySearch"
+                >Search</el-button
+              >
+            </template>
+          </el-input>
+          <el-button type="primary" icon="plus" @click="openDrawer">
+            Add item
+          </el-button>
+        </div>
       </div>
+      <!-- Table view -->
       <el-table
-        ref="multipleTable"
-        :data="tableData"
+        :data="displayTreeData"
         style="width: 100%"
         tooltip-effect="dark"
+        :tree-props="{ children: 'children'}"
         row-key="ID"
+        default-expand-all
       >
-        <el-table-column
-          type="selection"
-          width="55"
-        />
-        <el-table-column
-          align="left"
-          label="日期"
-          width="180"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.CreatedAt) }}
-          </template>
-        </el-table-column>
+        <el-table-column type="selection" width="55" />
+
+        <el-table-column align="left" label="Label" prop="label" min-width="100"/>
+
+        <el-table-column align="left" label="Value" prop="value" />
+
+        <el-table-column align="left" label="Extend" prop="extend" />
+
+        <el-table-column align="left" label="Level" prop="level" width="80" />
 
         <el-table-column
           align="left"
-          label="展示值"
-          prop="label"
-        />
-
-        <el-table-column
-          align="left"
-          label="字典值"
-          prop="value"
-        />
-
-        <el-table-column
-          align="left"
-          label="扩展值"
-          prop="extend"
-        />
-
-        <el-table-column
-          align="left"
-          label="启用状态"
+          label="Status"
           prop="status"
-          width="120"
+          width="100"
         >
           <template #default="scope">
             {{ formatBoolean(scope.row.status) }}
@@ -63,24 +59,33 @@
 
         <el-table-column
           align="left"
-          label="排序标记"
+          label="Sort"
           prop="sort"
-          width="120"
+          width="100"
         />
 
         <el-table-column
           align="left"
-          label="操作"
-          width="180"
+          :label="$t('admin.common.operation')"
+          :min-width="appStore.operateMinWith"
+          fixed="right"
         >
           <template #default="scope">
+            <el-button
+              type="primary"
+              link
+              icon="plus"
+              @click="addChildNode(scope.row)"
+            >
+              Add child
+            </el-button>
             <el-button
               type="primary"
               link
               icon="edit"
               @click="updateSysDictionaryDetailFunc(scope.row)"
             >
-              变更
+              Edit
             </el-button>
             <el-button
               type="primary"
@@ -88,41 +93,27 @@
               icon="delete"
               @click="deleteSysDictionaryDetailFunc(scope.row)"
             >
-              删除
+              {{ $t('admin.common.delete') }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-
-      <div class="gva-pagination">
-        <el-pagination
-          :current-page="page"
-          :page-size="pageSize"
-          :page-sizes="[10, 30, 50, 100]"
-          :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
-          @current-change="handleCurrentChange"
-          @size-change="handleSizeChange"
-        />
-      </div>
     </div>
 
     <el-drawer
       v-model="drawerFormVisible"
-      size="30%"
+      :size="appStore.drawerSize"
       :show-close="false"
       :before-close="closeDrawer"
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">{{ type==='create' ? '添加字典项' : '修改字典项' }}</span>
+          <span class="text-lg">{{
+            type === 'create' ? 'Add item' : 'Edit item'
+          }}</span>
           <div>
-            <el-button @click="closeDrawer">
-              取 消
-            </el-button>
-            <el-button type="primary" @click="enterDrawer">
-              确 定
-            </el-button>
+            <el-button @click="closeDrawer">{{ $t('admin.common.cancel') }}</el-button>
+            <el-button type="primary" @click="enterDrawer">{{ $t('admin.common.confirm') }}</el-button>
           </div>
         </div>
       </template>
@@ -132,57 +123,53 @@
         :rules="rules"
         label-width="110px"
       >
-        <el-form-item
-          label="展示值"
-          prop="label"
-        >
+        <el-form-item label="Parent item" prop="parentID">
+          <el-cascader
+            v-model="formData.parentID"
+            :options="[rootOption,...treeData]"
+            :props="cascadeProps"
+            placeholder="Select parent item (optional)"
+            clearable
+            filterable
+            :style="{ width: '100%' }"
+            @change="handleParentChange"
+          />
+        </el-form-item>
+        <el-form-item label="Label" prop="label">
           <el-input
             v-model="formData.label"
-            placeholder="请输入展示值"
+            placeholder="Enter label"
             clearable
-            :style="{width: '100%'}"
+            :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item
-          label="字典值"
-          prop="value"
-        >
+        <el-form-item label="Value" prop="value">
           <el-input
             v-model="formData.value"
-            placeholder="请输入字典值"
+            placeholder="Enter value"
             clearable
-            :style="{width: '100%'}"
+            :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item
-          label="扩展值"
-          prop="extend"
-        >
+        <el-form-item label="Extend" prop="extend">
           <el-input
             v-model="formData.extend"
-            placeholder="请输入扩展值"
+            placeholder="Enter extend"
             clearable
-            :style="{width: '100%'}"
+            :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item
-          label="启用状态"
-          prop="status"
-          required
-        >
+        <el-form-item label="Status" prop="status" required>
           <el-switch
             v-model="formData.status"
-            active-text="开启"
-            inactive-text="停用"
+            :active-text="$t('admin.common.enabled')"
+            :inactive-text="$t('admin.common.disabled')"
           />
         </el-form-item>
-        <el-form-item
-          label="排序标记"
-          prop="sort"
-        >
+        <el-form-item label="Sort" prop="sort">
           <el-input-number
             v-model.number="formData.sort"
-            placeholder="排序标记"
+            placeholder="Sort"
           />
         </el-form-item>
       </el-form>
@@ -191,171 +178,253 @@
 </template>
 
 <script setup>
-import {
-  createSysDictionaryDetail,
-  deleteSysDictionaryDetail,
-  updateSysDictionaryDetail,
-  findSysDictionaryDetail,
-  getSysDictionaryDetailList
-} from '@/api/sysDictionaryDetail' // 此处请自行替换地址
-import { ref, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { formatBoolean, formatDate } from '@/utils/format'
+  import {
+    createSysDictionaryDetail,
+    deleteSysDictionaryDetail,
+    updateSysDictionaryDetail,
+    findSysDictionaryDetail,
+    getDictionaryTreeList
+  } from '@/api/sysDictionaryDetail' // replace API module path if needed
+  import { ref, watch } from 'vue'
+  import { ElMessage, ElMessageBox } from 'element-plus'
+  import { formatBoolean, formatDate } from '@/utils/format'
+  import { useAppStore } from '@/pinia'
+  import { Search } from '@element-plus/icons-vue'
 
-defineOptions({
-  name: 'SysDictionaryDetail'
-})
-
-const props = defineProps({
-  sysDictionaryID: {
-    type: Number,
-    default: 0
-  }
-})
-
-const formData = ref({
-  label: null,
-  value: null,
-  status: true,
-  sort: null
-})
-const rules = ref({
-  label: [
-    {
-      required: true,
-      message: '请输入展示值',
-      trigger: 'blur'
-    }
-  ],
-  value: [
-    {
-      required: true,
-      message: '请输入字典值',
-      trigger: 'blur'
-    }
-  ],
-  sort: [
-    {
-      required: true,
-      message: '排序标记',
-      trigger: 'blur'
-    }
-  ]
-})
-
-const page = ref(1)
-const total = ref(0)
-const pageSize = ref(10)
-const tableData = ref([])
-
-// 分页
-const handleSizeChange = (val) => {
-  pageSize.value = val
-  getTableData()
-}
-
-const handleCurrentChange = (val) => {
-  page.value = val
-  getTableData()
-}
-
-// 查询
-const getTableData = async() => {
-  const table = await getSysDictionaryDetailList({
-    page: page.value,
-    pageSize: pageSize.value,
-    sysDictionaryID: props.sysDictionaryID
+  defineOptions({
+    name: 'SysDictionaryDetail'
   })
-  if (table.code === 0) {
-    tableData.value = table.data.list
-    total.value = table.data.total
-    page.value = table.data.page
-    pageSize.value = table.data.pageSize
-  }
-}
 
-getTableData()
+  const appStore = useAppStore()
+  const searchName = ref('')
 
-const type = ref('')
-const drawerFormVisible = ref(false)
-const updateSysDictionaryDetailFunc = async(row) => {
-  drawerForm.value && drawerForm.value.clearValidate()
-  const res = await findSysDictionaryDetail({ ID: row.ID })
-  type.value = 'update'
-  if (res.code === 0) {
-    formData.value = res.data.reSysDictionaryDetail
-    drawerFormVisible.value = true
-  }
-}
+  const props = defineProps({
+    sysDictionaryID: {
+      type: Number,
+      default: 0
+    }
+  })
 
-const closeDrawer = () => {
-  drawerFormVisible.value = false
-  formData.value = {
+  const formData = ref({
     label: null,
     value: null,
     status: true,
     sort: null,
-    sysDictionaryID: props.sysDictionaryID
-  }
-}
-const deleteSysDictionaryDetailFunc = async(row) => {
-  ElMessageBox.confirm('确定要删除吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async() => {
-    const res = await deleteSysDictionaryDetail({ ID: row.ID })
-    if (res.code === 0) {
-      ElMessage({
-        type: 'success',
-        message: '删除成功'
-      })
-      if (tableData.value.length === 1 && page.value > 1) {
-        page.value--
+    parentID: null
+  })
+
+  const rules = ref({
+    label: [
+      {
+        required: true,
+        message: 'Label is required',
+        trigger: 'blur'
       }
-      getTableData()
-    }
+    ],
+    value: [
+      {
+        required: true,
+        message: 'Value is required',
+        trigger: 'blur'
+      }
+    ],
+    sort: [
+      {
+        required: true,
+        message: 'Sort is required',
+        trigger: 'blur'
+      }
+    ]
   })
-}
 
-const drawerForm = ref(null)
-const enterDrawer = async() => {
-  drawerForm.value.validate(async valid => {
-    formData.value.sysDictionaryID = props.sysDictionaryID
-    if (!valid) return
-    let res
-    switch (type.value) {
-      case 'create':
-        res = await createSysDictionaryDetail(formData.value)
-        break
-      case 'update':
-        res = await updateSysDictionaryDetail(formData.value)
-        break
-      default:
-        res = await createSysDictionaryDetail(formData.value)
-        break
+  const treeData = ref([])
+  const displayTreeData = ref([])
+
+  // Cascader config
+  const cascadeProps = {
+    value: 'ID',
+    label: 'label',
+    children: 'children',
+    checkStrictly: true, // allow selecting any level
+    emitPath: false // return only selected node value
+  }
+
+
+  const normalizeSearch = (value) => (value ?? '').toString().toLowerCase()
+
+  const filterTree = (nodes, keyword) => {
+    const trimmed = normalizeSearch(keyword).trim()
+    if (!trimmed) {
+      return nodes
     }
-    if (res.code === 0) {
-      ElMessage({
-        type: 'success',
-        message: '创建/更改成功'
+    const walk = (list) => {
+      const result = []
+      for (const node of list) {
+        const label = normalizeSearch(node.label)
+        const children = Array.isArray(node.children) ? walk(node.children) : []
+        if (label.includes(trimmed) || children.length > 0) {
+          result.push({
+            ...node,
+            children
+          })
+        }
+      }
+      return result
+    }
+    return walk(nodes)
+  }
+
+  const applySearch = () => {
+    displayTreeData.value = filterTree(treeData.value, searchName.value)
+  }
+
+  // Fetch tree data
+  const getTreeData = async () => {
+    if (!props.sysDictionaryID) return
+    try {
+      const res = await getDictionaryTreeList({
+        sysDictionaryID: props.sysDictionaryID
       })
-      closeDrawer()
-      getTableData()
+      if (res.code === 0) {
+        treeData.value = res.data.list || []
+        applySearch()
+      }
+    } catch (error) {
+      console.error('failed to fetch tree data:', error)
+      ElMessage.error('Failed to load tree data')
     }
-  })
-}
-const openDrawer = () => {
-  type.value = 'create'
-  drawerForm.value && drawerForm.value.clearValidate()
-  drawerFormVisible.value = true
-}
+  }
 
-watch(() => props.sysDictionaryID, () => {
-  getTableData()
-})
+  const rootOption = {
+    ID: null,
+    label: 'No parent (root)'
+  }
 
+
+  // Initial load
+  getTreeData()
+
+  const type = ref('')
+  const drawerFormVisible = ref(false)
+
+  const updateSysDictionaryDetailFunc = async (row) => {
+    drawerForm.value && drawerForm.value.clearValidate()
+    const res = await findSysDictionaryDetail({ ID: row.ID })
+    type.value = 'update'
+    if (res.code === 0) {
+      formData.value = res.data.reSysDictionaryDetail
+      drawerFormVisible.value = true
+    }
+  }
+
+  // Add child node
+  const addChildNode = (parentNode) => {
+    console.log(parentNode)
+    type.value = 'create'
+    formData.value = {
+      label: null,
+      value: null,
+      status: true,
+      sort: null,
+      parentID: parentNode.ID,
+      sysDictionaryID: props.sysDictionaryID
+    }
+    drawerForm.value && drawerForm.value.clearValidate()
+    drawerFormVisible.value = true
+  }
+
+  // Handle parent selection change
+  const handleParentChange = (value) => {
+    formData.value.parentID = value
+  }
+
+  const closeDrawer = () => {
+    drawerFormVisible.value = false
+    formData.value = {
+      label: null,
+      value: null,
+      status: true,
+      sort: null,
+      parentID: null,
+      sysDictionaryID: props.sysDictionaryID
+    }
+  }
+
+  const deleteSysDictionaryDetailFunc = async (row) => {
+    ElMessageBox.confirm('Delete this item?', 'Confirm', {
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    }).then(async () => {
+      const res = await deleteSysDictionaryDetail({ ID: row.ID })
+      if (res.code === 0) {
+        ElMessage({
+          type: 'success',
+          message: 'Deleted'
+        })
+        await getTreeData() // reload
+      }
+    })
+  }
+
+  const drawerForm = ref(null)
+  const enterDrawer = async () => {
+    drawerForm.value.validate(async (valid) => {
+      formData.value.sysDictionaryID = props.sysDictionaryID
+      if (!valid) return
+      let res
+      switch (type.value) {
+        case 'create':
+          res = await createSysDictionaryDetail(formData.value)
+          break
+        case 'update':
+          res = await updateSysDictionaryDetail(formData.value)
+          break
+        default:
+          res = await createSysDictionaryDetail(formData.value)
+          break
+      }
+      if (res.code === 0) {
+        ElMessage({
+          type: 'success',
+          message: 'Saved'
+        })
+        closeDrawer()
+        await getTreeData() // reload
+      }
+    })
+  }
+
+  const openDrawer = () => {
+    type.value = 'create'
+    formData.value.parentID = null
+    drawerForm.value && drawerForm.value.clearValidate()
+    drawerFormVisible.value = true
+  }
+
+  const clearSearchInput = () => {
+    searchName.value = ''
+    applySearch()
+  }
+
+  const handleCloseSearchInput = () => {
+    // Handle closing the search input
+  }
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      applySearch()
+    }
+  }
+
+  watch(
+    () => props.sysDictionaryID,
+    () => {
+      getTreeData()
+    }
+  )
 </script>
 
-<style>
+<style scoped>
+
 </style>

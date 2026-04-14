@@ -1,12 +1,12 @@
 package main
 
 import (
-	_ "go.uber.org/automaxprocs"
-	"go.uber.org/zap"
-
 	"github.com/flipped-aurora/gin-vue-admin/server/core"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/global/i18n"
 	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
+	_ "go.uber.org/automaxprocs"
+	"go.uber.org/zap"
 )
 
 //go:generate go env -w GO111MODULE=on
@@ -14,26 +14,46 @@ import (
 //go:generate go mod tidy
 //go:generate go mod download
 
-// @title                       Gin-Vue-Admin Swagger API接口文档
-// @version                     v2.7.0
-// @description                 使用gin+vue进行极速开发的全栈开发基础平台
+// @Tag in this section controls ordering; add endpoints that need sorting using the format below
+// swag init resolves @Tag from the entry file only (default: main.go)
+// Or use --generalInfo to point at another file
+// @Tag.Name        Base
+// @Tag.Name        SysUser
+// @Tag.Description User
+
+// @title                       Gin-Vue-Admin Swagger API
+// @version                     v2.9.1
+// @description                 Full-stack rapid development with Gin + Vue
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header
 // @name                        x-token
 // @BasePath                    /
 func main() {
-	global.GVA_VP = core.Viper() // 初始化Viper
+	// Initialize system
+	initializeSystem()
+	// Run HTTP server
+	core.RunServer()
+}
+
+// initializeSystem wires all subsystems
+// Split out so reload paths can call it deterministically
+func initializeSystem() {
+	global.GVA_VP = core.Viper() // init Viper
 	initialize.OtherInit()
-	global.GVA_LOG = core.Zap() // 初始化zap日志库
+	// Story 8.3: load i18n message bundles before anything can call the
+	// response helpers. Path is relative to the admin server working
+	// directory (same convention as resource/rbac_model.conf etc.).
+	if err := i18n.Load("resource/i18n"); err != nil {
+		// Non-fatal: helpers will echo bundle keys instead of translations.
+		zap.L().Warn("i18n bundles failed to load", zap.Error(err))
+	}
+	global.GVA_LOG = core.Zap() // init zap logger
 	zap.ReplaceGlobals(global.GVA_LOG)
-	global.GVA_DB = initialize.Gorm() // gorm连接数据库
+	global.GVA_DB = initialize.Gorm() // connect database via GORM
 	initialize.Timer()
 	initialize.DBList()
+	initialize.SetupHandlers() // register global handlers
 	if global.GVA_DB != nil {
-		initialize.RegisterTables() // 初始化表
-		// 程序结束前关闭数据库链接
-		db, _ := global.GVA_DB.DB()
-		defer db.Close()
+		initialize.RegisterTables() // migrate / register tables
 	}
-	core.RunWindowsServer()
 }

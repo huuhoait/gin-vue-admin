@@ -3,22 +3,19 @@ package system
 import (
 	"errors"
 	"strconv"
-	"sync"
 
 	"gorm.io/gorm"
 
-	"github.com/casbin/casbin/v2"
-	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	_ "github.com/go-sql-driver/mysql"
-	"go.uber.org/zap"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateCasbin
-//@description: 更新casbin权限
+//@description: Update casbin permissions
 //@param: authorityId string, casbinInfos []request.CasbinInfo
 //@return: error
 
@@ -26,11 +23,37 @@ type CasbinService struct{}
 
 var CasbinServiceApp = new(CasbinService)
 
-func (casbinService *CasbinService) UpdateCasbin(AuthorityID uint, casbinInfos []request.CasbinInfo) error {
+func (casbinService *CasbinService) UpdateCasbin(adminAuthorityID, AuthorityID uint, casbinInfos []request.CasbinInfo) error {
+
+	err := AuthorityServiceApp.CheckAuthorityIDAuth(adminAuthorityID, AuthorityID)
+	if err != nil {
+		return err
+	}
+
+	if global.GVA_CONFIG.System.UseStrictAuth {
+		apis, e := ApiServiceApp.GetAllApis(adminAuthorityID)
+		if e != nil {
+			return e
+		}
+
+		for i := range casbinInfos {
+			hasApi := false
+			for j := range apis {
+				if apis[j].Path == casbinInfos[i].Path && apis[j].Method == casbinInfos[i].Method {
+					hasApi = true
+					break
+				}
+			}
+			if !hasApi {
+				return errors.New("some APIs are not in the authorized list")
+			}
+		}
+	}
+
 	authorityId := strconv.Itoa(int(AuthorityID))
 	casbinService.ClearCasbin(0, authorityId)
 	rules := [][]string{}
-	//做权限去重处理
+	// deduplicate permissions
 	deduplicateMap := make(map[string]bool)
 	for _, v := range casbinInfos {
 		key := authorityId + v.Path + v.Method
@@ -39,17 +62,20 @@ func (casbinService *CasbinService) UpdateCasbin(AuthorityID uint, casbinInfos [
 			rules = append(rules, []string{authorityId, v.Path, v.Method})
 		}
 	}
-	e := casbinService.Casbin()
+	if len(rules) == 0 {
+		return nil
+	} // no need to call AddPolicies when setting empty permissions
+	e := utils.GetCasbin()
 	success, _ := e.AddPolicies(rules)
 	if !success {
-		return errors.New("存在相同api,添加失败,请联系管理员")
+		return errors.New("duplicate API exists, failed to add, please contact administrator")
 	}
 	return nil
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateCasbinApi
-//@description: API更新随动
+//@description: Update casbin when API changes
 //@param: oldPath string, newPath string, oldMethod string, newMethod string
 //@return: error
 
@@ -58,24 +84,24 @@ func (casbinService *CasbinService) UpdateCasbinApi(oldPath string, newPath stri
 		"v1": newPath,
 		"v2": newMethod,
 	}).Error
-	e := casbinService.Casbin()
-	err = e.LoadPolicy()
 	if err != nil {
 		return err
 	}
-	return err
+
+	e := utils.GetCasbin()
+	return e.LoadPolicy()
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetPolicyPathByAuthorityId
-//@description: 获取权限列表
+//@description: Get policy path list by authority id
 //@param: authorityId string
 //@return: pathMaps []request.CasbinInfo
 
 func (casbinService *CasbinService) GetPolicyPathByAuthorityId(AuthorityID uint) (pathMaps []request.CasbinInfo) {
-	e := casbinService.Casbin()
+	e := utils.GetCasbin()
 	authorityId := strconv.Itoa(int(AuthorityID))
-	list := e.GetFilteredPolicy(0, authorityId)
+	list, _ := e.GetFilteredPolicy(0, authorityId)
 	for _, v := range list {
 		pathMaps = append(pathMaps, request.CasbinInfo{
 			Path:   v[1],
@@ -87,19 +113,19 @@ func (casbinService *CasbinService) GetPolicyPathByAuthorityId(AuthorityID uint)
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: ClearCasbin
-//@description: 清除匹配的权限
+//@description: Clear matching permissions
 //@param: v int, p ...string
 //@return: bool
 
 func (casbinService *CasbinService) ClearCasbin(v int, p ...string) bool {
-	e := casbinService.Casbin()
+	e := utils.GetCasbin()
 	success, _ := e.RemoveFilteredPolicy(v, p...)
 	return success
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: RemoveFilteredPolicy
-//@description: 使用数据库方法清理筛选的politicy 此方法需要调用FreshCasbin方法才可以在系统中即刻生效
+//@description: Remove filtered policy using database method; requires calling FreshCasbin to take effect immediately
 //@param: db *gorm.DB, authorityId string
 //@return: error
 
@@ -109,7 +135,7 @@ func (casbinService *CasbinService) RemoveFilteredPolicy(db *gorm.DB, authorityI
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: SyncPolicy
-//@description: 同步目前数据库的policy 此方法需要调用FreshCasbin方法才可以在系统中即刻生效
+//@description: Sync current database policy; requires calling FreshCasbin to take effect immediately
 //@param: db *gorm.DB, authorityId string, rules [][]string
 //@return: error
 
@@ -123,7 +149,7 @@ func (casbinService *CasbinService) SyncPolicy(db *gorm.DB, authorityId string, 
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: AddPolicies
-//@description: 添加匹配的权限
+//@description: Add matching permissions
 //@param: v int, p ...string
 //@return: bool
 
@@ -140,53 +166,50 @@ func (casbinService *CasbinService) AddPolicies(db *gorm.DB, rules [][]string) e
 	return db.Create(&casbinRules).Error
 }
 
-func (CasbinService *CasbinService) FreshCasbin() (err error) {
-	e := CasbinService.Casbin()
+func (casbinService *CasbinService) FreshCasbin() (err error) {
+	e := utils.GetCasbin()
 	err = e.LoadPolicy()
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Casbin
-//@description: 持久化到数据库  引入自定义规则
-//@return: *casbin.Enforcer
-
-var (
-	syncedCachedEnforcer *casbin.SyncedCachedEnforcer
-	once                 sync.Once
-)
-
-func (casbinService *CasbinService) Casbin() *casbin.SyncedCachedEnforcer {
-	once.Do(func() {
-		a, err := gormadapter.NewAdapterByDB(global.GVA_DB)
-		if err != nil {
-			zap.L().Error("适配数据库失败请检查casbin表是否为InnoDB引擎!", zap.Error(err))
-			return
+// GetAuthoritiesByApi gets all role IDs that have the specified API permission
+func (casbinService *CasbinService) GetAuthoritiesByApi(path, method string) (authorityIds []uint, err error) {
+	var rules []gormadapter.CasbinRule
+	err = global.GVA_DB.Where("ptype = 'p' AND v1 = ? AND v2 = ?", path, method).Find(&rules).Error
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range rules {
+		id, e := strconv.Atoi(r.V0)
+		if e == nil {
+			authorityIds = append(authorityIds, uint(id))
 		}
-		text := `
-		[request_definition]
-		r = sub, obj, act
-		
-		[policy_definition]
-		p = sub, obj, act
-		
-		[role_definition]
-		g = _, _
-		
-		[policy_effect]
-		e = some(where (p.eft == allow))
-		
-		[matchers]
-		m = r.sub == p.sub && keyMatch2(r.obj,p.obj) && r.act == p.act
-		`
-		m, err := model.NewModelFromString(text)
-		if err != nil {
-			zap.L().Error("字符串加载模型失败!", zap.Error(err))
-			return
+	}
+	return authorityIds, nil
+}
+
+// SetApiAuthorities fully replaces the role list associated with an API
+func (casbinService *CasbinService) SetApiAuthorities(path, method string, authorityIds []uint) error {
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		// 1. delete all existing role associations for this API
+		if err := tx.Where("ptype = 'p' AND v1 = ? AND v2 = ?", path, method).Delete(&gormadapter.CasbinRule{}).Error; err != nil {
+			return err
 		}
-		syncedCachedEnforcer, _ = casbin.NewSyncedCachedEnforcer(m, a)
-		syncedCachedEnforcer.SetExpireTime(60 * 60)
-		_ = syncedCachedEnforcer.LoadPolicy()
+		// 2. batch insert new association records
+		if len(authorityIds) > 0 {
+			newRules := make([]gormadapter.CasbinRule, 0, len(authorityIds))
+			for _, authorityId := range authorityIds {
+				newRules = append(newRules, gormadapter.CasbinRule{
+					Ptype: "p",
+					V0:    strconv.Itoa(int(authorityId)),
+					V1:    path,
+					V2:    method,
+				})
+			}
+			if err := tx.Create(&newRules).Error; err != nil {
+				return err
+			}
+		}
+		return nil
 	})
-	return syncedCachedEnforcer
 }

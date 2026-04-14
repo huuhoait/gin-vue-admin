@@ -1,56 +1,77 @@
 package request
 
 import (
+	common "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 )
 
 // Register User register structure
 type Register struct {
-	Username     string `json:"userName" example:"用户名"`
-	Password     string `json:"passWord" example:"密码"`
-	NickName     string `json:"nickName" example:"昵称"`
-	HeaderImg    string `json:"headerImg" example:"头像链接"`
-	AuthorityId  uint   `json:"authorityId" swaggertype:"string" example:"int 角色id"`
-	Enable       int    `json:"enable" swaggertype:"string" example:"int 是否启用"`
-	AuthorityIds []uint `json:"authorityIds" swaggertype:"string" example:"[]uint 角色id"`
-	Phone        string `json:"phone" example:"电话号码"`
-	Email        string `json:"email" example:"电子邮箱"`
+	Username     string `json:"userName" example:"username"`
+	Password     string `json:"passWord" example:"password"`
+	NickName     string `json:"nickName" example:"nickname"`
+	HeaderImg    string `json:"headerImg" example:"avatar URL"`
+	AuthorityId  uint   `json:"authorityId" swaggertype:"string" example:"int Roleid"`
+	Enable       int    `json:"enable" swaggertype:"string" example:"int YesNoEnable"`
+	AuthorityIds []uint `json:"authorityIds" swaggertype:"string" example:"[]uint Roleid"`
+	Phone        string `json:"phone" example:"PhoneNumberCode"`
+	Email        string `json:"email" example:"electricitySubEmail"`
 }
 
-// User login structure
+// Login User login structure
 type Login struct {
-	Username  string `json:"username"`  // 用户名
-	Password  string `json:"password"`  // 密码
-	Captcha   string `json:"captcha"`   // 验证码
-	CaptchaId string `json:"captchaId"` // 验证码ID
+	Username  string `json:"username"`  // username
+	Password  string `json:"password"`  // password
+	Captcha   string `json:"captcha"`   // captcha
+	CaptchaId string `json:"captchaId"` // captchaID
 }
 
-// Modify password structure
+// ChangePasswordReq Modify password structure
 type ChangePasswordReq struct {
-	ID          uint   `json:"-"`           // 从 JWT 中提取 user id，避免越权
-	Password    string `json:"password"`    // 密码
-	NewPassword string `json:"newPassword"` // 新密码
+	ID          uint   `json:"-"`           // From JWT InRaiseFetch user id, Avoidunauthorized access
+	Password    string `json:"password"`    // password
+	NewPassword string `json:"newPassword"` // Newpassword
 }
 
-// Modify  user's auth structure
+type ResetPassword struct {
+	ID       uint   `json:"ID" form:"ID"`
+	Password string `json:"password" form:"password" gorm:"comment:user login password"` // user login password
+}
+
+// SetUserAuth Modify user's auth structure
 type SetUserAuth struct {
-	AuthorityId uint `json:"authorityId"` // 角色ID
+	AuthorityId uint `json:"authorityId"` // role ID
 }
 
-// Modify  user's auth structure
+// SetUserAuthorities Modify user's auth structure
 type SetUserAuthorities struct {
 	ID           uint
-	AuthorityIds []uint `json:"authorityIds"` // 角色ID
+	AuthorityIds []uint `json:"authorityIds"` // role ID
 }
 
 type ChangeUserInfo struct {
-	ID           uint                  `gorm:"primarykey"`                                                                           // 主键ID
-	NickName     string                `json:"nickName" gorm:"default:系统用户;comment:用户昵称"`                                            // 用户昵称
-	Phone        string                `json:"phone"  gorm:"comment:用户手机号"`                                                          // 用户手机号
-	AuthorityIds []uint                `json:"authorityIds" gorm:"-"`                                                                // 角色ID
-	Email        string                `json:"email"  gorm:"comment:用户邮箱"`                                                           // 用户邮箱
-	HeaderImg    string                `json:"headerImg" gorm:"default:https://qmplusimg.henrongyi.top/gva_header.jpg;comment:用户头像"` // 用户头像
-	SideMode     string                `json:"sideMode"  gorm:"comment:用户侧边主题"`                                                      // 用户侧边主题
-	Enable       int                   `json:"enable" gorm:"comment:冻结用户"`                                                           //冻结用户
+	ID           uint                  `gorm:"primarykey"`                                                                           // primary key ID
+	NickName     string                `json:"nickName" gorm:"default:System User;comment:user nickname"`                                            // user nickname
+	Phone        string                `json:"phone"  gorm:"comment:user phone number"`                                                          // user phone number
+	AuthorityIds []uint                `json:"authorityIds" gorm:"-"`                                                                // role ID
+	Email        string                `json:"email"  gorm:"comment:user email"`                                                           // user email
+	HeaderImg    string                `json:"headerImg" gorm:"default:https://qmplusimg.henrongyi.top/gva_header.jpg;comment:user avatar"` // user avatar
+	Enable       int                   `json:"enable" gorm:"comment:FreezeUser"`                                                           //FreezeUser
 	Authorities  []system.SysAuthority `json:"-" gorm:"many2many:sys_user_authority;"`
+}
+
+type GetUserList struct {
+	common.PageInfo
+	Username string `json:"username" form:"username"`
+	NickName string `json:"nickName" form:"nickName"`
+	Phone    string `json:"phone" form:"phone"`
+	Email    string `json:"email" form:"email"`
+	OrderKey string `json:"orderKey" form:"orderKey"` // sort
+	Desc     bool   `json:"desc" form:"desc"`         // sortMethod:Ascendingfalse(default)|Descendingtrue
+}
+
+// SetRoleUsers Approvedrole IDfull overwriteassociated userList
+type SetRoleUsers struct {
+	AuthorityId uint   `json:"authorityId" form:"authorityId"` // role ID
+	UserIds     []uint `json:"userIds" form:"userIds"`         // User IDList
 }

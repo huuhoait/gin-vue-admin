@@ -13,7 +13,7 @@ func (s *EmailRouter) InitEmailRouter(Router *gin.RouterGroup) {
 	EmailApi := api.ApiGroupApp.EmailApi.EmailTest
 	SendEmail := api.ApiGroupApp.EmailApi.SendEmail
 	{
-		emailRouter.POST("emailTest", EmailApi)  // 发送测试邮件
-		emailRouter.POST("sendEmail", SendEmail) // 发送邮件
+		emailRouter.POST("emailTest", EmailApi)  // send test email
+		emailRouter.POST("sendEmail", SendEmail) // send email
 	}
 }

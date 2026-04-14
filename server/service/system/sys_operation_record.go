@@ -9,7 +9,7 @@ import (
 
 //@author: [granty1](https://github.com/granty1)
 //@function: CreateSysOperationRecord
-//@description: 创建记录
+//@description: create a record
 //@param: sysOperationRecord model.SysOperationRecord
 //@return: err error
 
@@ -17,15 +17,10 @@ type OperationRecordService struct{}
 
 var OperationRecordServiceApp = new(OperationRecordService)
 
-func (operationRecordService *OperationRecordService) CreateSysOperationRecord(sysOperationRecord system.SysOperationRecord) (err error) {
-	err = global.GVA_DB.Create(&sysOperationRecord).Error
-	return err
-}
-
 //@author: [granty1](https://github.com/granty1)
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteSysOperationRecordByIds
-//@description: 批量删除记录
+//@description: batch delete records
 //@param: ids request.IdsReq
 //@return: err error
 
@@ -36,7 +31,7 @@ func (operationRecordService *OperationRecordService) DeleteSysOperationRecordBy
 
 //@author: [granty1](https://github.com/granty1)
 //@function: DeleteSysOperationRecord
-//@description: 删除操作记录
+//@description: delete an operation record
 //@param: sysOperationRecord model.SysOperationRecord
 //@return: err error
 
@@ -47,7 +42,7 @@ func (operationRecordService *OperationRecordService) DeleteSysOperationRecord(s
 
 //@author: [granty1](https://github.com/granty1)
 //@function: GetSysOperationRecord
-//@description: 根据id获取单条操作记录
+//@description: get a single operation record by id
 //@param: id uint
 //@return: sysOperationRecord system.SysOperationRecord, err error
 
@@ -59,17 +54,17 @@ func (operationRecordService *OperationRecordService) GetSysOperationRecord(id u
 //@author: [granty1](https://github.com/granty1)
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetSysOperationRecordInfoList
-//@description: 分页获取操作记录列表
+//@description: get paginated operation record list
 //@param: info systemReq.SysOperationRecordSearch
 //@return: list interface{}, total int64, err error
 
 func (operationRecordService *OperationRecordService) GetSysOperationRecordInfoList(info systemReq.SysOperationRecordSearch) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	// 创建db
+	// create db
 	db := global.GVA_DB.Model(&system.SysOperationRecord{})
 	var sysOperationRecords []system.SysOperationRecord
-	// 如果有条件搜索 下方会自动创建搜索语句
+	// if search conditions exist, search queries will be automatically built below
 	if info.Method != "" {
 		db = db.Where("method = ?", info.Method)
 	}

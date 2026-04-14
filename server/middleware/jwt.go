@@ -2,43 +2,38 @@ package middleware
 
 import (
 	"errors"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	"github.com/golang-jwt/jwt/v4"
-	"go.uber.org/zap"
 	"strconv"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/service"
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/golang-jwt/jwt/v5"
 
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/gin-gonic/gin"
 )
 
-var jwtService = service.ServiceGroupApp.SystemServiceGroup.JwtService
-
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 我们这里jwt鉴权取头部信息 x-token 登录时回返回token信息 这里前端需要把token存储到cookie或者本地localStorage中 不过需要跟后端协商过期时间 可以约定刷新令牌或者重新登录
+		// JWT authentication retrieves the x-token header; the frontend should store the token in cookies or localStorage and coordinate expiration time with the backend
 		token := utils.GetToken(c)
 		if token == "" {
-			response.NoAuth("未登录或非法访问", c)
+			response.NoAuth("Not logged in or unauthorized access, please log in", c)
 			c.Abort()
 			return
 		}
-		if jwtService.IsBlacklist(token) {
-			response.NoAuth("您的帐户异地登陆或令牌失效", c)
+		if isBlacklist(token) {
+			response.NoAuth("Your account has been logged in from another location or the token is invalid", c)
 			utils.ClearToken(c)
 			c.Abort()
 			return
 		}
 		j := utils.NewJWT()
-		// parseToken 解析token包含的信息
+		// parseToken parses the information contained in the token
 		claims, err := j.ParseToken(token)
 		if err != nil {
 			if errors.Is(err, utils.TokenExpired) {
-				response.NoAuth("授权已过期", c)
+				response.NoAuth("Login has expired, please log in again", c)
 				utils.ClearToken(c)
 				c.Abort()
 				return
@@ -49,8 +44,8 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
-		// 已登录用户被管理员禁用 需要使该用户的jwt失效 此处比较消耗性能 如果需要 请自行打开
-		// 用户被删除的逻辑 需要优化 此处比较消耗性能 如果需要 请自行打开
+		// logged-in user disabled by admin - need to invalidate their JWT; this is performance-intensive, enable if needed
+		// user deletion logic needs optimization; this is performance-intensive, enable if needed
 
 		//if user, err := userService.FindUserByUuid(claims.UUID.String()); err != nil || user.Enable == 2 {
 		//	_ = jwtService.JsonInBlacklist(system.JwtBlacklist{Jwt: token})
@@ -65,16 +60,10 @@ func JWTAuth() gin.HandlerFunc {
 			newClaims, _ := j.ParseToken(newToken)
 			c.Header("new-token", newToken)
 			c.Header("new-expires-at", strconv.FormatInt(newClaims.ExpiresAt.Unix(), 10))
-			utils.SetToken(c, newToken, int(dr.Seconds()))
+			utils.SetToken(c, newToken, int(dr.Seconds()/60))
 			if global.GVA_CONFIG.System.UseMultipoint {
-				RedisJwtToken, err := jwtService.GetRedisJWT(newClaims.Username)
-				if err != nil {
-					global.GVA_LOG.Error("get redis jwt failed", zap.Error(err))
-				} else { // 当之前的取成功时才进行拉黑操作
-					_ = jwtService.JsonInBlacklist(system.JwtBlacklist{Jwt: RedisJwtToken})
-				}
-				// 无论如何都要记录当前的活跃状态
-				_ = jwtService.SetRedisJWT(newToken, newClaims.Username)
+				// record new active JWT
+				_ = utils.SetRedisJWT(newToken, newClaims.Username)
 			}
 		}
 		c.Next()
@@ -86,4 +75,15 @@ func JWTAuth() gin.HandlerFunc {
 			c.Header("new-expires-at", newExpiresAt.(string))
 		}
 	}
+}
+
+//@author: [piexlmax](https://github.com/piexlmax)
+//@function: IsBlacklist
+//@description: check if JWT is in the blacklist
+//@param: jwt string
+//@return: bool
+
+func isBlacklist(jwt string) bool {
+	_, ok := global.BlackCache.Get(jwt)
+	return ok
 }

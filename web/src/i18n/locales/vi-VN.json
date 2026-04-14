@@ -1,0 +1,680 @@
+{
+  "admin": {
+    "common": {
+      "ok": "Thành công",
+      "fail": "Thất bại",
+      "confirm": "Xác nhận",
+      "cancel": "Huỷ",
+      "save": "Lưu",
+      "delete": "Xoá",
+      "edit": "Chỉnh sửa",
+      "add": "Thêm mới",
+      "generate": "Tạo",
+      "search": "Tìm kiếm",
+      "reset": "Đặt lại",
+      "refresh": "Làm mới",
+      "export": "Xuất",
+      "import": "Nhập",
+      "select": "Vui lòng chọn",
+      "loading": "Đang tải...",
+      "no_data": "Không có dữ liệu",
+      "operation": "Thao tác",
+      "status": "Trạng thái",
+      "created_at": "Ngày tạo",
+      "updated_at": "Ngày cập nhật",
+      "are_you_sure": "Bạn có chắc chắn không?",
+      "delete_confirm": "Bạn có chắc muốn xoá bản ghi này?",
+      "yes": "Có",
+      "no": "Không",
+      "enabled": "Bật",
+      "disabled": "Tắt"
+    },
+    "auth": {
+      "login": "Đăng nhập",
+      "logout": "Đăng xuất",
+      "username": "Tên đăng nhập",
+      "password": "Mật khẩu",
+      "captcha": "Mã xác thực",
+      "remember_me": "Ghi nhớ đăng nhập",
+      "login_failed": "Đăng nhập thất bại",
+      "welcome_back": "Chào mừng trở lại"
+    },
+    "menu": {
+      "dashboard": "Bảng điều khiển",
+      "user_mgmt": "Quản lý người dùng",
+      "role_mgmt": "Quản lý vai trò",
+      "menu_mgmt": "Quản lý menu",
+      "api_mgmt": "Quản lý API",
+      "system_tools": "Công cụ hệ thống",
+      "kyc_mgmt": "Quản lý KYC",
+      "commission_mgmt": "Quản lý hoa hồng",
+      "skyagent": "SkyAgent",
+      "kyc": "Quản lý KYC",
+      "kyc_cases": "Danh sách hồ sơ",
+      "commission": "Hoa hồng"
+    },
+    "language": {
+      "switcher": "Ngôn ngữ",
+      "vi_vn": "Tiếng Việt",
+      "en_us": "English"
+    },
+    "system_tools": {
+      "auto_code": {
+        "dev_only_warning": "Chỉ dùng cho môi trường phát triển. Không khuyến nghị dùng cho production. Nhấn để xem demo.",
+        "create_with_ai": "Tạo bằng AI",
+        "get_ai_path": "Lấy AI-Path",
+        "ai_prompt_placeholder": "Hiện đang miễn phí.\\nHãy thử copy một ảnh rồi nhấn Ctrl+V (hoặc Cmd+V).\\nMô tả bảng của bạn để AI hỗ trợ.\\nLấy AI-Path tại trang hồ sơ chợ plugin, điền vào config.yaml (autocode -> ai-path) rồi khởi động lại project.\\nNhấn Ctrl+Enter (hoặc Cmd+Enter) để tạo.",
+        "free_go_to": "Miễn phí: vào",
+        "plugin_market_profile": "Hồ sơ chợ plugin",
+        "apply_ai_path_hint": "Đăng ký AI-Path và cấu hình vào ai-path trong config.yaml.",
+        "image_to_text": "Nhận dạng ảnh",
+        "create_from_database": "Tạo từ cơ sở dữ liệu",
+        "business_db": "DB nghiệp vụ",
+        "business_db_tooltip": "Ghi chú: cấu hình multi-DB trước trong db-list. Nếu chưa cấu hình thì cấu hình và khởi động lại service. (Chọn DB để lấy danh sách bảng.)",
+        "select_business_db": "Chọn DB nghiệp vụ",
+        "database": "Cơ sở dữ liệu",
+        "select_database": "Chọn cơ sở dữ liệu",
+        "table": "Bảng",
+        "select_table": "Chọn bảng",
+        "use_this_table": "Dùng bảng này",
+        "auto_code_structure": "Cấu trúc sinh code",
+        "struct_name": "Tên struct",
+        "struct_name_placeholder": "Tự viết hoa chữ cái đầu",
+        "abbreviation": "Viết tắt",
+        "abbreviation_placeholder": "Nhập viết tắt của struct",
+        "display_name": "Tên hiển thị",
+        "file_name": "Tên file",
+        "template": "Mẫu",
+        "expert_mode": "Chế độ nâng cao",
+        "collapse": "Thu gọn",
+        "expand": "Mở rộng",
+        "basic_settings": "Thiết lập cơ bản",
+        "automation_settings": "Thiết lập tự động",
+        "advanced_settings": "Thiết lập nâng cao",
+        "tree_structure_settings": "Thiết lập cấu trúc cây",
+        "column_table": "Bảng",
+        "display_name_placeholder": "Dùng làm mô tả API tự động",
+        "file_name_tooltip": "Tên file mặc định khi sinh (khuyến nghị: camelCase, chữ cái đầu viết thường, ví dụ: sysXxxXxxx)",
+        "file_name_placeholder": "Nhập tên file",
+        "clear_stash": "Xoá tạm",
+        "stash": "Lưu tạm",
+        "generate_code": "Sinh mã",
+        "view_code": "Xem mã",
+        "preview_code": "Xem trước mã",
+        "field_editor": "Chỉnh sửa field",
+        "toolbar": "Thanh công cụ",
+        "select_all": "Chọn tất cả",
+        "copy": "Sao chép",
+        "generate_frontend": "Sinh frontend",
+        "generate_backend": "Sinh backend",
+        "msg_enter_struct_name": "Vui lòng nhập tên struct",
+        "msg_enter_description": "Vui lòng nhập mô tả",
+        "confirm_ai_overwrite_message": "AI sẽ xoá dữ liệu hiện tại để tạo lại. Bạn có muốn tiếp tục không?"
+      }
+    },
+    "login": {
+      "username_placeholder": "Vui lòng nhập tên đăng nhập",
+      "password_placeholder": "Vui lòng nhập mật khẩu",
+      "captcha_placeholder": "Vui lòng nhập mã xác thực",
+      "go_to_init": "Đi đến khởi tạo",
+      "form_invalid": "Vui lòng điền đúng thông tin đăng nhập",
+      "already_initialized": "Cơ sở dữ liệu đã được khởi tạo, không thể khởi tạo lại",
+      "link_docs": "Tài liệu",
+      "link_support": "Hỗ trợ",
+      "link_video": "Video",
+      "validation": {
+        "username_invalid": "Tên đăng nhập không hợp lệ",
+        "password_invalid": "Mật khẩu không hợp lệ",
+        "captcha_required": "Vui lòng nhập mã xác thực",
+        "captcha_numeric": "Mã xác thực phải là số",
+        "captcha_length": "Mã xác thực phải có ít nhất {n} chữ số"
+      }
+    },
+    "layout": {
+      "header": {
+        "current_role": "Vai trò hiện tại",
+        "switch_to": "Chuyển sang",
+        "profile": "Thông tin cá nhân"
+      },
+      "tools": {
+        "video_tutorial": "Hướng dẫn video",
+        "search": "Tìm kiếm",
+        "settings": "Cài đặt hệ thống",
+        "refresh": "Làm mới",
+        "toggle_theme": "Đổi giao diện",
+        "change_language": "Đổi ngôn ngữ"
+      },
+      "tabs": {
+        "home": "Trang chủ",
+        "close_all": "Đóng tất cả",
+        "close_left": "Đóng bên trái",
+        "close_right": "Đóng bên phải",
+        "close_other": "Đóng tab khác"
+      },
+      "settings": {
+        "title": "Cấu hình hệ thống",
+        "reset": "Đặt lại cấu hình",
+        "reset_description": "Khôi phục toàn bộ thiết lập về giá trị mặc định",
+        "reset_confirm_message": "Bạn có chắc muốn đặt lại toàn bộ cấu hình? Thao tác này không thể hoàn tác.",
+        "reset_success": "Đã đặt lại cấu hình",
+        "export": "Xuất cấu hình",
+        "export_description": "Xuất cấu hình hiện tại thành tệp JSON",
+        "export_success": "Đã xuất cấu hình",
+        "import": "Nhập cấu hình",
+        "import_description": "Nhập cấu hình từ tệp JSON",
+        "import_success": "Đã nhập cấu hình",
+        "import_format_error": "Tệp cấu hình sai định dạng",
+        "save_success": "Lưu thành công",
+        "tabs": {
+          "appearance": "Giao diện",
+          "layout": "Bố cục",
+          "general": "Chung"
+        },
+        "sections": {
+          "theme_mode": "Chế độ giao diện",
+          "theme_color": "Màu chủ đạo",
+          "global_size": "Kích thước tổng thể",
+          "accessibility": "Hỗ trợ thị giác",
+          "layout_mode": "Kiểu bố cục",
+          "ui_config": "Cấu hình giao diện",
+          "size_config": "Cấu hình kích thước",
+          "system_info": "Thông tin hệ thống",
+          "config_mgmt": "Quản lý cấu hình",
+          "about": "Giới thiệu dự án"
+        },
+        "sizes": {
+          "default": "Mặc định",
+          "large": "Lớn hơn",
+          "small": "Nhỏ hơn"
+        },
+        "items": {
+          "global_size_hint": "Cài đặt kích thước chung cho các thành phần",
+          "grey": {
+            "label": "Chế độ xám",
+            "hint": "Giảm độ bão hoà màu"
+          },
+          "weakness": {
+            "label": "Chế độ mù màu",
+            "hint": "Tối ưu độ tương phản"
+          },
+          "watermark": {
+            "label": "Hiển thị watermark",
+            "hint": "Hiển thị dấu ấn định danh trên trang"
+          },
+          "show_tabs": {
+            "label": "Hiển thị thanh tab",
+            "hint": "Điều hướng đa trang qua thẻ tab"
+          },
+          "transition": {
+            "label": "Hiệu ứng chuyển trang",
+            "hint": "Chọn hiệu ứng khi chuyển trang"
+          },
+          "side_width": {
+            "label": "Bề rộng thanh bên",
+            "hint": "Bề rộng khi thanh bên mở rộng hoàn toàn"
+          },
+          "side_collapsed": {
+            "label": "Bề rộng thanh bên (thu gọn)",
+            "hint": "Bề rộng tối thiểu khi thanh bên thu gọn"
+          },
+          "side_item_height": {
+            "label": "Chiều cao item menu",
+            "hint": "Chiều cao mỗi dòng trong menu thanh bên"
+          }
+        },
+        "transitions": {
+          "fade": "Mờ dần",
+          "slide": "Trượt",
+          "zoom": "Thu phóng",
+          "none": "Không hiệu ứng"
+        },
+        "theme_modes": {
+          "light": "Sáng",
+          "dark": "Tối",
+          "auto": "Theo hệ thống"
+        },
+        "layout_modes": {
+          "normal": {
+            "label": "Bố cục kinh điển",
+            "description": "Menu bên trái, thanh tiêu đề phía trên"
+          },
+          "head": {
+            "label": "Menu phía trên",
+            "description": "Bố cục menu ngang phía trên"
+          },
+          "combination": {
+            "label": "Bố cục hỗn hợp",
+            "description": "Kết hợp menu nhiều cấp"
+          },
+          "sidebar": {
+            "label": "Thanh bên cố định",
+            "description": "Menu cấp hai luôn hiển thị"
+          }
+        },
+        "colors": {
+          "presets_title": "Màu chọn sẵn",
+          "custom_title": "Màu tuỳ chỉnh",
+          "custom_hint": "Chọn bất kỳ màu nào làm màu chủ đạo",
+          "current_title": "Màu chủ đạo hiện tại",
+          "presets": {
+            "default": "Mặc định",
+            "morning_mist": "Xanh sương mai",
+            "mint": "Xanh bạc hà",
+            "rose": "Hồng phấn",
+            "lavender": "Oải hương",
+            "warm_sun": "Vàng nắng ấm",
+            "moon_silver": "Bạc ánh trăng",
+            "coral": "Cam san hô",
+            "sea_mist": "Xanh sương biển",
+            "olive": "Xanh ô liu",
+            "milk_tea": "Nâu sữa trà",
+            "dream_purple": "Tím mộng mơ",
+            "matcha": "Xanh matcha"
+          }
+        },
+        "info": {
+          "version": "Phiên bản",
+          "frontend": "Framework Frontend",
+          "ui_library": "Thư viện UI",
+          "build_tool": "Công cụ build",
+          "browser": "Trình duyệt",
+          "screen": "Độ phân giải màn hình"
+        },
+        "about": {
+          "description": "Nền tảng phát triển full-stack dựa trên Vue3 + Gin, cung cấp giải pháp quản trị hoàn chỉnh.",
+          "github": "Kho GitHub",
+          "docs": "Tài liệu chính thức"
+        }
+      }
+    }
+    ,
+    "superadmin": {
+      "common": {
+        "title": "Quản trị hệ thống"
+      },
+      "authority": {
+        "title": "Cấu hình vai trò",
+        "add": "Thêm vai trò",
+        "edit": "Sửa vai trò",
+        "copy": "Sao chép vai trò",
+        "warning_switch_role": "Bạn đang thao tác quyền vai trò; thay đổi ảnh hưởng tới mọi người dùng thuộc vai trò này.",
+        "role_id": "ID vai trò",
+        "role_name": "Tên vai trò",
+        "parent_role": "Vai trò cha",
+        "set_permissions": "Cấp quyền",
+        "assign_to_users": "Gán cho người dùng",
+        "add_child": "Thêm vai trò con",
+        "assign_title": "Gán người dùng — {name}",
+        "assign_warning": "Lưu sẽ ghi đè gán người dùng–vai trò cho vai trò này.",
+        "assign_success": "Gán thành công",
+        "assign_failed": "Gán thất bại",
+        "delete_confirm_message": "Xóa vai trò này? Vai trò con và liên kết có thể bị ảnh hưởng.",
+        "delete_success": "Đã xóa vai trò",
+        "delete_cancelled": "Đã hủy",
+        "add_success": "Lưu thành công",
+        "copy_success": "Đã sao chép vai trò",
+        "root_role_strict": "Vai trò gốc (888)",
+        "root_role_user": "Vai trò người dùng",
+        "tabs": {
+          "menus": "Menu theo vai trò",
+          "apis": "API theo vai trò",
+          "data": "Quyền dữ liệu"
+        },
+        "rules": {
+          "role_id_required": "Vui lòng nhập ID vai trò",
+          "role_name_required": "Vui lòng nhập tên vai trò",
+          "parent_required": "Vui lòng chọn vai trò cha",
+          "must_positive_int": "Phải là số nguyên dương"
+        }
+      },
+      "user": {
+        "title": "Người dùng",
+        "warning_switch_role": "Đổi vai trò trong danh sách sẽ áp dụng vai trò đang hoạt động cho người dùng ngay lập tức.",
+        "username": "Tên đăng nhập",
+        "nickname": "Tên hiển thị",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "add": "Thêm người dùng",
+        "avatar": "Ảnh đại diện",
+        "role": "Vai trò",
+        "enabled": "Trạng thái",
+        "reset_password": "Đặt lại mật khẩu",
+        "new_password": "Mật khẩu mới",
+        "new_password_placeholder": "Nhập mật khẩu mới",
+        "generate_random": "Tạo ngẫu nhiên",
+        "password": "Mật khẩu",
+        "password_copied": "Đã sao chép mật khẩu",
+        "password_copy_failed": "Sao chép thất bại",
+        "password_required": "Vui lòng nhập mật khẩu",
+        "reset_password_success": "Đặt lại mật khẩu thành công",
+        "reset_password_failed": "Đặt lại mật khẩu thất bại",
+        "delete_success": "Đã xóa",
+        "create_success": "Tạo người dùng thành công",
+        "edit_success": "Cập nhật người dùng thành công",
+        "role_update_success": "Cập nhật vai trò thành công",
+        "disable_success": "Đã vô hiệu hóa người dùng",
+        "enable_success": "Đã kích hoạt người dùng",
+        "rules": {
+          "username_required": "Vui lòng nhập tên đăng nhập",
+          "min5": "Ít nhất 5 ký tự",
+          "password_required": "Vui lòng nhập mật khẩu",
+          "min6": "Ít nhất 6 ký tự",
+          "nickname_required": "Vui lòng nhập tên hiển thị",
+          "phone_invalid": "Số điện thoại không hợp lệ",
+          "email_invalid": "Email không hợp lệ",
+          "role_required": "Vui lòng chọn vai trò"
+        }
+      },
+      "operation": {
+        "method": "Phương thức HTTP",
+        "path": "Đường dẫn",
+        "status": "Trạng thái",
+        "operator": "Người thao tác",
+        "date": "Thời gian",
+        "ip": "IP",
+        "request": "Nội dung request",
+        "response": "Nội dung response",
+        "none": "Không có",
+        "delete_success": "Đã xóa thành công"
+      },
+      "menu": {
+        "add_root": "Thêm menu gốc",
+        "warning_add_menu": "Thêm menu mới: cần cấu hình quyền trong Quản lý vai trò để sử dụng",
+        "columns": {
+          "display_name": "Tên hiển thị",
+          "icon": "Biểu tượng",
+          "route_name": "Route name",
+          "route_path": "Route path",
+          "hidden": "Ẩn",
+          "parent": "Cha",
+          "sort": "Sắp xếp",
+          "component_path": "Đường dẫn file"
+        },
+        "hidden": {
+          "hidden": "Ẩn",
+          "visible": "Hiện"
+        },
+        "actions": {
+          "add_child": "Thêm menu con",
+          "assign_roles": "Gán vai trò",
+          "add_params": "Thêm tham số",
+          "add_param": "Thêm tham số menu",
+          "add_button": "Thêm nút kiểm soát"
+        },
+        "sections": {
+          "basic_info": "Thông tin cơ bản",
+          "route_config": "Cấu hình route",
+          "display_settings": "Thiết lập hiển thị",
+          "advanced_config": "Cấu hình nâng cao",
+          "params_config": "Cấu hình tham số menu",
+          "buttons_config": "Cấu hình nút kiểm soát"
+        },
+        "fields": {
+          "component_path": "Đường dẫn file",
+          "display_name": "Tên hiển thị",
+          "route_name": "Route name",
+          "route_path": "Route path",
+          "parent_id": "ID cha",
+          "icon": "Biểu tượng",
+          "sort": "Sắp xếp",
+          "hidden": "Ẩn",
+          "active_menu": "Menu highlight",
+          "base_view": "Trang cơ bản",
+          "transition": "Hiệu ứng chuyển trang"
+        },
+        "tips": {
+          "component_router_view": "Nếu menu có menu con, hãy dùng trang router-view hoặc",
+          "click_to_set": "Bấm để tự thiết lập",
+          "active_menu_help": "Khi vào route này, tên menu bên trái sẽ được highlight. Có thể để trống (mặc định là route name).",
+          "base_view_help": "Nếu bật, sẽ không hiển thị sidebar và header.",
+          "transition_help": "Nếu set animation ở route này, nó sẽ ưu tiên hơn animation global.",
+          "button_docs": "Xem tài liệu cấu hình quyền nút"
+        },
+        "placeholders": {
+          "display_name": "Nhập tên hiển thị của menu",
+          "unique_name": "Chuỗi tiếng Anh duy nhất",
+          "select_parent": "Chọn node cha",
+          "path_params_hint": "Khuyến nghị chỉ nối tham số ở phía sau",
+          "sort": "Nhập số thứ tự",
+          "hidden": "Có ẩn trong danh sách không?",
+          "active_menu": "Nhập tên menu highlight",
+          "keep_alive": "Có cache trang (keepAlive) không?",
+          "close_tab": "Có tự động đóng tab không?",
+          "base_view": "Có phải trang cơ bản không?",
+          "follow_global": "Theo global",
+          "param_key": "Nhập key",
+          "param_value": "Nhập value",
+          "button_name": "Nhập tên nút",
+          "button_remark": "Nhập ghi chú nút"
+        },
+        "transitions": {
+          "fade": "Mờ dần",
+          "slide": "Trượt",
+          "zoom": "Phóng to/thu nhỏ",
+          "none": "Không hiệu ứng"
+        },
+        "params": {
+          "type": "Loại tham số",
+          "key": "Key",
+          "value": "Giá trị"
+        },
+        "buttons": {
+          "name": "Tên nút",
+          "remark": "Ghi chú"
+        },
+        "assign": {
+          "title": "Gán vai trò - {name}",
+          "warning": "Lưu sẽ ghi đè toàn bộ quan hệ vai trò của menu; menu là trang chủ của vai trò thì không thể bỏ chọn",
+          "success": "Gán thành công",
+          "failed": "Gán thất bại, vui lòng thử lại"
+        },
+        "validation": {
+          "route_name_required": "Vui lòng nhập route name",
+          "component_required": "Vui lòng nhập đường dẫn file",
+          "display_name_required": "Vui lòng nhập tên hiển thị"
+        },
+        "messages": {
+          "delete_confirm_detail": "Thao tác này sẽ xoá menu này khỏi tất cả vai trò. Tiếp tục?",
+          "delete_success": "Đã xoá thành công",
+          "delete_cancelled": "Đã huỷ xoá",
+          "add_success_assign_hint": "Thêm thành công, hãy vào Quản lý vai trò để phân quyền",
+          "edit_success": "Cập nhật thành công"
+        },
+        "titles": {
+          "add_menu": "Thêm menu",
+          "edit_menu": "Sửa menu"
+        },
+        "options": {
+          "root_menu": "Menu gốc",
+          "root_dir": "Thư mục gốc"
+        }
+      },
+      "api": {
+        "fields": {
+          "path": "Đường dẫn",
+          "description": "Mô tả",
+          "group": "Nhóm API",
+          "method": "Phương thức"
+        },
+        "columns": {
+          "api_path": "Đường dẫn API",
+          "api_group": "Nhóm API",
+          "api_desc": "Mô tả API",
+          "method": "Phương thức"
+        },
+        "actions": {
+          "refresh_cache": "Làm mới cache",
+          "sync_api": "Đồng bộ API",
+          "assign_roles": "Gán vai trò"
+        }
+      },
+      "dictionary": {},
+      "params": {}
+    },
+    "agent": {
+      "title": "Quản lý Đại lý",
+      "list": "Danh sách Đại lý",
+      "pending": "Chờ duyệt",
+      "code": "Mã",
+      "full_name": "Họ tên",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "level": "Cấp độ",
+      "status": "Trạng thái",
+      "kyc_tier": "KYC",
+      "parent_id": "Đại lý tuyến trên",
+      "partner_id": "Mã đối tác",
+      "user_id": "Mã người dùng",
+      "path": "Đường dẫn phân cấp",
+      "created_at": "Ngày tạo",
+      "updated_at": "Ngày cập nhật",
+      "created_by": "Người tạo",
+      "updated_by": "Người cập nhật",
+      "create": "Tạo Đại lý",
+      "edit": "Sửa Đại lý",
+      "detail": "Chi tiết Đại lý",
+      "basic_info": "Thông tin cơ bản",
+      "kyc_profile": "Hồ sơ KYC",
+      "hierarchy": "Phân cấp",
+      "audit": "Lịch sử thay đổi",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "approve_confirm": "Duyệt đại lý này?",
+      "reject_reason": "Lý do từ chối",
+      "approve_success": "Duyệt đại lý thành công",
+      "reject_success": "Từ chối đại lý thành công",
+      "create_success": "Tạo đại lý thành công",
+      "update_success": "Cập nhật đại lý thành công",
+      "status_pending": "Chờ duyệt",
+      "status_pending_approval": "Chờ duyệt",
+      "status_active": "Hoạt động",
+      "status_suspended": "Tạm ngưng",
+      "status_terminated": "Đã chấm dứt",
+      "status_rejected": "Đã từ chối",
+      "kyc_tier_0": "Chưa xác minh",
+      "kyc_tier_1": "Cơ bản",
+      "kyc_tier_2": "Đầy đủ",
+      "filter_status": "Lọc theo trạng thái",
+      "filter_level": "Lọc theo cấp độ",
+      "filter_kyc": "Lọc theo KYC",
+      "search_keyword": "Tìm theo tên, SĐT, mã",
+      "province": "Tỉnh/Thành phố",
+      "tree_view": "Cây phân cấp",
+      "flat_view": "Danh sách",
+      "referral_code": "Mã giới thiệu",
+      "filter_date": "Khoảng thời gian"
+    },
+    "order": {
+      "title": "Quản lý Đơn hàng",
+      "list": "Danh sách Đơn hàng",
+      "order_id": "Mã đơn hàng",
+      "agent": "Đại lý",
+      "product": "Sản phẩm",
+      "amount": "Số tiền",
+      "status": "Trạng thái",
+      "created_at": "Ngày tạo",
+      "detail": "Chi tiết Đơn hàng",
+      "info": "Thông tin Đơn hàng",
+      "request_payload": "Nội dung yêu cầu",
+      "supplier_response": "Phản hồi nhà cung cấp",
+      "webhook_history": "Lịch sử Webhook",
+      "error_detail": "Chi tiết lỗi",
+      "no_webhooks": "Chưa có webhook",
+      "filter_date": "Khoảng thời gian",
+      "filter_status": "Lọc theo trạng thái",
+      "search_placeholder": "Tìm theo Mã đơn hoặc Mã đại lý",
+      "status_pending": "Đang xử lý",
+      "status_success": "Thành công",
+      "status_failed": "Thất bại",
+      "status_refunded": "Đã hoàn tiền",
+      "export_coming_soon": "Xuất dữ liệu sắp ra mắt"
+    },
+    "catalog": {
+      "title": "Danh mục",
+      "products": "Sản phẩm",
+      "suppliers": "Nhà cung cấp",
+      "product_name": "Tên sản phẩm",
+      "product_group": "Nhóm sản phẩm",
+      "product_image": "Hình ảnh",
+      "product_status": "Trạng thái",
+      "supplier_name": "Tên nhà cung cấp",
+      "adapter_type": "Loại kết nối",
+      "health_status": "Trạng thái kết nối",
+      "health_online": "Đang hoạt động",
+      "health_offline": "Ngắt kết nối",
+      "health_degraded": "Suy giảm",
+      "health_na": "Không rõ",
+      "group_telco": "Viễn thông",
+      "group_bank": "Ngân hàng",
+      "group_travel": "Du lịch",
+      "group_insurance": "Bảo hiểm",
+      "filter_group": "Lọc theo nhóm",
+      "filter_status": "Lọc theo trạng thái"
+    },
+    "onboarding": {
+      "title": "Onboarding Đại lý",
+      "ticket_list": "Danh sách Ticket",
+      "ticket_id": "Mã Ticket",
+      "agent_id": "Mã Đại lý",
+      "agent_name": "Tên Đại lý",
+      "status": "Trạng thái",
+      "current_step": "Bước hiện tại",
+      "detail": "Chi tiết Ticket",
+      "ticket_info": "Thông tin Ticket",
+      "workflow_info": "Trạng thái Workflow",
+      "workflow_id": "Workflow ID",
+      "run_id": "Run ID",
+      "attachments": "Hồ sơ đính kèm",
+      "att_type": "Loại",
+      "att_url": "Đường dẫn",
+      "no_attachments": "Chưa có hồ sơ đính kèm",
+      "create_ticket": "Tạo Ticket",
+      "create_success": "Tạo ticket thành công",
+      "upload": "Tải lên",
+      "upload_success": "Tải lên hồ sơ thành công",
+      "submit": "Đẩy lên chờ duyệt",
+      "submit_success": "Đã gửi chờ duyệt",
+      "approve_confirm": "Duyệt ticket này?",
+      "search_ticket": "Tìm theo Mã Ticket",
+      "filter_status": "Lọc theo trạng thái",
+      "status_draft": "Nháp",
+      "status_pending_upload": "Chờ hồ sơ",
+      "status_pending_review": "Chờ duyệt",
+      "status_approved": "Đã duyệt",
+      "status_rejected": "Đã từ chối",
+      "review_queue": "Hàng đợi duyệt",
+      "create_desc": "Tạo ticket onboarding mới cho Đại lý L0. Tải lên hồ sơ cần thiết và gửi duyệt.",
+      "create_and_save": "Tạo & Lưu nháp",
+      "att_business_license": "Giấy phép kinh doanh",
+      "att_agency_contract": "Hợp đồng đại lý",
+      "att_ekyc_photos": "Ảnh eKYC",
+      "uploaded": "Đã tải",
+      "required": "Bắt buộc",
+      "optional": "Không bắt buộc",
+      "missing": "Thiếu",
+      "create_agent_l0": "Đăng ký Đại lý L0",
+      "create_agent_desc": "Đăng ký đại lý cấp 0 mới với đầy đủ thông tin doanh nghiệp, hồ sơ và tự động tạo ticket phê duyệt.",
+      "step_basic": "Thông tin cơ bản",
+      "step_business": "Doanh nghiệp",
+      "step_bank": "Ngân hàng & Địa chỉ",
+      "step_docs": "Hồ sơ",
+      "step_confirm": "Xác nhận",
+      "business_name": "Tên doanh nghiệp",
+      "business_type": "Loại hình",
+      "tax_code": "Mã số thuế",
+      "representative_name": "Người đại diện",
+      "representative_cccd": "CCCD người đại diện",
+      "bank_name": "Tên ngân hàng",
+      "bank_account": "Số tài khoản",
+      "permanent_address": "Địa chỉ thường trú",
+      "contact_address": "Địa chỉ liên lạc",
+      "referral_name": "Tên người giới thiệu",
+      "prev": "Quay lại",
+      "next": "Tiếp theo",
+      "save_draft": "Lưu nháp",
+      "submit_review": "Tạo & Gửi duyệt",
+      "missing_docs_warning": "Thiếu hồ sơ bắt buộc. Bạn có thể lưu nháp và bổ sung sau.",
+      "go_tickets": "Xem Tickets"
+    }
+  }
+}

@@ -9,7 +9,7 @@ var AutoCodeOracle = new(autoCodeOracle)
 
 type autoCodeOracle struct{}
 
-// GetDB 获取数据库的所有数据库名
+// GetDB retrieves all database names
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodeOracle) GetDB(businessDB string) (data []response.Db, err error) {
@@ -19,7 +19,7 @@ func (s *autoCodeOracle) GetDB(businessDB string) (data []response.Db, err error
 	return entities, err
 }
 
-// GetTables 获取数据库的所有表名
+// GetTables retrieves all table names in the database
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodeOracle) GetTables(businessDB string, dbName string) (data []response.Table, err error) {
@@ -30,18 +30,19 @@ func (s *autoCodeOracle) GetTables(businessDB string, dbName string) (data []res
 	return entities, err
 }
 
-// GetColumn 获取指定数据库和指定数据表的所有字段名,类型值等
+// GetColumn retrieves all column names, types, etc. for the specified database and table
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodeOracle) GetColumn(businessDB string, tableName string, dbName string) (data []response.Column, err error) {
 	var entities []response.Column
 	sql := `
-		SELECT
+	SELECT
     lower(a.COLUMN_NAME) as "column_name",
     (CASE WHEN a.DATA_TYPE = 'NUMBER' AND a.DATA_SCALE=0 THEN 'int' else lower(a.DATA_TYPE) end)  as "data_type",
     (CASE WHEN a.DATA_TYPE = 'NUMBER' THEN a.DATA_PRECISION else a.DATA_LENGTH end) as "data_type_long",
     b.COMMENTS as "column_comment",
-    (CASE WHEN pk.COLUMN_NAME IS NOT NULL THEN 1 ELSE 0 END) as "primary_key"
+    (CASE WHEN pk.COLUMN_NAME IS NOT NULL THEN 1 ELSE 0 END) as "primary_key",
+    a.COLUMN_ID
 FROM
     all_tab_columns a
 JOIN
@@ -61,7 +62,9 @@ LEFT JOIN
     ) pk ON a.OWNER = pk.OWNER AND a.TABLE_NAME = pk.TABLE_NAME AND a.COLUMN_NAME = pk.COLUMN_NAME
 WHERE
     lower(a.table_name) = ?
-    AND lower(a.OWNER) = ?;
+    AND lower(a.OWNER) = ?
+ORDER BY
+    a.COLUMN_ID
 `
 
 	err = global.GVA_DBList[businessDB].Raw(sql, tableName, dbName).Scan(&entities).Error

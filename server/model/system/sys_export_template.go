@@ -1,30 +1,32 @@
-// 自动生成模板SysExportTemplate
+// auto-generate templateSysExportTemplate
 package system
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 )
 
-// 导出模板 结构体  SysExportTemplate
+// Export Template StructureBody  SysExportTemplate
 type SysExportTemplate struct {
 	global.GVA_MODEL
-	DBName       string         `json:"dbName" form:"dbName" gorm:"column:db_name;comment:数据库名称;"`               //数据库名称
-	Name         string         `json:"name" form:"name" gorm:"column:name;comment:模板名称;"`                       //模板名称
-	TableName    string         `json:"tableName" form:"tableName" gorm:"column:table_name;comment:表名称;"`        //表名称
-	TemplateID   string         `json:"templateID" form:"templateID" gorm:"column:template_id;comment:模板标识;"`    //模板标识
-	TemplateInfo string         `json:"templateInfo" form:"templateInfo" gorm:"column:template_info;type:text;"` //模板信息
-	Limit        *int           `json:"limit" form:"limit" gorm:"column:limit;comment:导出限制"`
-	Order        string         `json:"order" form:"order" gorm:"column:order;comment:排序"`
-	Conditions   []Condition    `json:"conditions" form:"conditions" gorm:"foreignKey:TemplateID;references:TemplateID;comment:条件"`
-	JoinTemplate []JoinTemplate `json:"joinTemplate" form:"joinTemplate" gorm:"foreignKey:TemplateID;references:TemplateID;comment:关联"`
+	DBName       string         `json:"dbName" form:"dbName" gorm:"column:db_name;comment:Databasename;"`                       //Databasename
+	Name         string         `json:"name" form:"name" gorm:"column:name;comment:Templatename;"`                               //Templatename
+	TableName    string         `json:"tableName" form:"tableName" gorm:"column:table_name;comment:table nameName;"`                //table nameName
+	TemplateID   string         `json:"templateID" form:"templateID" gorm:"column:template_id;comment:template identifier;"`            //template identifier
+	TemplateInfo string         `json:"templateInfo" form:"templateInfo" gorm:"column:template_info;type:text;"`         //template information
+	SQL          string         `json:"sql" form:"sql" gorm:"column:sql;type:text;comment:CustomexportSQL;"`                    //CustomexportSQL
+	ImportSQL    string         `json:"importSql" form:"importSql" gorm:"column:import_sql;type:text;comment:CustomimportSQL;"` //CustomimportSQL
+	Limit        *int           `json:"limit" form:"limit" gorm:"column:limit;comment:exportLimit"`
+	Order        string         `json:"order" form:"order" gorm:"column:order;comment:sort"`
+	Conditions   []Condition    `json:"conditions" form:"conditions" gorm:"foreignKey:TemplateID;references:TemplateID;comment:Condition"`
+	JoinTemplate []JoinTemplate `json:"joinTemplate" form:"joinTemplate" gorm:"foreignKey:TemplateID;references:TemplateID;comment:Association"`
 }
 
 type JoinTemplate struct {
 	global.GVA_MODEL
-	TemplateID string `json:"templateID" form:"templateID" gorm:"column:template_id;comment:模板标识"`
-	JOINS      string `json:"joins" form:"joins" gorm:"column:joins;comment:关联"`
-	Table      string `json:"table" form:"table" gorm:"column:table;comment:关联表"`
-	ON         string `json:"on" form:"on" gorm:"column:on;comment:关联条件"`
+	TemplateID string `json:"templateID" form:"templateID" gorm:"column:template_id;comment:template identifier"`
+	JOINS      string `json:"joins" form:"joins" gorm:"column:joins;comment:Association"`
+	Table      string `json:"table" form:"table" gorm:"column:table;comment:related table"`
+	ON         string `json:"on" form:"on" gorm:"column:on;comment:AssociationCondition"`
 }
 
 func (JoinTemplate) TableName() string {
@@ -33,10 +35,10 @@ func (JoinTemplate) TableName() string {
 
 type Condition struct {
 	global.GVA_MODEL
-	TemplateID string `json:"templateID" form:"templateID" gorm:"column:template_id;comment:模板标识"`
-	From       string `json:"from" form:"from" gorm:"column:from;comment:条件取的key"`
-	Column     string `json:"column" form:"column" gorm:"column:column;comment:作为查询条件的字段"`
-	Operator   string `json:"operator" form:"operator" gorm:"column:operator;comment:操作符"`
+	TemplateID string `json:"templateID" form:"templateID" gorm:"column:template_id;comment:template identifier"`
+	From       string `json:"from" form:"from" gorm:"column:from;comment:ConditionFetchofkey"`
+	Column     string `json:"column" form:"column" gorm:"column:column;comment:AsQueryConditionofField"`
+	Operator   string `json:"operator" form:"operator" gorm:"column:operator;comment:OperationSymbol"`
 }
 
 func (Condition) TableName() string {

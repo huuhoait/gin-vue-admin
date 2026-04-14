@@ -7,7 +7,7 @@ import (
 	"github.com/unrolled/secure"
 )
 
-// 用https把这个中间件在router里面use一下就好
+// To use HTTPS, just use this middleware in the router
 
 func LoadTls() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -17,11 +17,11 @@ func LoadTls() gin.HandlerFunc {
 		})
 		err := middleware.Process(c.Writer, c.Request)
 		if err != nil {
-			// 如果出现错误，请不要继续
+			// if an error occurs, do not continue
 			fmt.Println(err)
 			return
 		}
-		// 继续往下处理
+		// continue processing
 		c.Next()
 	}
 }

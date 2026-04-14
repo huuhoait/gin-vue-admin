@@ -2,13 +2,19 @@ package system
 
 import (
 	"context"
-	model "github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"reflect"
 	"testing"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	model "github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"os"
 )
 
 func Test_autoCodePackage_Create(t *testing.T) {
+	if global.GVA_DB == nil {
+		t.Skip("requires initialized DB (global.GVA_DB)")
+	}
 	type args struct {
 		ctx  context.Context
 		info *request.SysAutoCodePackageCreate
@@ -19,7 +25,7 @@ func Test_autoCodePackage_Create(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "测试 package",
+			name: "test package",
 			args: args{
 				ctx: context.Background(),
 				info: &request.SysAutoCodePackageCreate{
@@ -30,7 +36,7 @@ func Test_autoCodePackage_Create(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "测试 plugin",
+			name: "test plugin",
 			args: args{
 				ctx: context.Background(),
 				info: &request.SysAutoCodePackageCreate{
@@ -52,10 +58,17 @@ func Test_autoCodePackage_Create(t *testing.T) {
 }
 
 func Test_autoCodePackage_templates(t *testing.T) {
+	if global.GVA_DB == nil {
+		t.Skip("requires initialized DB (global.GVA_DB)")
+	}
+	if _, err := os.Stat("resource/plugin"); err != nil {
+		t.Skipf("requires resource/plugin: %v", err)
+	}
 	type args struct {
-		ctx    context.Context
-		entity model.SysAutoCodePackage
-		info   request.AutoCode
+		ctx       context.Context
+		entity    model.SysAutoCodePackage
+		info      request.AutoCode
+		isPackage bool
 	}
 	tests := []struct {
 		name      string
@@ -65,12 +78,12 @@ func Test_autoCodePackage_templates(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			name: "测试1",
+			name: "test1",
 			args: args{
 				ctx: context.Background(),
 				entity: model.SysAutoCodePackage{
-					Desc:        "描述",
-					Label:       "展示名",
+					Desc:        "description",
+					Label:       "display name",
 					Template:    "plugin",
 					PackageName: "preview",
 				},
@@ -78,6 +91,7 @@ func Test_autoCodePackage_templates(t *testing.T) {
 					Abbreviation:    "user",
 					HumpPackageName: "user",
 				},
+				isPackage: false,
 			},
 			wantErr: false,
 		},
@@ -85,16 +99,16 @@ func Test_autoCodePackage_templates(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &autoCodePackage{}
-			gotCode, gotEnter, gotCreates, err := s.templates(tt.args.ctx, tt.args.entity, tt.args.info)
+			gotCode, gotEnter, gotCreates, err := s.templates(tt.args.ctx, tt.args.entity, tt.args.info, tt.args.isPackage)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("templates() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			for key, value := range gotCode {
-				t.Logf("\n")
-				t.Logf(key)
-				t.Logf(value)
-				t.Logf("\n")
+				t.Log("\n")
+				t.Log(key)
+				t.Log(value)
+				t.Log("\n")
 			}
 			t.Log(gotCreates)
 			if !reflect.DeepEqual(gotEnter, tt.wantEnter) {

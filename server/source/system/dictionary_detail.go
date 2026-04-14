@@ -34,7 +34,7 @@ func (i *initDictDetail) TableCreated(ctx context.Context) bool {
 	return db.Migrator().HasTable(&sysModel.SysDictionaryDetail{})
 }
 
-func (i initDictDetail) InitializerName() string {
+func (i *initDictDetail) InitializerName() string {
 	return sysModel.SysDictionaryDetail{}.TableName()
 }
 
@@ -43,15 +43,15 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
-	dicts, ok := ctx.Value(initDict{}.InitializerName()).([]sysModel.SysDictionary)
+	dicts, ok := ctx.Value(new(initDict).InitializerName()).([]sysModel.SysDictionary)
 	if !ok {
 		return ctx, errors.Wrap(system.ErrMissingDependentContext,
-			fmt.Sprintf("未找到 %s 表初始化数据", sysModel.SysDictionary{}.TableName()))
+			fmt.Sprintf("not found %s table seed data", sysModel.SysDictionary{}.TableName()))
 	}
 	True := true
 	dicts[0].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
-		{Label: "男", Value: "1", Status: &True, Sort: 1},
-		{Label: "女", Value: "2", Status: &True, Sort: 2},
+		{Label: "Male", Value: "1", Status: &True, Sort: 1},
+		{Label: "Female", Value: "2", Status: &True, Sort: 2},
 	}
 
 	dicts[1].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
@@ -66,7 +66,7 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 	}
 
 	dicts[2].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
-		{Label: "date", Status: &True},
+		{Label: "date", Value: "0", Status: &True, Extend: "mysql", Sort: 0},
 		{Label: "time", Value: "1", Status: &True, Extend: "mysql", Sort: 1},
 		{Label: "year", Value: "2", Status: &True, Extend: "mysql", Sort: 2},
 		{Label: "datetime", Value: "3", Status: &True, Extend: "mysql", Sort: 3},
@@ -74,7 +74,7 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 		{Label: "timestamptz", Value: "6", Status: &True, Extend: "pgsql", Sort: 5},
 	}
 	dicts[3].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
-		{Label: "float", Status: &True},
+		{Label: "float", Value: "0", Status: &True, Extend: "mysql", Sort: 0},
 		{Label: "double", Value: "1", Status: &True, Extend: "mysql", Sort: 1},
 		{Label: "decimal", Value: "2", Status: &True, Extend: "mysql", Sort: 2},
 		{Label: "numeric", Value: "3", Status: &True, Extend: "pgsql", Sort: 3},
@@ -82,7 +82,7 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 	}
 
 	dicts[4].SysDictionaryDetails = []sysModel.SysDictionaryDetail{
-		{Label: "char", Status: &True},
+		{Label: "char", Value: "0", Status: &True, Extend: "mysql", Sort: 0},
 		{Label: "varchar", Value: "1", Status: &True, Extend: "mysql", Sort: 1},
 		{Label: "tinyblob", Value: "2", Status: &True, Extend: "mysql", Sort: 2},
 		{Label: "tinytext", Value: "3", Status: &True, Extend: "mysql", Sort: 3},
@@ -101,7 +101,7 @@ func (i *initDictDetail) InitializeData(ctx context.Context) (context.Context, e
 	for _, dict := range dicts {
 		if err := db.Model(&dict).Association("SysDictionaryDetails").
 			Replace(dict.SysDictionaryDetails); err != nil {
-			return ctx, errors.Wrap(err, sysModel.SysDictionaryDetail{}.TableName()+"表数据初始化失败!")
+			return ctx, errors.Wrap(err, sysModel.SysDictionaryDetail{}.TableName()+"table data initialization failed!")
 		}
 	}
 	return ctx, nil
@@ -114,7 +114,7 @@ func (i *initDictDetail) DataInserted(ctx context.Context) bool {
 	}
 	var dict sysModel.SysDictionary
 	if err := db.Preload("SysDictionaryDetails").
-		First(&dict, &sysModel.SysDictionary{Name: "数据库bool类型"}).Error; err != nil {
+		First(&dict, &sysModel.SysDictionary{Name: "Database bool type"}).Error; err != nil {
 		return false
 	}
 	return len(dict.SysDictionaryDetails) > 0 && dict.SysDictionaryDetails[0].Label == "tinyint"

@@ -13,7 +13,7 @@ import (
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"github.com/gofrs/uuid/v5"
+	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -24,7 +24,7 @@ func NewMysqlInitHandler() *MysqlInitHandler {
 	return &MysqlInitHandler{}
 }
 
-// WriteConfig mysql回写配置
+// WriteConfig writes back mysql configuration
 func (h MysqlInitHandler) WriteConfig(ctx context.Context) error {
 	c, ok := ctx.Value("config").(config.Mysql)
 	if !ok {
@@ -32,15 +32,16 @@ func (h MysqlInitHandler) WriteConfig(ctx context.Context) error {
 	}
 	global.GVA_CONFIG.System.DbType = "mysql"
 	global.GVA_CONFIG.Mysql = c
-	global.GVA_CONFIG.JWT.SigningKey = uuid.Must(uuid.NewV4()).String()
+	global.GVA_CONFIG.JWT.SigningKey = uuid.New().String()
 	cs := utils.StructToMap(global.GVA_CONFIG)
 	for k, v := range cs {
 		global.GVA_VP.Set(k, v)
 	}
+	global.GVA_ACTIVE_DBNAME = &c.Dbname
 	return global.GVA_VP.WriteConfig()
 }
 
-// EnsureDB 创建数据库并初始化 mysql
+// EnsureDB creates the database and initializes mysql
 func (h MysqlInitHandler) EnsureDB(ctx context.Context, conf *request.InitDB) (next context.Context, err error) {
 	if s, ok := ctx.Value("dbtype").(string); !ok || s != "mysql" {
 		return ctx, ErrDBTypeMismatch
@@ -50,19 +51,19 @@ func (h MysqlInitHandler) EnsureDB(ctx context.Context, conf *request.InitDB) (n
 	next = context.WithValue(ctx, "config", c)
 	if c.Dbname == "" {
 		return ctx, nil
-	} // 如果没有数据库名, 则跳出初始化数据
+	} // if no database name, skip data initialization
 
 	dsn := conf.MysqlEmptyDsn()
 	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", c.Dbname)
 	if err = createDatabase(dsn, "mysql", createSql); err != nil {
 		return nil, err
-	} // 创建数据库
+	} // create database
 
 	var db *gorm.DB
 	if db, err = gorm.Open(mysql.New(mysql.Config{
 		DSN:                       c.Dsn(), // DSN data source name
-		DefaultStringSize:         191,     // string 类型字段的默认长度
-		SkipInitializeWithVersion: true,    // 根据版本自动配置
+		DefaultStringSize:         191,     // default length for string type fields
+		SkipInitializeWithVersion: true,    // auto-configure based on version
 	}), &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}); err != nil {
 		return ctx, err
 	}
@@ -77,7 +78,7 @@ func (h MysqlInitHandler) InitTables(ctx context.Context, inits initSlice) error
 
 func (h MysqlInitHandler) InitData(ctx context.Context, inits initSlice) error {
 	next, cancel := context.WithCancel(ctx)
-	defer func(c func()) { c() }(cancel)
+	defer cancel()
 	for _, init := range inits {
 		if init.DataInserted(next) {
 			color.Info.Printf(InitDataExist, Mysql, init.InitializerName())

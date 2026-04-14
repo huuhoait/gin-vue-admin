@@ -10,12 +10,12 @@ var AutoCodeMssql = new(autoCodeMssql)
 
 type autoCodeMssql struct{}
 
-// GetDB 获取数据库的所有数据库名
+// GetDB retrieves all database names
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodeMssql) GetDB(businessDB string) (data []response.Db, err error) {
 	var entities []response.Db
-	sql := "select name AS 'database' from sysdatabases;"
+	sql := "select name AS 'database' from sys.databases;"
 	if businessDB == "" {
 		err = global.GVA_DB.Raw(sql).Scan(&entities).Error
 	} else {
@@ -24,7 +24,7 @@ func (s *autoCodeMssql) GetDB(businessDB string) (data []response.Db, err error)
 	return entities, err
 }
 
-// GetTables 获取数据库的所有表名
+// GetTables retrieves all table names in the database
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodeMssql) GetTables(businessDB string, dbName string) (data []response.Table, err error) {
@@ -40,7 +40,7 @@ func (s *autoCodeMssql) GetTables(businessDB string, dbName string) (data []resp
 	return entities, err
 }
 
-// GetColumn 获取指定数据库和指定数据表的所有字段名,类型值等
+// GetColumn retrieves all column names, types, etc. for the specified database and table
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodeMssql) GetColumn(businessDB string, tableName string, dbName string) (data []response.Column, err error) {
@@ -53,7 +53,8 @@ SELECT
     CASE
         WHEN pk.object_id IS NOT NULL THEN 1
         ELSE 0
-    END AS primary_key
+    END AS primary_key,
+    sc.column_id
 FROM
     %s.sys.columns sc
 JOIN
@@ -68,6 +69,8 @@ LEFT JOIN
     %s.sys.key_constraints pk ON pk.object_id = si.object_id
 WHERE
     st.is_user_defined=0 AND sc.object_id = so.object_id
+ORDER BY
+    sc.column_id
 `, dbName, dbName, tableName, dbName, dbName, dbName)
 
 	if businessDB == "" {

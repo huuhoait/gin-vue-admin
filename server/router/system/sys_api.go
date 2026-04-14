@@ -13,21 +13,23 @@ func (s *ApiRouter) InitApiRouter(Router *gin.RouterGroup, RouterPub *gin.Router
 
 	apiPublicRouterWithoutRecord := RouterPub.Group("api")
 	{
-		apiRouter.GET("getApiGroups", apiRouterApi.GetApiGroups)          // 获取路由组
-		apiRouter.GET("syncApi", apiRouterApi.SyncApi)                    // 同步Api
-		apiRouter.POST("ignoreApi", apiRouterApi.IgnoreApi)               // 忽略Api
-		apiRouter.POST("enterSyncApi", apiRouterApi.EnterSyncApi)         // 确认同步Api
-		apiRouter.POST("createApi", apiRouterApi.CreateApi)               // 创建Api
-		apiRouter.POST("deleteApi", apiRouterApi.DeleteApi)               // 删除Api
-		apiRouter.POST("getApiById", apiRouterApi.GetApiById)             // 获取单条Api消息
-		apiRouter.POST("updateApi", apiRouterApi.UpdateApi)               // 更新api
-		apiRouter.DELETE("deleteApisByIds", apiRouterApi.DeleteApisByIds) // 删除选中api
+		apiRouter.GET("getApiGroups", apiRouterApi.GetApiGroups)          // getroute group
+		apiRouter.GET("syncApi", apiRouterApi.SyncApi)                    // SynchronousApi
+		apiRouter.POST("ignoreApi", apiRouterApi.IgnoreApi)               // IgnoreApi
+		apiRouter.POST("enterSyncApi", apiRouterApi.EnterSyncApi)         // sureAcknowledgeSynchronousApi
+		apiRouter.POST("createApi", apiRouterApi.CreateApi)               // CreateApi
+		apiRouter.POST("deleteApi", apiRouterApi.DeleteApi)               // deleteApi
+		apiRouter.POST("getApiById", apiRouterApi.GetApiById)             // getDocumentRowApiMessage
+		apiRouter.POST("updateApi", apiRouterApi.UpdateApi)               // update API
+		apiRouter.DELETE("deleteApisByIds", apiRouterApi.DeleteApisByIds) // delete selected APIs
+		apiRouter.POST("setApiRoles", apiRouterApi.SetApiRoles)          // full overwriteAPIAssociationRole
 	}
 	{
-		apiRouterWithoutRecord.POST("getAllApis", apiRouterApi.GetAllApis) // 获取所有api
-		apiRouterWithoutRecord.POST("getApiList", apiRouterApi.GetApiList) // 获取Api列表
+		apiRouterWithoutRecord.POST("getAllApis", apiRouterApi.GetAllApis) // get all APIs
+		apiRouterWithoutRecord.POST("getApiList", apiRouterApi.GetApiList) // getApiList
+		apiRouterWithoutRecord.GET("getApiRoles", apiRouterApi.GetApiRoles) // getAPIAssociationrole IDList
 	}
 	{
-		apiPublicRouterWithoutRecord.GET("freshCasbin", apiRouterApi.FreshCasbin) // 刷新casbin权限
+		apiPublicRouterWithoutRecord.GET("freshCasbin", apiRouterApi.FreshCasbin) // RefreshcasbinPermission
 	}
 }

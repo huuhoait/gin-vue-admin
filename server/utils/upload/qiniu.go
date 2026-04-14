@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/qiniu/api.v7/v7/auth/qbox"
-	"github.com/qiniu/api.v7/v7/storage"
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	"github.com/qiniu/go-sdk/v7/storage"
 	"go.uber.org/zap"
 )
 
@@ -20,7 +20,7 @@ type Qiniu struct{}
 //@author: [SliverHorn](https://github.com/SliverHorn)
 //@object: *Qiniu
 //@function: UploadFile
-//@description: 上传文件
+//@description: upload file
 //@param: file *multipart.FileHeader
 //@return: string, string, error
 
@@ -39,8 +39,8 @@ func (*Qiniu) UploadFile(file *multipart.FileHeader) (string, string, error) {
 
 		return "", "", errors.New("function file.Open() failed, err:" + openError.Error())
 	}
-	defer f.Close()                                                  // 创建文件 defer 关闭
-	fileKey := fmt.Sprintf("%d%s", time.Now().Unix(), file.Filename) // 文件名格式 自己可以改 建议保证唯一性
+	defer f.Close()                                                  // create file, defer close
+	fileKey := fmt.Sprintf("%d%s", time.Now().Unix(), file.Filename) // file nameFormat you may change keep unique names recommended
 	putErr := formUploader.Put(context.Background(), &ret, upToken, fileKey, f, file.Size, &putExtra)
 	if putErr != nil {
 		global.GVA_LOG.Error("function formUploader.Put() failed", zap.Any("err", putErr.Error()))
@@ -54,7 +54,7 @@ func (*Qiniu) UploadFile(file *multipart.FileHeader) (string, string, error) {
 //@author: [SliverHorn](https://github.com/SliverHorn)
 //@object: *Qiniu
 //@function: DeleteFile
-//@description: 删除文件
+//@description: deleteFile
 //@param: key string
 //@return: error
 
@@ -72,7 +72,7 @@ func (*Qiniu) DeleteFile(key string) error {
 //@author: [SliverHorn](https://github.com/SliverHorn)
 //@object: *Qiniu
 //@function: qiniuConfig
-//@description: 根据配置文件进行返回七牛云的配置
+//@description: According toconfigurationFilePerformReturnQiniu Cloudofconfiguration
 //@return: *storage.Config
 
 func qiniuConfig() *storage.Config {
@@ -80,7 +80,7 @@ func qiniuConfig() *storage.Config {
 		UseHTTPS:      global.GVA_CONFIG.Qiniu.UseHTTPS,
 		UseCdnDomains: global.GVA_CONFIG.Qiniu.UseCdnDomains,
 	}
-	switch global.GVA_CONFIG.Qiniu.Zone { // 根据配置文件进行初始化空间对应的机房
+	switch global.GVA_CONFIG.Qiniu.Zone { // According toconfigurationFilePerforminitializeEmptyIntervalCorrespondingMachineroom
 	case "ZoneHuadong":
 		cfg.Zone = &storage.ZoneHuadong
 	case "ZoneHuabei":

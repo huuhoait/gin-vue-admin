@@ -1,126 +1,219 @@
 package system
 
 import (
-	"github.com/goccy/go-json"
+	"errors"
+	"fmt"
 	"io"
+	"net/http"
 	"strings"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils/request"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 	"go.uber.org/zap"
 )
 
 type AutoCodeApi struct{}
 
-// GetDB
-// @Tags      AutoCode
-// @Summary   获取当前所有数据库
-// @Security  ApiKeyAuth
-// @accept    application/json
-// @Produce   application/json
-// @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "获取当前所有数据库"
-// @Router    /autoCode/getDatabase [get]
 func (autoApi *AutoCodeApi) GetDB(c *gin.Context) {
 	businessDB := c.Query("businessDB")
 	dbs, err := autoCodeService.Database(businessDB).GetDB(businessDB)
 	var dbList []map[string]interface{}
 	for _, db := range global.GVA_CONFIG.DBList {
-		var item = make(map[string]interface{})
-		item["aliasName"] = db.AliasName
-		item["dbName"] = db.Dbname
-		item["disable"] = db.Disable
-		item["dbtype"] = db.Type
+		item := map[string]interface{}{
+			"aliasName": db.AliasName,
+			"dbName":    db.Dbname,
+			"disable":   db.Disable,
+			"dbtype":    db.Type,
+		}
 		dbList = append(dbList, item)
 	}
 	if err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
-	} else {
-		response.OkWithDetailed(gin.H{"dbs": dbs, "dbList": dbList}, "获取成功", c)
+		global.GVA_LOG.Error("Failed to retrieve!", zap.Error(err))
+		response.FailWithMessage("Failed to retrieve", c)
+		return
 	}
+	response.OkWithDetailed(gin.H{"dbs": dbs, "dbList": dbList}, "Retrieved successfully", c)
 }
 
-// GetTables
-// @Tags      AutoCode
-// @Summary   获取当前数据库所有表
-// @Security  ApiKeyAuth
-// @accept    application/json
-// @Produce   application/json
-// @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "获取当前数据库所有表"
-// @Router    /autoCode/getTables [get]
 func (autoApi *AutoCodeApi) GetTables(c *gin.Context) {
-	dbName := c.DefaultQuery("dbName", global.GVA_CONFIG.Mysql.Dbname)
+	dbName := c.Query("dbName")
 	businessDB := c.Query("businessDB")
+	if dbName == "" {
+		dbName = *global.GVA_ACTIVE_DBNAME
+		if businessDB != "" {
+			for _, db := range global.GVA_CONFIG.DBList {
+				if db.AliasName == businessDB {
+					dbName = db.Dbname
+				}
+			}
+		}
+	}
+
 	tables, err := autoCodeService.Database(businessDB).GetTables(businessDB, dbName)
 	if err != nil {
-		global.GVA_LOG.Error("查询table失败!", zap.Error(err))
-		response.FailWithMessage("查询table失败", c)
-	} else {
-		response.OkWithDetailed(gin.H{"tables": tables}, "获取成功", c)
+		global.GVA_LOG.Error("Failed to query tables!", zap.Error(err))
+		response.FailWithMessage("Failed to query tables", c)
+		return
 	}
+	response.OkWithDetailed(gin.H{"tables": tables}, "Retrieved successfully", c)
 }
 
-// GetColumn
-// @Tags      AutoCode
-// @Summary   获取当前表所有字段
-// @Security  ApiKeyAuth
-// @accept    application/json
-// @Produce   application/json
-// @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "获取当前表所有字段"
-// @Router    /autoCode/getColumn [get]
 func (autoApi *AutoCodeApi) GetColumn(c *gin.Context) {
 	businessDB := c.Query("businessDB")
-	dbName := c.DefaultQuery("dbName", global.GVA_CONFIG.Mysql.Dbname)
+	dbName := c.Query("dbName")
+	if dbName == "" {
+		dbName = *global.GVA_ACTIVE_DBNAME
+		if businessDB != "" {
+			for _, db := range global.GVA_CONFIG.DBList {
+				if db.AliasName == businessDB {
+					dbName = db.Dbname
+				}
+			}
+		}
+	}
 	tableName := c.Query("tableName")
 	columns, err := autoCodeService.Database(businessDB).GetColumn(businessDB, tableName, dbName)
 	if err != nil {
-		global.GVA_LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
-	} else {
-		response.OkWithDetailed(gin.H{"columns": columns}, "获取成功", c)
+		global.GVA_LOG.Error("Failed to retrieve!", zap.Error(err))
+		response.FailWithMessage("Failed to retrieve", c)
+		return
 	}
+	response.OkWithDetailed(gin.H{"columns": columns}, "Retrieved successfully", c)
 }
 
 func (autoApi *AutoCodeApi) LLMAuto(c *gin.Context) {
-	prompt := c.Query("prompt")
-	mode := c.Query("mode")
-	params := make(map[string]string)
-	params["prompt"] = prompt
-	params["mode"] = mode
-	path := strings.ReplaceAll(global.GVA_CONFIG.AutoCode.AiPath, "{FUNC}", "api/chat/ai")
-	res, err := request.HttpRequest(
-		path,
-		"POST",
-		nil,
-		params,
-		nil,
-	)
-	if err != nil {
-		global.GVA_LOG.Error("大模型生成失败!", zap.Error(err))
-		response.FailWithMessage("大模型生成失败"+err.Error(), c)
-		return
-	}
-	var resStruct response.Response
-	b, err := io.ReadAll(res.Body)
-	defer res.Body.Close()
-	if err != nil {
-		global.GVA_LOG.Error("大模型生成失败!", zap.Error(err))
-		response.FailWithMessage("大模型生成失败"+err.Error(), c)
-		return
-	}
-	err = json.Unmarshal(b, &resStruct)
-	if err != nil {
-		global.GVA_LOG.Error("大模型生成失败!", zap.Error(err))
-		response.FailWithMessage("大模型生成失败"+err.Error(), c)
+	var llm common.JSONMap
+	if err := c.ShouldBindJSON(&llm); err != nil {
+		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if resStruct.Code == 7 {
-		global.GVA_LOG.Error("大模型生成失败!"+resStruct.Msg, zap.Error(err))
-		response.FailWithMessage("大模型生成失败"+resStruct.Msg, c)
+	if shouldStreamLLM(c, llm) {
+		if err := autoApi.proxyLLMStream(c, llm); err != nil {
+			global.GVA_LOG.Error("LLM streaming proxy failed!", zap.Error(err))
+			if c.Writer.Written() {
+				writeLLMStreamError(c, err)
+				return
+			}
+			response.FailWithMessage(err.Error(), c)
+		}
 		return
 	}
-	response.OkWithData(resStruct.Data, c)
+
+	data, err := autoCodeService.LLMAuto(c.Request.Context(), llm)
+	if err != nil {
+		global.GVA_LOG.Error("LLM generation failed!", zap.Error(err))
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	response.OkWithData(data, c)
+}
+
+func shouldStreamLLM(c *gin.Context, llm common.JSONMap) bool {
+	responseMode := strings.ToLower(strings.TrimSpace(fmt.Sprintf("%v", llm["response_mode"])))
+	if responseMode == "streaming" || responseMode == "sse" {
+		return true
+	}
+	if stream, ok := llm["stream"].(bool); ok && stream {
+		return true
+	}
+	return strings.Contains(strings.ToLower(c.GetHeader("Accept")), "text/event-stream")
+}
+
+func (autoApi *AutoCodeApi) proxyLLMStream(c *gin.Context, llm common.JSONMap) error {
+	res, err := autoCodeService.LLMAutoStream(c.Request.Context(), llm)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		body, readErr := io.ReadAll(res.Body)
+		if readErr != nil {
+			return fmt.Errorf("upstream LLM streaming service returned non-2xx: status=%d content-type=%s read-body-err=%w", res.StatusCode, res.Header.Get("Content-Type"), readErr)
+		}
+		return fmt.Errorf("upstream LLM streaming service returned non-2xx: status=%d content-type=%s body=%s", res.StatusCode, res.Header.Get("Content-Type"), previewResponseBody(body))
+	}
+
+	flusher, ok := c.Writer.(http.Flusher)
+	if !ok {
+		return errors.New("current response does not support streaming output")
+	}
+
+	copyLLMStreamHeaders(c.Writer.Header(), res.Header)
+	if c.Writer.Header().Get("Content-Type") == "" {
+		c.Writer.Header().Set("Content-Type", "text/event-stream; charset=utf-8")
+	}
+	if c.Writer.Header().Get("Cache-Control") == "" {
+		c.Writer.Header().Set("Cache-Control", "no-cache")
+	}
+	c.Writer.Header().Set("Connection", "keep-alive")
+	c.Writer.Header().Set("X-Accel-Buffering", "no")
+	c.Status(res.StatusCode)
+	flusher.Flush()
+
+	buf := make([]byte, 32*1024)
+	for {
+		n, readErr := res.Body.Read(buf)
+		if n > 0 {
+			if _, writeErr := c.Writer.Write(buf[:n]); writeErr != nil {
+				return fmt.Errorf("failed to write streaming response to client: %w", writeErr)
+			}
+			flusher.Flush()
+		}
+		if readErr != nil {
+			if errors.Is(readErr, io.EOF) {
+				return nil
+			}
+			return fmt.Errorf("failed to read upstream streaming response: %w", readErr)
+		}
+	}
+}
+
+func copyLLMStreamHeaders(dst, src http.Header) {
+	for _, key := range []string{
+		"Content-Type",
+		"Cache-Control",
+		"Content-Encoding",
+		"Content-Language",
+		"X-Accel-Buffering",
+	} {
+		if value := src.Get(key); value != "" {
+			dst.Set(key, value)
+		}
+	}
+}
+
+func writeLLMStreamError(c *gin.Context, err error) {
+	payload, marshalErr := json.Marshal(gin.H{
+		"message": err.Error(),
+	})
+	if marshalErr != nil {
+		payload = []byte(`{"message":"streaming proxy failed"}`)
+	}
+	_, _ = c.Writer.WriteString("event: error\n")
+	_, _ = c.Writer.WriteString("data: ")
+	_, _ = c.Writer.Write(payload)
+	_, _ = c.Writer.WriteString("\n\n")
+	if flusher, ok := c.Writer.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
+
+func previewResponseBody(body []byte) string {
+	text := strings.TrimSpace(string(body))
+	text = strings.ReplaceAll(text, "\r", " ")
+	text = strings.ReplaceAll(text, "\n", " ")
+	text = strings.Join(strings.Fields(text), " ")
+	if text == "" {
+		return "<empty>"
+	}
+	runes := []rune(text)
+	if len(runes) > 300 {
+		return string(runes[:300]) + "..."
+	}
+	return text
 }

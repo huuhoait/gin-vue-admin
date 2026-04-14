@@ -1,34 +1,35 @@
 package internal
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
 )
 
-// Cutter 实现 io.Writer 接口
-// 用于日志切割, strings.Join([]string{director,layout, formats..., level+".log"}, os.PathSeparator)
+// Cutter Implement io.Writer API
+// Used forLogslice, strings.Join([]string{director,layout, formats..., level+".log"}, os.PathSeparator)
 type Cutter struct {
-	level        string        // 日志级别(debug, info, warn, error, dpanic, panic, fatal)
-	layout       string        // 时间格式 2006-01-02 15:04:05
-	formats      []string      // 自定义参数([]string{Director,"2006-01-02", "business"(此参数可不写), level+".log"}
-	director     string        // 日志文件夹
-	retentionDay int           //日志保留天数
-	file         *os.File      // 文件句柄
-	mutex        *sync.RWMutex // 读写锁
+	level        string        // Log Level(debug, info, warn, error, dpanic, panic, fatal)
+	layout       string        // time format 2006-01-02 15:04:05
+	formats      []string      // CustomParameter([]string{Director,"2006-01-02", "business"(ThisParameterOptional), level+".log"}
+	director     string        // log folder
+	retentionDay int           //log retention days
+	file         *os.File      // FileSentencehandle
+	mutex        *sync.RWMutex // Read WriteLock
 }
 
 type CutterOption func(*Cutter)
 
-// CutterWithLayout 时间格式
+// CutterWithLayout time format
 func CutterWithLayout(layout string) CutterOption {
 	return func(c *Cutter) {
 		c.layout = layout
 	}
 }
 
-// CutterWithFormats 格式化参数
+// CutterWithFormats FormatParameter
 func CutterWithFormats(format ...string) CutterOption {
 	return func(c *Cutter) {
 		if len(format) > 0 {
@@ -79,10 +80,13 @@ func (c *Cutter) Write(bytes []byte) (n int, err error) {
 	if err != nil {
 		return 0, err
 	}
-	err = removeNDaysFolders(c.director, c.retentionDay)
-	if err != nil {
-		return 0, err
-	}
+	defer func() {
+		err := removeNDaysFolders(c.director, c.retentionDay)
+		if err != nil {
+			fmt.Println("CleanExpiredLogfailed", err)
+		}
+	}()
+
 	c.file, err = os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return 0, err
@@ -100,7 +104,7 @@ func (c *Cutter) Sync() error {
 	return nil
 }
 
-// 增加日志目录文件清理 小于等于零的值默认忽略不再处理
+// IncreaseLogDirectoryFileClean SmallAtetc.AtzeroofValuedefaultIgnoreNotAgainHandle
 func removeNDaysFolders(dir string, days int) error {
 	if days <= 0 {
 		return nil

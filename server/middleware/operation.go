@@ -15,12 +15,9 @@ import (
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
-
-var operationRecordService = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
 
 var respPool sync.Pool
 var bufferSize = 1024
@@ -75,12 +72,12 @@ func OperationRecord() gin.HandlerFunc {
 			UserID: userId,
 		}
 
-		// 上传文件时候 中间件日志进行裁断操作
+		// when uploading files, the middleware log truncates the body
 		if strings.Contains(c.GetHeader("Content-Type"), "multipart/form-data") {
-			record.Body = "[文件]"
+			record.Body = "[file]"
 		} else {
 			if len(body) > bufferSize {
-				record.Body = "[超出记录长度]"
+				record.Body = "[exceeds record length]"
 			} else {
 				record.Body = string(body)
 			}
@@ -111,12 +108,11 @@ func OperationRecord() gin.HandlerFunc {
 			strings.Contains(c.Writer.Header().Get("Content-Disposition"), "attachment") ||
 			strings.Contains(c.Writer.Header().Get("Content-Transfer-Encoding"), "binary") {
 			if len(record.Resp) > bufferSize {
-				// 截断
-				record.Body = "超出记录长度"
+				// truncate
+				record.Body = "exceeds record length"
 			}
 		}
-
-		if err := operationRecordService.CreateSysOperationRecord(record); err != nil {
+		if err := global.GVA_DB.Create(&record).Error; err != nil {
 			global.GVA_LOG.Error("create operation record error:", zap.Error(err))
 		}
 	}

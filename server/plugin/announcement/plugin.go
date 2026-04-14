@@ -13,14 +13,20 @@ var Plugin = new(plugin)
 
 type plugin struct{}
 
+func init() {
+	interfaces.Register(Plugin)
+}
+
 func (p *plugin) Register(group *gin.Engine) {
 	ctx := context.Background()
-	// 如果需要配置文件，请到config.Config中填充配置结构，且到下方发放中填入其在config.yaml中的key
+	// if neededconfigurationFile, PleaseToconfig.ConfigInFillFillconfigurationStructure, AndToDownSideIssueInFillInItsAtconfig.yamlInkey
 	// initialize.Viper()
-	// 安装插件时候自动注册的api数据请到下方法.Api方法中实现
+	// auto-registered when installing pluginapidata please refer to belowmethod.Apimethodimplemented in
 	initialize.Api(ctx)
-	// 安装插件时候自动注册的api数据请到下方法.Menu方法中实现
+	// auto-registered when installing pluginMenudata please refer to belowmethod.Menumethodimplemented in
 	initialize.Menu(ctx)
+	// auto-registered when installing pluginDictionarydata please refer to belowmethod.Dictionarymethodimplemented in
+	initialize.Dictionary(ctx)
 	initialize.Gorm(ctx)
 	initialize.Router(group)
 }

@@ -7,23 +7,23 @@ import (
 	"io"
 )
 
-// PackageInitializeRouter 包初始化路由
+// PackageInitializeRouter PackageinitializeRoute
 // ModuleName := PackageName.AppName.GroupName
 // ModuleName.FunctionName(RouterGroupName)
 type PackageInitializeRouter struct {
 	Base
-	Type                 Type   // 类型
-	Path                 string // 文件路径
-	ImportPath           string // 导包路径
-	RelativePath         string // 相对路径
-	AppName              string // 应用名称
-	GroupName            string // 分组名称
-	ModuleName           string // 模块名称
-	PackageName          string // 包名
-	FunctionName         string // 函数名
-	RouterGroupName      string // 路由分组名称
-	LeftRouterGroupName  string // 左路由分组名称
-	RightRouterGroupName string // 右路由分组名称
+	Type                 Type   // type
+	Path                 string // Filepath
+	ImportPath           string // GuidePackagepath
+	RelativePath         string // relative path
+	AppName              string // application name
+	GroupName            string // group name
+	ModuleName           string // Modulename
+	PackageName          string // package name
+	FunctionName         string // function name
+	RouterGroupName      string // Routegroup name
+	LeftRouterGroupName  string // left routegroup name
+	RightRouterGroupName string // right routegroup name
 }
 
 func (a *PackageInitializeRouter) Parse(filename string, writer io.Writer) (file *ast.File, err error) {
@@ -46,35 +46,35 @@ func (a *PackageInitializeRouter) Rollback(file *ast.File) error {
 		if IsBlockStmt(funcDecl.Body.List[i]) {
 			if VariableExistsInBlock(funcDecl.Body.List[i].(*ast.BlockStmt), a.ModuleName) {
 				for ii, stmt := range funcDecl.Body.List[i].(*ast.BlockStmt).List {
-					// 检查语句是否为 *ast.ExprStmt
+					// CheckStatementYesNoFor *ast.ExprStmt
 					exprStmt, ok := stmt.(*ast.ExprStmt)
 					if !ok {
 						continue
 					}
-					// 检查表达式是否为 *ast.CallExpr
+					// CheckExpressionYesNoFor *ast.CallExpr
 					callExpr, ok := exprStmt.X.(*ast.CallExpr)
 					if !ok {
 						continue
 					}
-					// 检查是否调用了我们正在寻找的函数
+					// CheckYesNoInvokeDoneWePositiveAtSearchFindofFunctionNumber
 					selExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
 					if !ok {
 						continue
 					}
-					// 检查调用的函数是否为 systemRouter.InitApiRouter
+					// CheckInvokeofFunctionNumberYesNoFor systemRouter.InitApiRouter
 					ident, ok := selExpr.X.(*ast.Ident)
-					//只要存在调用则+1
+					//OnlyRequireExistsInvokeThen+1
 					if ok && ident.Name == a.ModuleName {
 						exprNum++
 					}
-					//判断是否为目标结构
+					//JudgeYesNoForItemTagStructure
 					if !ok || ident.Name != a.ModuleName || selExpr.Sel.Name != a.FunctionName {
 						continue
 					}
 					exprNum--
-					// 从语句列表中移除。
+					// FromStatementListInRemove. 
 					funcDecl.Body.List[i].(*ast.BlockStmt).List = append(funcDecl.Body.List[i].(*ast.BlockStmt).List[:ii], funcDecl.Body.List[i].(*ast.BlockStmt).List[ii+1:]...)
-					// 如果不再存在任何调用，则删除导入和变量。
+					// if notAgainExistsanyInvoke, ThendeleteimportAndVariable. 
 					if exprNum == 0 {
 						funcDecl.Body.List = append(funcDecl.Body.List[:i], funcDecl.Body.List[i+1:]...)
 					}
@@ -125,12 +125,12 @@ func (a *PackageInitializeRouter) Format(filename string, writer io.Writer, file
 }
 
 func (a *PackageInitializeRouter) CreateAssignStmt() *ast.AssignStmt {
-	//创建左侧变量
+	//CreateLeft PanelVariable
 	ident := &ast.Ident{
 		Name: a.ModuleName,
 	}
 
-	//创建右侧的赋值语句
+	//CreateRight PanelofAssignValueStatement
 	selector := &ast.SelectorExpr{
 		X: &ast.SelectorExpr{
 			X:   &ast.Ident{Name: a.PackageName},
@@ -139,7 +139,7 @@ func (a *PackageInitializeRouter) CreateAssignStmt() *ast.AssignStmt {
 		Sel: &ast.Ident{Name: a.GroupName},
 	}
 
-	// 创建一个组合的赋值语句
+	// CreateOnePieceCompositeofAssignValueStatement
 	stmt := &ast.AssignStmt{
 		Lhs: []ast.Expr{ident},
 		Tok: token.DEFINE,

@@ -1,13 +1,13 @@
 package utils
 
 import (
+	"context"
 	"errors"
 	"time"
 
-	jwt "github.com/golang-jwt/jwt/v4"
-
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 type JWT struct {
@@ -15,10 +15,12 @@ type JWT struct {
 }
 
 var (
-	TokenExpired     = errors.New("Token is expired")
-	TokenNotValidYet = errors.New("Token not active yet")
-	TokenMalformed   = errors.New("That's not even a token")
-	TokenInvalid     = errors.New("Couldn't handle this token:")
+	TokenValid            = errors.New("UnknownError")
+	TokenExpired          = errors.New("tokenAlreadyExpired")
+	TokenNotValidYet      = errors.New("tokenStillNotActivate")
+	TokenMalformed        = errors.New("ThisNotYesOnePiecetoken")
+	TokenSignatureInvalid = errors.New("NoneEffectSign")
+	TokenInvalid          = errors.New("UnableHandleThistoken")
 )
 
 func NewJWT() *JWT {
@@ -32,24 +34,24 @@ func (j *JWT) CreateClaims(baseClaims request.BaseClaims) request.CustomClaims {
 	ep, _ := ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
 	claims := request.CustomClaims{
 		BaseClaims: baseClaims,
-		BufferTime: int64(bf / time.Second), // 缓冲时间1天 缓冲时间内会获得新的token刷新令牌 此时一个用户会存在两个有效令牌 但是前端只留一个 另一个会丢失
+		BufferTime: int64(bf / time.Second), // buffer time1Day buffer timeInsideWillGetNewoftokenRefresh Token ThisWhenOnePieceUserWillExistsTwoPieceHaveEffectToken ButYesFrontendOnlykeepOnePiece otherOnePieceWillLost
 		RegisteredClaims: jwt.RegisteredClaims{
-			Audience:  jwt.ClaimStrings{"GVA"},                   // 受众
-			NotBefore: jwt.NewNumericDate(time.Now().Add(-1000)), // 签名生效时间
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ep)),    // 过期时间 7天  配置文件
-			Issuer:    global.GVA_CONFIG.JWT.Issuer,              // 签名的发行者
+			Audience:  jwt.ClaimStrings{"GVA"},                   // Receivepublic
+			NotBefore: jwt.NewNumericDate(time.Now().Add(-1000)), // SignEffective Time
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ep)),    // expiration time 7Day  configurationFile
+			Issuer:    global.GVA_CONFIG.JWT.Issuer,              // SignofsendRowPerson
 		},
 	}
 	return claims
 }
 
-// 创建一个token
+// CreateToken CreateOnePiecetoken
 func (j *JWT) CreateToken(claims request.CustomClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.SigningKey)
 }
 
-// CreateTokenByOldToken 旧token 换新token 使用归并回源避免并发问题
+// CreateTokenByOldToken Oldtoken ChangeNewtoken UsereturnAndReturnSourceAvoidConcurrencyIssue
 func (j *JWT) CreateTokenByOldToken(oldToken string, claims request.CustomClaims) (string, error) {
 	v, err, _ := global.GVA_Concurrency_Control.Do("JWT:"+oldToken, func() (interface{}, error) {
 		return j.CreateToken(claims)
@@ -57,32 +59,47 @@ func (j *JWT) CreateTokenByOldToken(oldToken string, claims request.CustomClaims
 	return v.(string), err
 }
 
-// 解析 token
+// ParseToken Parse token
 func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &request.CustomClaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return j.SigningKey, nil
 	})
+
 	if err != nil {
-		if ve, ok := err.(*jwt.ValidationError); ok {
-			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-				return nil, TokenMalformed
-			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
-				// Token is expired
-				return nil, TokenExpired
-			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 {
-				return nil, TokenNotValidYet
-			} else {
-				return nil, TokenInvalid
-			}
+		switch {
+		case errors.Is(err, jwt.ErrTokenExpired):
+			return nil, TokenExpired
+		case errors.Is(err, jwt.ErrTokenMalformed):
+			return nil, TokenMalformed
+		case errors.Is(err, jwt.ErrTokenSignatureInvalid):
+			return nil, TokenSignatureInvalid
+		case errors.Is(err, jwt.ErrTokenNotValidYet):
+			return nil, TokenNotValidYet
+		default:
+			return nil, TokenInvalid
 		}
 	}
 	if token != nil {
 		if claims, ok := token.Claims.(*request.CustomClaims); ok && token.Valid {
 			return claims, nil
 		}
-		return nil, TokenInvalid
-
-	} else {
-		return nil, TokenInvalid
 	}
+	return nil, TokenValid
+}
+
+//@author: [piexlmax](https://github.com/piexlmax)
+//@function: SetRedisJWT
+//@description: jwtSaveInredisAndsetexpiration time
+//@param: jwt string, userName string
+//@return: err error
+
+func SetRedisJWT(jwt string, userName string) (err error) {
+	// This Locationexpiration timeetc.Atjwtexpiration time
+	dr, err := ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
+	if err != nil {
+		return err
+	}
+	timer := dr
+	err = global.GVA_REDIS.Set(context.Background(), userName, jwt, timer).Err()
+	return err
 }

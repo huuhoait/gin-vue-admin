@@ -13,12 +13,12 @@ type AutoCodeTemplateApi struct{}
 
 // Preview
 // @Tags      AutoCodeTemplate
-// @Summary   预览创建后的代码
+// @Summary   Preview generated code
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      request.AutoCode                                      true  "预览创建代码"
-// @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "预览创建后的代码"
+// @Param     data  body      request.AutoCode                                      true  "Preview code generation"
+// @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "Preview of generated code"
 // @Router    /autoCode/preview [post]
 func (a *AutoCodeTemplateApi) Preview(c *gin.Context) {
 	var info request.AutoCode
@@ -40,21 +40,21 @@ func (a *AutoCodeTemplateApi) Preview(c *gin.Context) {
 	info.PackageT = utils.FirstUpper(info.Package)
 	autoCode, err := autoCodeTemplateService.Preview(c.Request.Context(), info)
 	if err != nil {
-		global.GVA_LOG.Error("预览失败!", zap.Error(err))
-		response.FailWithMessage("预览失败", c)
+		global.GVA_LOG.Error(err.Error(), zap.Error(err))
+		response.FailWithMessage("Preview failed: "+err.Error(), c)
 	} else {
-		response.OkWithDetailed(gin.H{"autoCode": autoCode}, "预览成功", c)
+		response.OkWithDetailed(gin.H{"autoCode": autoCode}, "Preview successful", c)
 	}
 }
 
 // Create
 // @Tags      AutoCodeTemplate
-// @Summary   自动代码模板
+// @Summary   Auto code template
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      request.AutoCode  true  "创建自动代码"
-// @Success   200   {string}  string                 "{"success":true,"data":{},"msg":"创建成功"}"
+// @Param     data  body      request.AutoCode  true  "Create auto code"
+// @Success   200   {string}  string                 "{"success":true,"data":{},"msg":"Created successfully"}"
 // @Router    /autoCode/createTemp [post]
 func (a *AutoCodeTemplateApi) Create(c *gin.Context) {
 	var info request.AutoCode
@@ -75,21 +75,21 @@ func (a *AutoCodeTemplateApi) Create(c *gin.Context) {
 	}
 	err = autoCodeTemplateService.Create(c.Request.Context(), info)
 	if err != nil {
-		global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		global.GVA_LOG.Error("Failed to create!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {
-		response.OkWithMessage("创建成功", c)
+		response.OkWithMessage("Created successfully", c)
 	}
 }
 
-// Create
+// AddFunc
 // @Tags      AddFunc
-// @Summary   增加方法
+// @Summary   Add function
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      request.AutoCode  true  "增加方法"
-// @Success   200   {string}  string                 "{"success":true,"data":{},"msg":"创建成功"}"
+// @Param     data  body      request.AutoCode  true  "Add function"
+// @Success   200   {string}  string                 "{"success":true,"data":{},"msg":"Created successfully"}"
 // @Router    /autoCode/addFunc [post]
 func (a *AutoCodeTemplateApi) AddFunc(c *gin.Context) {
 	var info request.AutoFunc
@@ -98,11 +98,24 @@ func (a *AutoCodeTemplateApi) AddFunc(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = autoCodeTemplateService.AddFunc(info)
-	if err != nil {
-		global.GVA_LOG.Error("注入失败!", zap.Error(err))
-		response.FailWithMessage("注入失败", c)
+	var tempMap map[string]string
+	if info.IsPreview {
+		info.Router = "placeholder_router"
+		info.FuncName = "placeholder_funcName"
+		info.Method = "placeholder_method"
+		info.Description = "placeholder_description"
+		tempMap, err = autoCodeTemplateService.GetApiAndServer(info)
 	} else {
-		response.OkWithMessage("注入成功", c)
+		err = autoCodeTemplateService.AddFunc(info)
+	}
+	if err != nil {
+		global.GVA_LOG.Error("Failed to inject!", zap.Error(err))
+		response.FailWithMessage("Injection failed", c)
+	} else {
+		if info.IsPreview {
+			response.OkWithDetailed(tempMap, "Injected successfully", c)
+			return
+		}
+		response.OkWithMessage("Injected successfully", c)
 	}
 }

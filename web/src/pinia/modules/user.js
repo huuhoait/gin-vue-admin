@@ -1,36 +1,48 @@
-import { login, getUserInfo, setSelfInfo } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
 import { jsonInBlacklist } from '@/api/jwt'
 import router from '@/router/index'
 import { ElLoading, ElMessage } from 'element-plus'
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouterStore } from './router'
-import cookie from 'js-cookie'
+import { useCookies } from '@vueuse/integrations/useCookies'
+import { useStorage } from '@vueuse/core'
+
+import { useAppStore } from '@/pinia'
 
 export const useUserStore = defineStore('user', () => {
+  const appStore = useAppStore()
   const loadingInstance = ref(null)
 
   const userInfo = ref({
     uuid: '',
     nickName: '',
     headerImg: '',
-    authority: {},
-    sideMode: 'dark',
-    baseColor: '#fff'
+    authority: {}
   })
-  const token = ref(window.localStorage.getItem('token') || cookie.get('x-token') || '')
+  const token = useStorage('token', '')
+  const xToken = useCookies()
+  const currentToken = computed(() => token.value || xToken.get('x-token') || '')
+
   const setUserInfo = (val) => {
     userInfo.value = val
+    if (val.originSetting) {
+      Object.keys(appStore.config).forEach((key) => {
+        if (val.originSetting[key] !== undefined) {
+          appStore.config[key] = val.originSetting[key]
+        }
+      })
+    }
   }
 
   const setToken = (val) => {
     token.value = val
+    xToken.value = val
   }
 
-  const NeedInit = () => {
-    token.value = ''
-    window.localStorage.removeItem('token')
-    router.push({ name: 'Init', replace: true })
+  const NeedInit = async () => {
+    await ClearStorage()
+    await router.push({ name: 'Init', replace: true })
   }
 
   const ResetUserInfo = (value = {}) => {
@@ -39,131 +51,99 @@ export const useUserStore = defineStore('user', () => {
       ...value
     }
   }
-  /* 获取用户信息*/
-  const GetUserInfo = async() => {
+  /* Get user info */
+  const GetUserInfo = async () => {
     const res = await getUserInfo()
     if (res.code === 0) {
       setUserInfo(res.data.userInfo)
     }
     return res
   }
-  /* 登录*/
-  const LoginIn = async(loginInfo) => {
-    loadingInstance.value = ElLoading.service({
-      fullscreen: true,
-      text: '登录中，请稍候...',
-    })
+  /* Sign in */
+  const LoginIn = async (loginInfo) => {
+    try {
+      loadingInstance.value = ElLoading.service({
+        fullscreen: true,
+        text: 'Signing in, please wait...'
+      })
 
-    const res = await login(loginInfo)
+      const res = await login(loginInfo)
 
-    // 登陆失败，直接返回
-    if (res.code !== 0) {
-      loadingInstance.value.close()
+      if (res.code !== 0) {
+        return false
+      }
+      // Signed in: set user info and authority
+      setUserInfo(res.data.user)
+      setToken(res.data.token)
+
+      // Initialize route info
+      const routerStore = useRouterStore()
+      await routerStore.SetAsyncRouter()
+      const asyncRouters = routerStore.asyncRouters
+
+      // Register to router
+      asyncRouters.forEach((asyncRouter) => {
+        router.addRoute(asyncRouter)
+      })
+
+      if(router.currentRoute.value.query.redirect) {
+        await router.replace(router.currentRoute.value.query.redirect)
+        return true
+      }
+
+      if (!router.hasRoute(userInfo.value.authority.defaultRouter)) {
+        ElMessage.error('No default home route is available. Please contact an administrator.')
+      } else {
+        await router.replace({ name: userInfo.value.authority.defaultRouter })
+      }
+
+      const isWindows = /windows/i.test(navigator.userAgent)
+      window.localStorage.setItem('osType', isWindows ? 'WIN' : 'MAC')
+
+      // Done: close loading and return
+      return true
+    } catch (error) {
+      console.error('LoginIn error:', error)
       return false
+    } finally {
+      loadingInstance.value?.close()
     }
-
-    // 登陆成功，设置用户信息和权限相关信息
-    setUserInfo(res.data.user)
-    setToken(res.data.token)
-
-    // 初始化路由信息
-    const routerStore = useRouterStore()
-    await routerStore.SetAsyncRouter()
-    const asyncRouters = routerStore.asyncRouters
-
-    // 注册到路由表里
-    asyncRouters.forEach(asyncRouter => {
-      router.addRoute(asyncRouter)
-    })
-
-    if (!router.hasRoute(userInfo.value.authority.defaultRouter)) {
-      ElMessage.error('请联系管理员进行授权')
-    } else {
-      await router.replace({ name: userInfo.value.authority.defaultRouter })
-    }
-
-    const isWin = ref(/windows/i.test(navigator.userAgent))
-    if (isWin.value) {
-      window.localStorage.setItem('osType', 'WIN')
-    } else {
-      window.localStorage.setItem('osType', 'MAC')
-    }
-
-    // 全部操作均结束，关闭loading并返回
-    loadingInstance.value.close()
-    return true
   }
-  /* 登出*/
-  const LoginOut = async() => {
+  /* Sign out */
+  const LoginOut = async () => {
     const res = await jsonInBlacklist()
 
-    // 登出失败
+    // Sign out failed
     if (res.code !== 0) {
       return
     }
 
     await ClearStorage()
 
-    // 把路由定向到登录页，无需等待直接reload
+    // Redirect to login and reload
     router.push({ name: 'Login', replace: true })
     window.location.reload()
   }
-  /* 清理数据 */
-  const ClearStorage = async() => {
+  /* Clear storage */
+  const ClearStorage = async () => {
     token.value = ''
+    // Use remove() to delete cookie
+    xToken.remove()
     sessionStorage.clear()
-    window.localStorage.removeItem('token')
-    cookie.remove('x-token')
+    // Clear related localStorage items
+    localStorage.removeItem('originSetting')
+    localStorage.removeItem('token')
   }
-  /* 设置侧边栏模式*/
-  const changeSideMode = async(data) => {
-    const res = await setSelfInfo({ sideMode: data })
-    if (res.code === 0) {
-      userInfo.value.sideMode = data
-      ElMessage({
-        type: 'success',
-        message: '设置成功'
-      })
-    }
-  }
-
-  const mode = computed(() => userInfo.value.sideMode)
-  const sideMode = computed(() => {
-    if (userInfo.value.sideMode === 'dark') {
-      return '#191a23'
-    } else if (userInfo.value.sideMode === 'light') {
-      return '#fff'
-    } else {
-      return userInfo.value.sideMode
-    }
-  })
-  const baseColor = computed(() => {
-    if (userInfo.value.sideMode === 'dark') {
-      return '#fff'
-    } else if (userInfo.value.sideMode === 'light') {
-      return '#191a23'
-    } else {
-      return userInfo.value.baseColor
-    }
-  })
-
-  watch(() => token.value, () => {
-    window.localStorage.setItem('token', token.value)
-  })
 
   return {
     userInfo,
-    token,
+    token: currentToken,
     NeedInit,
     ResetUserInfo,
     GetUserInfo,
     LoginIn,
     LoginOut,
-    changeSideMode,
-    mode,
-    sideMode,
     setToken,
-    baseColor,
     loadingInstance,
     ClearStorage
   }

@@ -3,80 +3,82 @@ package system
 import (
 	"context"
 	"fmt"
+	"go/token"
+	"os"
+	"path/filepath"
+	"strings"
+	"text/template"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	common "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	model "github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils/ast"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils/autocode"
 	"github.com/pkg/errors"
-	"go/token"
 	"gorm.io/gorm"
-	"os"
-	"path/filepath"
-	"strings"
-	"text/template"
 )
 
 var AutoCodePackage = new(autoCodePackage)
 
 type autoCodePackage struct{}
 
-// Create 创建包信息
+// Create creates package information
 // @author: [piexlmax](https://github.com/piexlmax)
 // @author: [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodePackage) Create(ctx context.Context, info *request.SysAutoCodePackageCreate) error {
 	switch {
 	case info.Template == "":
-		return errors.New("模板不能为空!")
+		return errors.New("template cannot be empty!")
 	case info.Template == "page":
-		return errors.New("page为表单生成器!")
+		return errors.New("page is for the form generator!")
 	case info.PackageName == "":
-		return errors.New("PackageName不能为空!")
+		return errors.New("PackageName cannot be empty!")
 	case token.IsKeyword(info.PackageName):
-		return errors.Errorf("%s为go的关键字!", info.PackageName)
+		return errors.Errorf("%s is a Go keyword!", info.PackageName)
 	case info.Template == "package":
 		if info.PackageName == "system" || info.PackageName == "example" {
-			return errors.New("不能使用已保留的package name")
+			return errors.New("cannot use a reserved package name")
 		}
 	default:
 		break
 	}
 	if !errors.Is(global.GVA_DB.Where("package_name = ? and template = ?", info.PackageName, info.Template).First(&model.SysAutoCodePackage{}).Error, gorm.ErrRecordNotFound) {
-		return errors.New("存在相同PackageName")
+		return errors.New("a PackageName with the same name already exists")
 	}
 	create := info.Create()
 	return global.GVA_DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		err := tx.Create(&create).Error
 		if err != nil {
-			return errors.Wrap(err, "创建失败!")
+			return errors.Wrap(err, "creation failed!")
 		}
 		code := info.AutoCode()
-		_, asts, creates, err := s.templates(ctx, create, code)
+		_, asts, creates, err := s.templates(ctx, create, code, true)
 		if err != nil {
 			return err
 		}
-		for key, value := range creates { // key 为 模版绝对路径
+		for key, value := range creates { // key is the template absolute path
 			var files *template.Template
-			files, err = template.ParseFiles(key)
+			files, err = template.New(filepath.Base(key)).Funcs(autocode.GetTemplateFuncMap()).ParseFiles(key)
 			if err != nil {
-				return errors.Wrapf(err, "[filepath:%s]读取模版文件失败!", key)
+				return errors.Wrapf(err, "[filepath:%s]failed to read template file!", key)
 			}
 			err = os.MkdirAll(filepath.Dir(value), os.ModePerm)
 			if err != nil {
-				return errors.Wrapf(err, "[filepath:%s]创建文件夹失败!", value)
+				return errors.Wrapf(err, "[filepath:%s]failed to create directory!", value)
 			}
 			var file *os.File
 			file, err = os.Create(value)
 			if err != nil {
-				return errors.Wrapf(err, "[filepath:%s]创建文件夹失败!", value)
+				return errors.Wrapf(err, "[filepath:%s]failed to create directory!", value)
 			}
 			err = files.Execute(file, code)
 			_ = file.Close()
 			if err != nil {
-				return errors.Wrapf(err, "[filepath:%s]生成失败!", value)
+				return errors.Wrapf(err, "[filepath:%s]generation failed!", value)
 			}
-			fmt.Printf("[template:%s][filepath:%s]生成成功!\n", key, value)
+			fmt.Printf("[template:%s][filepath:%s]generated successfully!\n", key, value)
 		}
 		for key, value := range asts {
 			keys := strings.Split(key, "=>")
@@ -94,7 +96,7 @@ func (s *autoCodePackage) Create(ctx context.Context, info *request.SysAutoCodeP
 							return err
 						}
 					}
-					fmt.Printf("[type:%s]注入成功!\n", key)
+					fmt.Printf("[type:%s]injection succeeded!\n", key)
 				}
 			}
 		}
@@ -102,70 +104,223 @@ func (s *autoCodePackage) Create(ctx context.Context, info *request.SysAutoCodeP
 	})
 }
 
-// Delete 删除包记录
+// Delete deletes a package record
 // @author: [piexlmax](https://github.com/piexlmax)
 // @author: [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodePackage) Delete(ctx context.Context, info common.GetById) error {
 	err := global.GVA_DB.WithContext(ctx).Delete(&model.SysAutoCodePackage{}, info.Uint()).Error
 	if err != nil {
-		return errors.Wrap(err, "删除失败!")
+		return errors.Wrap(err, "deletion failed!")
 	}
 	return nil
 }
 
-// All 获取所有包
+// DeleteByNames
+// @author: [piexlmax](https://github.com/piexlmax)
+// @author: [SliverHorn](https://github.com/SliverHorn)
+func (s *autoCodePackage) DeleteByNames(ctx context.Context, names []string) error {
+	if len(names) == 0 {
+		return nil
+	}
+	err := global.GVA_DB.WithContext(ctx).Where("package_name IN ?", names).Delete(&model.SysAutoCodePackage{}).Error
+	if err != nil {
+		return errors.Wrap(err, "deletion failed!")
+	}
+	return nil
+}
+
+// All retrieves all packages
 // @author: [piexlmax](https://github.com/piexlmax)
 // @author: [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodePackage) All(ctx context.Context) (entities []model.SysAutoCodePackage, err error) {
+	server := make([]model.SysAutoCodePackage, 0)
+	plugin := make([]model.SysAutoCodePackage, 0)
+	serverPath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "service")
+	pluginPath := filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "plugin")
+	serverDir, err := os.ReadDir(serverPath)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read service directory!")
+	}
+	pluginDir, err := os.ReadDir(pluginPath)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read plugin directory!")
+	}
+	for i := 0; i < len(serverDir); i++ {
+		if serverDir[i].IsDir() {
+			serverPackage := model.SysAutoCodePackage{
+				PackageName: serverDir[i].Name(),
+				Template:    "package",
+				Label:       serverDir[i].Name() + " package",
+				Desc:        "auto-detected " + serverDir[i].Name() + " package",
+				Module:      global.GVA_CONFIG.AutoCode.Module,
+			}
+			server = append(server, serverPackage)
+		}
+	}
+	for i := 0; i < len(pluginDir); i++ {
+		if pluginDir[i].IsDir() {
+			dirNameMap := map[string]bool{
+				"api":        true,
+				"config":     true,
+				"initialize": true,
+				"plugin":     true,
+				"router":     true,
+				"service":    true,
+			}
+			dir, e := os.ReadDir(filepath.Join(pluginPath, pluginDir[i].Name()))
+			if e != nil {
+				return nil, errors.Wrap(err, "failed to read plugin directory!")
+			}
+			// dir must contain all entries in dirNameMap
+			for k := 0; k < len(dir); k++ {
+				if dir[k].IsDir() {
+					if ok := dirNameMap[dir[k].Name()]; ok {
+						delete(dirNameMap, dir[k].Name())
+					}
+				}
+			}
+
+			var desc string
+			if len(dirNameMap) == 0 {
+				// Fully matches standard structure
+				desc = "auto-detected " + pluginDir[i].Name() + " plugin, please confirm it is a v2 plugin before use"
+			} else {
+				// Missing some structures, generate warning description
+				var missingDirs []string
+				for dirName := range dirNameMap {
+					missingDirs = append(missingDirs, dirName)
+				}
+				desc = fmt.Sprintf("auto-detected, but missing %s structure(s), not recommended for autocode or MCP use", strings.Join(missingDirs, ", "))
+			}
+
+			pluginPackage := model.SysAutoCodePackage{
+				PackageName: pluginDir[i].Name(),
+				Template:    "plugin",
+				Label:       pluginDir[i].Name() + " plugin",
+				Desc:        desc,
+				Module:      global.GVA_CONFIG.AutoCode.Module,
+			}
+			plugin = append(plugin, pluginPackage)
+		}
+	}
+
 	err = global.GVA_DB.WithContext(ctx).Find(&entities).Error
 	if err != nil {
-		return nil, errors.Wrap(err, "获取所有包失败!")
+		return nil, errors.Wrap(err, "failed to retrieve all packages!")
 	}
+	entitiesMap := make(map[string]model.SysAutoCodePackage)
+	for i := 0; i < len(entities); i++ {
+		entitiesMap[entities[i].PackageName] = entities[i]
+	}
+	createEntity := []model.SysAutoCodePackage{}
+	for i := 0; i < len(server); i++ {
+		if _, ok := entitiesMap[server[i].PackageName]; !ok {
+			if server[i].Template == "package" {
+				createEntity = append(createEntity, server[i])
+			}
+		}
+	}
+	for i := 0; i < len(plugin); i++ {
+		if _, ok := entitiesMap[plugin[i].PackageName]; !ok {
+			if plugin[i].Template == "plugin" {
+				createEntity = append(createEntity, plugin[i])
+			}
+		}
+	}
+
+	if len(createEntity) > 0 {
+		err = global.GVA_DB.WithContext(ctx).Create(&createEntity).Error
+		if err != nil {
+			return nil, errors.Wrap(err, "sync failed!")
+		}
+		entities = append(entities, createEntity...)
+	}
+
+	// Handle case where DB records exist but entity files do not - delete corresponding DB records
+	existingPackageNames := make(map[string]bool)
+	// Collect all existing package names
+	for i := 0; i < len(server); i++ {
+		existingPackageNames[server[i].PackageName] = true
+	}
+	for i := 0; i < len(plugin); i++ {
+		existingPackageNames[plugin[i].PackageName] = true
+	}
+
+	// Find DB records that need to be deleted
+	deleteEntityIDs := []uint{}
+	for i := 0; i < len(entities); i++ {
+		if !existingPackageNames[entities[i].PackageName] {
+			deleteEntityIDs = append(deleteEntityIDs, entities[i].ID)
+		}
+	}
+
+	// Delete DB records whose files no longer exist
+	if len(deleteEntityIDs) > 0 {
+		err = global.GVA_DB.WithContext(ctx).Delete(&model.SysAutoCodePackage{}, deleteEntityIDs).Error
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to delete orphaned package records!")
+		}
+		// Remove deleted records from the result set
+		filteredEntities := []model.SysAutoCodePackage{}
+		for i := 0; i < len(entities); i++ {
+			if existingPackageNames[entities[i].PackageName] {
+				filteredEntities = append(filteredEntities, entities[i])
+			}
+		}
+		entities = filteredEntities
+	}
+
 	return entities, nil
 }
 
-// Templates 获取所有模版文件夹
+// Templates retrieves all template directories
 // @author: [SliverHorn](https://github.com/SliverHorn)
 func (s *autoCodePackage) Templates(ctx context.Context) ([]string, error) {
 	templates := make([]string, 0)
 	entries, err := os.ReadDir("resource")
 	if err != nil {
-		return nil, errors.Wrap(err, "读取模版文件夹失败!")
+		return nil, errors.Wrap(err, "failed to read template directory!")
 	}
 	for i := 0; i < len(entries); i++ {
 		if entries[i].IsDir() {
 			if entries[i].Name() == "page" {
 				continue
-			} // page 为表单生成器
+			} // page is for the form generator
 			if entries[i].Name() == "function" {
 				continue
-			} // function 为函数生成器
+			} // function is for the function generator
 			if entries[i].Name() == "preview" {
 				continue
-			} // preview 为预览代码生成器的代码
+			} // preview is for the code preview generator
+			if entries[i].Name() == "mcp" {
+				continue
+			} // mcp is for the MCP generator
 			templates = append(templates, entries[i].Name())
 		}
 	}
 	return templates, nil
 }
 
-func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCodePackage, info request.AutoCode) (code map[string]string, asts map[string]ast.Ast, creates map[string]string, err error) {
+func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCodePackage, info request.AutoCode, isPackage bool) (code map[string]string, asts map[string]ast.Ast, creates map[string]string, err error) {
 	code = make(map[string]string)
 	asts = make(map[string]ast.Ast)
 	creates = make(map[string]string)
 	templateDir := filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "resource", entity.Template)
 	templateDirs, err := os.ReadDir(templateDir)
 	if err != nil {
-		return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", templateDir)
+		return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", templateDir)
 	}
 	for i := 0; i < len(templateDirs); i++ {
 		second := filepath.Join(templateDir, templateDirs[i].Name())
 		switch templateDirs[i].Name() {
 		case "server":
+			if !info.GenerateServer && !isPackage {
+				break
+			}
 			var secondDirs []os.DirEntry
 			secondDirs, err = os.ReadDir(second)
 			if err != nil {
-				return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", second)
+				return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", second)
 			}
 			for j := 0; j < len(secondDirs); j++ {
 				if secondDirs[j].Name() == ".DS_Store" {
@@ -174,15 +329,15 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 				three := filepath.Join(second, secondDirs[j].Name())
 				if !secondDirs[j].IsDir() {
 					ext := filepath.Ext(secondDirs[j].Name())
-					if ext != ".template" && ext != ".tpl" {
-						return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版后缀!", three)
+					if ext != ".tpl" {
+						return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file extension!", three)
 					}
 					name := strings.TrimSuffix(secondDirs[j].Name(), ext)
 					if name == "main.go" || name == "plugin.go" {
 						pluginInitialize := &ast.PluginInitializeV2{
 							Type:        ast.TypePluginInitializeV2,
 							Path:        filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "plugin", entity.PackageName, name),
-							PluginPath:  filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "initialize", "plugin_biz_v2.go"),
+							PluginPath:  filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "plugin", "register.go"),
 							ImportPath:  fmt.Sprintf(`"%s/plugin/%s"`, global.GVA_CONFIG.AutoCode.Module, entity.PackageName),
 							PackageName: entity.PackageName,
 						}
@@ -190,14 +345,14 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 						creates[three] = pluginInitialize.Path
 						continue
 					}
-					return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", three)
+					return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", three)
 				}
 				switch secondDirs[j].Name() {
 				case "api", "router", "service":
 					var threeDirs []os.DirEntry
 					threeDirs, err = os.ReadDir(three)
 					if err != nil {
-						return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", three)
+						return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", three)
 					}
 					for k := 0; k < len(threeDirs); k++ {
 						if threeDirs[k].Name() == ".DS_Store" {
@@ -205,18 +360,18 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 						}
 						four := filepath.Join(three, threeDirs[k].Name())
 						if threeDirs[k].IsDir() {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件夹!", four)
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template directory!", four)
 						}
 						ext := filepath.Ext(four)
-						if ext != ".template" && ext != ".tpl" {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版后缀!", four)
+						if ext != ".tpl" {
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file extension!", four)
 						}
 						api := strings.Index(threeDirs[k].Name(), "api")
 						hasEnter := strings.Index(threeDirs[k].Name(), "enter")
 						router := strings.Index(threeDirs[k].Name(), "router")
 						service := strings.Index(threeDirs[k].Name(), "service")
 						if router == -1 && api == -1 && service == -1 && hasEnter == -1 {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", four)
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", four)
 						}
 						if entity.Template == "package" {
 							create := filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, secondDirs[j].Name(), entity.PackageName, info.HumpPackageName+".go")
@@ -365,11 +520,11 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 				case "gen", "config", "initialize", "plugin", "response":
 					if entity.Template == "package" {
 						continue
-					} // package模板不需要生成gen, config, initialize
+					} // package template does not need gen, config, initialize
 					var threeDirs []os.DirEntry
 					threeDirs, err = os.ReadDir(three)
 					if err != nil {
-						return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", three)
+						return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", three)
 					}
 					for k := 0; k < len(threeDirs); k++ {
 						if threeDirs[k].Name() == ".DS_Store" {
@@ -377,11 +532,11 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 						}
 						four := filepath.Join(three, threeDirs[k].Name())
 						if threeDirs[k].IsDir() {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件夹!", four)
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template directory!", four)
 						}
 						ext := filepath.Ext(four)
-						if ext != ".template" && ext != ".tpl" {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版后缀!", four)
+						if ext != ".tpl" {
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file extension!", four)
 						}
 						gen := strings.Index(threeDirs[k].Name(), "gen")
 						api := strings.Index(threeDirs[k].Name(), "api")
@@ -392,10 +547,11 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 						router := strings.Index(threeDirs[k].Name(), "router")
 						hasGorm := strings.Index(threeDirs[k].Name(), "gorm")
 						response := strings.Index(threeDirs[k].Name(), "response")
-						if gen != -1 && api != -1 && menu != -1 && viper != -1 && plugin != -1 && config != -1 && router != -1 && hasGorm != -1 && response != -1 {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", four)
+						dictionary := strings.Index(threeDirs[k].Name(), "dictionary")
+						if gen != -1 && api != -1 && menu != -1 && viper != -1 && plugin != -1 && config != -1 && router != -1 && hasGorm != -1 && response != -1 && dictionary != -1 {
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", four)
 						}
-						if api != -1 || menu != -1 || viper != -1 || response != -1 || plugin != -1 || config != -1 {
+						if api != -1 || menu != -1 || viper != -1 || response != -1 || plugin != -1 || config != -1 || dictionary != -1 {
 							creates[four] = filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "plugin", entity.PackageName, secondDirs[j].Name(), strings.TrimSuffix(threeDirs[k].Name(), ext))
 						}
 						if gen != -1 {
@@ -442,7 +598,7 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 					var threeDirs []os.DirEntry
 					threeDirs, err = os.ReadDir(three)
 					if err != nil {
-						return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", three)
+						return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", three)
 					}
 					for k := 0; k < len(threeDirs); k++ {
 						if threeDirs[k].Name() == ".DS_Store" {
@@ -453,7 +609,7 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 							var fourDirs []os.DirEntry
 							fourDirs, err = os.ReadDir(four)
 							if err != nil {
-								return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", four)
+								return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", four)
 							}
 							for l := 0; l < len(fourDirs); l++ {
 								if fourDirs[l].Name() == ".DS_Store" {
@@ -461,15 +617,15 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 								}
 								five := filepath.Join(four, fourDirs[l].Name())
 								if fourDirs[l].IsDir() {
-									return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件夹!", five)
+									return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template directory!", five)
 								}
 								ext := filepath.Ext(five)
-								if ext != ".template" && ext != ".tpl" {
-									return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版后缀!", five)
+								if ext != ".tpl" {
+									return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file extension!", five)
 								}
 								hasRequest := strings.Index(fourDirs[l].Name(), "request")
 								if hasRequest == -1 {
-									return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", five)
+									return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", five)
 								}
 								create := filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "plugin", entity.PackageName, secondDirs[j].Name(), threeDirs[k].Name(), info.HumpPackageName+".go")
 								if entity.Template == "package" {
@@ -480,12 +636,12 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 							continue
 						}
 						ext := filepath.Ext(threeDirs[k].Name())
-						if ext != ".template" && ext != ".tpl" {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版后缀!", four)
+						if ext != ".tpl" {
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file extension!", four)
 						}
 						hasModel := strings.Index(threeDirs[k].Name(), "model")
 						if hasModel == -1 {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", four)
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", four)
 						}
 						create := filepath.Join(global.GVA_CONFIG.AutoCode.Root, global.GVA_CONFIG.AutoCode.Server, "plugin", entity.PackageName, secondDirs[j].Name(), info.HumpPackageName+".go")
 						if entity.Template == "package" {
@@ -505,14 +661,17 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 						code[four] = create
 					}
 				default:
-					return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件夹!", three)
+					return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template directory!", three)
 				}
 			}
 		case "web":
+			if !info.GenerateWeb && !isPackage {
+				break
+			}
 			var secondDirs []os.DirEntry
 			secondDirs, err = os.ReadDir(second)
 			if err != nil {
-				return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", second)
+				return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", second)
 			}
 			for j := 0; j < len(secondDirs); j++ {
 				if secondDirs[j].Name() == ".DS_Store" {
@@ -520,14 +679,14 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 				}
 				three := filepath.Join(second, secondDirs[j].Name())
 				if !secondDirs[j].IsDir() {
-					return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", three)
+					return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", three)
 				}
 				switch secondDirs[j].Name() {
 				case "api", "form", "view", "table":
 					var threeDirs []os.DirEntry
 					threeDirs, err = os.ReadDir(three)
 					if err != nil {
-						return nil, nil, nil, errors.Wrapf(err, "读取模版文件夹[%s]失败!", three)
+						return nil, nil, nil, errors.Wrapf(err, "failed to read template directory [%s]!", three)
 					}
 					for k := 0; k < len(threeDirs); k++ {
 						if threeDirs[k].Name() == ".DS_Store" {
@@ -535,18 +694,18 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 						}
 						four := filepath.Join(three, threeDirs[k].Name())
 						if threeDirs[k].IsDir() {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件夹!", four)
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template directory!", four)
 						}
 						ext := filepath.Ext(four)
-						if ext != ".template" && ext != ".tpl" {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版后缀!", four)
+						if ext != ".tpl" {
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file extension!", four)
 						}
 						api := strings.Index(threeDirs[k].Name(), "api")
 						form := strings.Index(threeDirs[k].Name(), "form")
 						view := strings.Index(threeDirs[k].Name(), "view")
 						table := strings.Index(threeDirs[k].Name(), "table")
 						if api == -1 && form == -1 && view == -1 && table == -1 {
-							return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", four)
+							return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", four)
 						}
 						if entity.Template == "package" {
 							if view != -1 || table != -1 {
@@ -568,7 +727,7 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 						code[four] = create
 					}
 				default:
-					return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件夹!", three)
+					return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template directory!", three)
 				}
 			}
 		case "readme.txt.tpl", "readme.txt.template":
@@ -577,7 +736,7 @@ func (s *autoCodePackage) templates(ctx context.Context, entity model.SysAutoCod
 			if templateDirs[i].Name() == ".DS_Store" {
 				continue
 			}
-			return nil, nil, nil, errors.Errorf("[filpath:%s]非法模版文件!", second)
+			return nil, nil, nil, errors.Errorf("[filpath:%s]invalid template file!", second)
 		}
 	}
 	return code, asts, creates, nil

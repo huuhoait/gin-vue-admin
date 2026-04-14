@@ -9,7 +9,7 @@ var AutoCodePgsql = new(autoCodePgsql)
 
 type autoCodePgsql struct{}
 
-// GetDB 获取数据库的所有数据库名
+// GetDB retrieves all database names
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (a *autoCodePgsql) GetDB(businessDB string) (data []response.Db, err error) {
@@ -24,7 +24,7 @@ func (a *autoCodePgsql) GetDB(businessDB string) (data []response.Db, err error)
 	return entities, err
 }
 
-// GetTables 获取数据库的所有表名
+// GetTables retrieves all table names for a database
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (a *autoCodePgsql) GetTables(businessDB string, dbName string) (data []response.Table, err error) {
@@ -40,11 +40,11 @@ func (a *autoCodePgsql) GetTables(businessDB string, dbName string) (data []resp
 	return entities, err
 }
 
-// GetColumn 获取指定数据库和指定数据表的所有字段名,类型值等
+// GetColumn retrieves all column names, types, and other metadata for a specified database and table
 // Author [piexlmax](https://github.com/piexlmax)
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (a *autoCodePgsql) GetColumn(businessDB string, tableName string, dbName string) (data []response.Column, err error) {
-	// todo 数据获取不全, 待完善sql
+	// TODO: data retrieval is incomplete, SQL needs improvement
 	sql := `
 SELECT
     psc.COLUMN_NAME AS COLUMN_NAME,
@@ -111,13 +111,16 @@ SELECT
                 attrelid = conrelid
               AND attname = psc.column_name
         )]
-    ) > 0 AS primary_key
+    ) > 0 AS primary_key,
+    psc.ordinal_position
 FROM
     INFORMATION_SCHEMA.COLUMNS psc
 WHERE
   table_catalog = ?
   AND table_schema = 'public' 
-  AND TABLE_NAME = ?;
+  AND TABLE_NAME = ?
+ORDER BY
+    psc.ordinal_position;
 `
 	var entities []response.Column
 	//sql = strings.ReplaceAll(sql, "@table_catalog", dbName)

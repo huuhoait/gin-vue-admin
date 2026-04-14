@@ -24,41 +24,45 @@ func (fs justFilesFilesystem) Open(name string) (http.File, error) {
 	}
 
 	stat, err := f.Stat()
-	if stat.IsDir() {
+	if err == nil && stat.IsDir() {
 		return nil, os.ErrPermission
 	}
 
 	return f, nil
 }
 
-// 初始化总路由
+// initializeTotalRoute
 
 func Routers() *gin.Engine {
 	Router := gin.New()
-	Router.Use(gin.Recovery())
+	// Story 8.3: resolve caller locale from Accept-Language for the i18n
+	// response helpers. Must run before any handler that calls Ok/Fail.
+	Router.Use(middleware.I18nLocale())
+	// UseCustomof Recovery InIntervalpiece, Record panic AndInbound
+	Router.Use(middleware.GinRecovery(true))
 	if gin.Mode() == gin.DebugMode {
 		Router.Use(gin.Logger())
 	}
 
 	systemRouter := router.RouterGroupApp.System
-	exampleRouter := router.RouterGroupApp.Example
-	// 如果想要不使用nginx代理前端网页，可以修改 web/.env.production 下的
+	// IfThinkRequireNotUsenginxagentFrontendWeb Page, CanByUpdate web/.env.production Downof
 	// VUE_APP_BASE_API = /
 	// VUE_APP_BASE_PATH = http://localhost
-	// 然后执行打包命令 npm run build。在打开下面3行注释
-	// Router.Static("/favicon.ico", "./dist/favicon.ico")
-	// Router.Static("/assets", "./dist/assets")   // dist里面的静态资源
-	// Router.StaticFile("/", "./dist/index.html") // 前端网页入口页面
+	// ThenAfterExecutehitPackageCommand npm run build. AtopenDownPage3RowNoteExplain
+	// Router.StaticFile("/favicon.ico", "./dist/favicon.ico")
+	// Router.Static("/assets", "./dist/assets")   // distInsidePageofStaticResource
+	// Router.StaticFile("/", "./dist/index.html") // FrontendWeb PageInPortPage
 
-	Router.StaticFS(global.GVA_CONFIG.Local.StorePath, justFilesFilesystem{http.Dir(global.GVA_CONFIG.Local.StorePath)}) // Router.Use(middleware.LoadTls())  // 如果需要使用https 请打开此中间件 然后前往 core/server.go 将启动模式 更变为 Router.RunTLS("端口","你的cre/pem文件","你的key文件")
-	// 跨域，如需跨域可以打开下面的注释
-	// Router.Use(middleware.Cors()) // 直接放行全部跨域请求
-	// Router.Use(middleware.CorsByRules()) // 按照配置的规则放行跨域请求
+	Router.StaticFS(global.GVA_CONFIG.Local.StorePath, justFilesFilesystem{http.Dir(global.GVA_CONFIG.Local.StorePath)})
+	// Router.Use(middleware.LoadTls())  // if neededUsehttps PleaseopenThisInIntervalpiece ThenAfterBeforeToward core/server.go WillStartMode UpdateChangeFor Router.RunTLS("port","Youofcre/pemFile","YouofkeyFile")
+	// CORS, Such AsNeedCORSCanByopenDownPageofNoteExplain
+	// Router.Use(middleware.Cors()) // DirectPlaceRowAllCORSRequest
+	// Router.Use(middleware.CorsByRules()) // According toconfigurationofRulePlaceRowCORSRequest
 	// global.GVA_LOG.Info("use middleware cors")
 	docs.SwaggerInfo.BasePath = global.GVA_CONFIG.System.RouterPrefix
 	Router.GET(global.GVA_CONFIG.System.RouterPrefix+"/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	global.GVA_LOG.Info("register swagger handler")
-	// 方便统一添加路由组前缀 多服务器上线使用
+	// ConvenientUnifiedAddroute groupPrefix MultipleServerUpperLineUse
 
 	PublicGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
 	PrivateGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
@@ -66,40 +70,57 @@ func Routers() *gin.Engine {
 	PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 
 	{
-		// 健康监测
+		// HealthMonitorTest
 		PublicGroup.GET("/health", func(c *gin.Context) {
 			c.JSON(http.StatusOK, "ok")
 		})
 	}
 	{
-		systemRouter.InitBaseRouter(PublicGroup) // 注册基础功能路由 不做鉴权
-		systemRouter.InitInitRouter(PublicGroup) // 自动初始化相关
+		systemRouter.InitBaseRouter(PublicGroup)               // RegisterBasicFunctionRoute NotDoAuthorization
+		systemRouter.InitInitRouter(PublicGroup)               // AutomaticinitializeRelated
 	}
 
 	{
-		systemRouter.InitApiRouter(PrivateGroup, PublicGroup)       // 注册功能api路由
-		systemRouter.InitJwtRouter(PrivateGroup)                    // jwt相关路由
-		systemRouter.InitUserRouter(PrivateGroup)                   // 注册用户路由
-		systemRouter.InitMenuRouter(PrivateGroup)                   // 注册menu路由
-		systemRouter.InitSystemRouter(PrivateGroup)                 // system相关路由
-		systemRouter.InitCasbinRouter(PrivateGroup)                 // 权限相关路由
-		systemRouter.InitAutoCodeRouter(PrivateGroup, PublicGroup)  // 创建自动化代码
-		systemRouter.InitAuthorityRouter(PrivateGroup)              // 注册角色路由
-		systemRouter.InitSysDictionaryRouter(PrivateGroup)          // 字典管理
-		systemRouter.InitAutoCodeHistoryRouter(PrivateGroup)        // 自动化代码历史
-		systemRouter.InitSysOperationRecordRouter(PrivateGroup)     // 操作记录
-		systemRouter.InitSysDictionaryDetailRouter(PrivateGroup)    // 字典详情管理
-		systemRouter.InitAuthorityBtnRouterRouter(PrivateGroup)     // 按钮权限管理
-		systemRouter.InitSysExportTemplateRouter(PrivateGroup)      // 导出模板
-		exampleRouter.InitCustomerRouter(PrivateGroup)              // 客户路由
-		exampleRouter.InitFileUploadAndDownloadRouter(PrivateGroup) // 文件上传下载功能路由
-
+		systemRouter.InitApiRouter(PrivateGroup, PublicGroup)                 // RegisterFunctionapiRoute
+		systemRouter.InitJwtRouter(PrivateGroup)                              // jwtrelated routes
+		systemRouter.InitUserRouter(PrivateGroup)                             // RegisterUserRoute
+		systemRouter.InitMenuRouter(PrivateGroup)                             // RegistermenuRoute
+		systemRouter.InitSystemRouter(PrivateGroup)                           // systemrelated routes
+		systemRouter.InitSysVersionRouter(PrivateGroup)                       // releaserelated routes
+		systemRouter.InitCasbinRouter(PrivateGroup)                           // Permissionrelated routes
+		systemRouter.InitAutoCodeRouter(PrivateGroup, PublicGroup)             // Createautomation code
+		systemRouter.InitAuthorityRouter(PrivateGroup)                        // RegisterRoleRoute
+		systemRouter.InitSysDictionaryRouter(PrivateGroup)                    // Dictionary Management
+		systemRouter.InitAutoCodeHistoryRouter(PrivateGroup)                  // automation codeHistory
+		systemRouter.InitSysOperationRecordRouter(PrivateGroup)               // Operation Record
+		systemRouter.InitSysDictionaryDetailRouter(PrivateGroup)              // DictionaryDetailsmanagement
+		systemRouter.InitAuthorityBtnRouterRouter(PrivateGroup)               // Button Permissionmanagement
+		systemRouter.InitSysExportTemplateRouter(PrivateGroup, PublicGroup)    // Export Template
+		systemRouter.InitSysParamsRouter(PrivateGroup, PublicGroup)            // Parameter Management
+		systemRouter.InitSysErrorRouter(PrivateGroup, PublicGroup)             // Error Log
+		systemRouter.InitLoginLogRouter(PrivateGroup)                         // Login Log
+		systemRouter.InitApiTokenRouter(PrivateGroup)                         // apiTokenSignsend
+		systemRouter.InitSkillsRouter(PrivateGroup, PublicGroup)              // Skills DefineDevice
 	}
 
-	//插件路由安装
+	// SkyAgent domain placeholder endpoints (Epic 8)
+	{
+		PrivateGroup.GET("/kyc/ping", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"ok": true}) })
+		PrivateGroup.GET("/commission/ping", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"ok": true}) })
+	}
+
+	// SkyAgent BFF proxy routes (Epic 9)
+	{
+		proxyRouter := router.RouterGroupApp.Proxy
+		skyAgentGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix + "/admin-api/v1")
+		skyAgentGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
+		proxyRouter.InitSkyAgentRouter(skyAgentGroup)
+	}
+
+	//PluginRoutesafeInstall
 	InstallPlugin(PrivateGroup, PublicGroup, Router)
 
-	// 注册业务路由
+	// RegisterBusinessRoute
 	initBizRouter(PrivateGroup, PublicGroup)
 
 	global.GVA_ROUTERS = Router.Routes()

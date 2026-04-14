@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// Cors 直接放行所有跨域请求并放行所有 OPTIONS 方法
+// Cors allows all cross-origin requests and passes through all OPTIONS methods
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
@@ -18,25 +18,25 @@ func Cors() gin.HandlerFunc {
 		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At")
 		c.Header("Access-Control-Allow-Credentials", "true")
 
-		// 放行所有OPTIONS方法
+		// allow all OPTIONS methods
 		if method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
 		}
-		// 处理请求
+		// process request
 		c.Next()
 	}
 }
 
-// CorsByRules 按照配置处理跨域请求
+// CorsByRules handles cross-origin requests according to configuration
 func CorsByRules() gin.HandlerFunc {
-	// 放行全部
+	// allow all
 	if global.GVA_CONFIG.Cors.Mode == "allow-all" {
 		return Cors()
 	}
 	return func(c *gin.Context) {
 		whitelist := checkCors(c.GetHeader("origin"))
 
-		// 通过检查, 添加请求头
+		// passed check, add request headers
 		if whitelist != nil {
 			c.Header("Access-Control-Allow-Origin", whitelist.AllowOrigin)
 			c.Header("Access-Control-Allow-Headers", whitelist.AllowHeaders)
@@ -47,24 +47,24 @@ func CorsByRules() gin.HandlerFunc {
 			}
 		}
 
-		// 严格白名单模式且未通过检查，直接拒绝处理请求
+		// strict whitelist mode and check failed, reject request directly
 		if whitelist == nil && global.GVA_CONFIG.Cors.Mode == "strict-whitelist" && !(c.Request.Method == "GET" && c.Request.URL.Path == "/health") {
 			c.AbortWithStatus(http.StatusForbidden)
 		} else {
-			// 非严格白名单模式，无论是否通过检查均放行所有 OPTIONS 方法
+			// non-strict whitelist mode, allow all OPTIONS methods regardless of check result
 			if c.Request.Method == http.MethodOptions {
 				c.AbortWithStatus(http.StatusNoContent)
 			}
 		}
 
-		// 处理请求
+		// process request
 		c.Next()
 	}
 }
 
 func checkCors(currentOrigin string) *config.CORSWhitelist {
 	for _, whitelist := range global.GVA_CONFIG.Cors.Whitelist {
-		// 遍历配置中的跨域头，寻找匹配项
+		// iterate through configured CORS headers to find a match
 		if currentOrigin == whitelist.AllowOrigin {
 			return &whitelist
 		}

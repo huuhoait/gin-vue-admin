@@ -13,45 +13,45 @@ type DBApi struct{}
 
 // InitDB
 // @Tags     InitDB
-// @Summary  初始化用户数据库
+// @Summary  Initialize user database
 // @Produce  application/json
-// @Param    data  body      request.InitDB                  true  "初始化数据库参数"
-// @Success  200   {object}  response.Response{data=string}  "初始化用户数据库"
+// @Param    data  body      request.InitDB                  true  "Database initialization parameters"
+// @Success  200   {object}  response.Response{data=string}  "Initialize user database"
 // @Router   /init/initdb [post]
 func (i *DBApi) InitDB(c *gin.Context) {
 	if global.GVA_DB != nil {
-		global.GVA_LOG.Error("已存在数据库配置!")
-		response.FailWithMessage("已存在数据库配置", c)
+		global.GVA_LOG.Error("Database configuration already exists!")
+		response.FailWithMessage("Database configuration already exists", c)
 		return
 	}
 	var dbInfo request.InitDB
 	if err := c.ShouldBindJSON(&dbInfo); err != nil {
-		global.GVA_LOG.Error("参数校验不通过!", zap.Error(err))
-		response.FailWithMessage("参数校验不通过", c)
+		global.GVA_LOG.Error("Parameter validation failed!", zap.Error(err))
+		response.FailWithMessage("Parameter validation failed", c)
 		return
 	}
 	if err := initDBService.InitDB(dbInfo); err != nil {
-		global.GVA_LOG.Error("自动创建数据库失败!", zap.Error(err))
-		response.FailWithMessage("自动创建数据库失败，请查看后台日志，检查后在进行初始化", c)
+		global.GVA_LOG.Error("Failed to auto-create database!", zap.Error(err))
+		response.FailWithMessage("Failed to auto-create database, please check the server logs and try again", c)
 		return
 	}
-	response.OkWithMessage("自动创建数据库成功", c)
+	response.OkWithMessage("Database created successfully", c)
 }
 
 // CheckDB
 // @Tags     CheckDB
-// @Summary  初始化用户数据库
+// @Summary  Check database initialization status
 // @Produce  application/json
-// @Success  200  {object}  response.Response{data=map[string]interface{},msg=string}  "初始化用户数据库"
+// @Success  200  {object}  response.Response{data=map[string]interface{},msg=string}  "Check database initialization status"
 // @Router   /init/checkdb [post]
 func (i *DBApi) CheckDB(c *gin.Context) {
 	var (
-		message  = "前往初始化数据库"
+		message  = "Please initialize the database"
 		needInit = true
 	)
 
 	if global.GVA_DB != nil {
-		message = "数据库无需初始化"
+		message = "Database is already initialized"
 		needInit = false
 	}
 	global.GVA_LOG.Info(message)

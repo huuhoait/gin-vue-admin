@@ -12,7 +12,7 @@ type BaseMenuService struct{}
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteBaseMenu
-//@description: 删除基础路由
+//@description: Delete base menu
 //@param: id float64
 //@return: err error
 
@@ -20,41 +20,51 @@ var BaseMenuServiceApp = new(BaseMenuService)
 
 func (baseMenuService *BaseMenuService) DeleteBaseMenu(id int) (err error) {
 	err = global.GVA_DB.First(&system.SysBaseMenu{}, "parent_id = ?", id).Error
-	if err != nil {
-		return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-
-			err = tx.Delete(&system.SysBaseMenu{}, "id = ?", id).Error
-			if err != nil {
-				return err
-			}
-
-			err = tx.Delete(&system.SysBaseMenuParameter{}, "sys_base_menu_id = ?", id).Error
-			if err != nil {
-				return err
-			}
-
-			err = tx.Delete(&system.SysBaseMenuBtn{}, "sys_base_menu_id = ?", id).Error
-			if err != nil {
-				return err
-			}
-			err = tx.Delete(&system.SysAuthorityBtn{}, "sys_menu_id = ?", id).Error
-			if err != nil {
-				return err
-			}
-
-			err = tx.Delete(&system.SysAuthorityMenu{}, "sys_base_menu_id = ?", id).Error
-			if err != nil {
-				return err
-			}
-			return nil
-		})
+	if err == nil {
+		return errors.New("this menu has child menus and cannot be deleted")
 	}
-	return errors.New("此菜单存在子菜单不可删除")
+	var menu system.SysBaseMenu
+	err = global.GVA_DB.First(&menu, id).Error
+	if err != nil {
+		return errors.New("record does not exist")
+	}
+	err = global.GVA_DB.First(&system.SysAuthority{}, "default_router = ?", menu.Name).Error
+	if err == nil {
+		return errors.New("this menu is used as a default page by a role and cannot be deleted")
+	}
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+
+		err = tx.Delete(&system.SysBaseMenu{}, "id = ?", id).Error
+		if err != nil {
+			return err
+		}
+
+		err = tx.Delete(&system.SysBaseMenuParameter{}, "sys_base_menu_id = ?", id).Error
+		if err != nil {
+			return err
+		}
+
+		err = tx.Delete(&system.SysBaseMenuBtn{}, "sys_base_menu_id = ?", id).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Delete(&system.SysAuthorityBtn{}, "sys_menu_id = ?", id).Error
+		if err != nil {
+			return err
+		}
+
+		err = tx.Delete(&system.SysAuthorityMenu{}, "sys_base_menu_id = ?", id).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateBaseMenu
-//@description: 更新路由
+//@description: Update base menu
 //@param: menu model.SysBaseMenu
 //@return: err error
 
@@ -62,6 +72,7 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) 
 	var oldMenu system.SysBaseMenu
 	upDateMap := make(map[string]interface{})
 	upDateMap["keep_alive"] = menu.KeepAlive
+	upDateMap["transition_type"] = menu.TransitionType
 	upDateMap["close_tab"] = menu.CloseTab
 	upDateMap["default_menu"] = menu.DefaultMenu
 	upDateMap["parent_id"] = menu.ParentId
@@ -78,8 +89,8 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) 
 		tx.Where("id = ?", menu.ID).Find(&oldMenu)
 		if oldMenu.Name != menu.Name {
 			if !errors.Is(tx.Where("id <> ? AND name = ?", menu.ID, menu.Name).First(&system.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
-				global.GVA_LOG.Debug("存在相同name修改失败")
-				return errors.New("存在相同name修改失败")
+				global.GVA_LOG.Debug("duplicate name exists, update failed")
+				return errors.New("duplicate name exists, update failed")
 			}
 		}
 		txErr := tx.Unscoped().Delete(&system.SysBaseMenuParameter{}, "sys_base_menu_id = ?", menu.ID).Error
@@ -126,7 +137,7 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) 
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetBaseMenuById
-//@description: 返回当前选中menu
+//@description: Get base menu by id
 //@param: id float64
 //@return: menu system.SysBaseMenu, err error
 

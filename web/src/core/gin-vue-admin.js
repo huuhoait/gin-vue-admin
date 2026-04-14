@@ -1,27 +1,28 @@
 /*
- * gin-vue-admin web框架组
- *
- * */
-// 加载网站配置文件夹
+ * gin-vue-admin web framework
+ */
+// Load website config and register plugins
 import { register } from './global'
+import packageInfo from '../../package.json'
 
 export default {
   install: (app) => {
     register(app)
     console.log(`
-       欢迎使用 Gin-Vue-Admin
-       当前版本:v2.7.0
-       加群方式:微信：shouzi_1994 QQ群：622360840
-       项目地址：https://github.com/flipped-aurora/gin-vue-admin
-       插件市场:https://plugin.gin-vue-admin.com
-       GVA讨论社区:https://support.qq.com/products/371961
-       默认自动化文档地址:http://127.0.0.1:${import.meta.env.VITE_SERVER_PORT}/swagger/index.html
-       默认前端文件运行地址:http://127.0.0.1:${import.meta.env.VITE_CLI_PORT}
-       如果项目让您获得了收益，希望您能请团队喝杯可乐:https://www.gin-vue-admin.com/coffee/index.html
-       --------------------------------------版权声明--------------------------------------
-       ** 版权所有方：flipped-aurora开源团队 **
-       ** 版权持有公司：北京翻转极光科技有限责任公司 **
-       ** 剔除授权标识需购买商用授权：https://gin-vue-admin.com/empower/index.html **
+       Welcome to Gin-Vue-Admin
+       Version: v${packageInfo.version}
+       Community: WeChat shouzi_1994 | QQ group 622360840
+       Repo: https://github.com/flipped-aurora/gin-vue-admin
+       Plugin market: https://plugin.gin-vue-admin.com
+       Community forum: https://support.qq.com/products/371961
+       Swagger: http://127.0.0.1:${import.meta.env.VITE_SERVER_PORT}/swagger/index.html
+       Dev server: http://127.0.0.1:${import.meta.env.VITE_CLI_PORT}
+       Support the project: https://www.gin-vue-admin.com/coffee/index.html
+       -------------------------------------- LICENSE NOTICE --------------------------------------
+       ** Owner: flipped-aurora OSS team **
+       ** Company: Flipped Aurora (Beijing) Technology Co., Ltd. **
+       ** Commercial use requires a license: https://plugin.gin-vue-admin.com/license **
+       ** Thanks for supporting Gin-Vue-Admin. Licensed usage helps long-term maintenance. **
     `)
   }
 }

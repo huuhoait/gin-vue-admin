@@ -6,10 +6,11 @@ import (
 
 type SysAutoCodePackage struct {
 	global.GVA_MODEL
-	Desc        string `json:"desc" gorm:"comment:描述"`
-	Label       string `json:"label" gorm:"comment:展示名"`
-	Template    string `json:"template"  gorm:"comment:模版"`
-	PackageName string `json:"packageName" gorm:"comment:包名"`
+	Desc        string `json:"desc" gorm:"comment:description"`
+	Label       string `json:"label" gorm:"comment:display name"`
+	Template    string `json:"template"  gorm:"comment:Template"`
+	PackageName string `json:"packageName" gorm:"comment:package name"`
+	Module      string `json:"-" example:"Module"`
 }
 
 func (s *SysAutoCodePackage) TableName() string {

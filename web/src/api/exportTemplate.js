@@ -1,12 +1,12 @@
 import service from '@/utils/request'
 
 // @Tags SysExportTemplate
-// @Summary 创建导出模板
+// @Summary Create export template
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.SysExportTemplate true "创建导出模板"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
+// @Param data body model.SysExportTemplate true "Create export template"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Created"}"
 // @Router /sysExportTemplate/createSysExportTemplate [post]
 export const createSysExportTemplate = (data) => {
   return service({
@@ -17,12 +17,12 @@ export const createSysExportTemplate = (data) => {
 }
 
 // @Tags SysExportTemplate
-// @Summary 删除导出模板
+// @Summary Delete export template
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.SysExportTemplate true "删除导出模板"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
+// @Param data body model.SysExportTemplate true "Delete export template"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Deleted"}"
 // @Router /sysExportTemplate/deleteSysExportTemplate [delete]
 export const deleteSysExportTemplate = (data) => {
   return service({
@@ -33,12 +33,12 @@ export const deleteSysExportTemplate = (data) => {
 }
 
 // @Tags SysExportTemplate
-// @Summary 批量删除导出模板
+// @Summary Delete export templates in bulk
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.IdsReq true "批量删除导出模板"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
+// @Param data body request.IdsReq true "Bulk delete export templates"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Deleted"}"
 // @Router /sysExportTemplate/deleteSysExportTemplate [delete]
 export const deleteSysExportTemplateByIds = (data) => {
   return service({
@@ -49,12 +49,12 @@ export const deleteSysExportTemplateByIds = (data) => {
 }
 
 // @Tags SysExportTemplate
-// @Summary 更新导出模板
+// @Summary Update export template
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.SysExportTemplate true "更新导出模板"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
+// @Param data body model.SysExportTemplate true "Update export template"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"Updated"}"
 // @Router /sysExportTemplate/updateSysExportTemplate [put]
 export const updateSysExportTemplate = (data) => {
   return service({
@@ -65,12 +65,12 @@ export const updateSysExportTemplate = (data) => {
 }
 
 // @Tags SysExportTemplate
-// @Summary 用id查询导出模板
+// @Summary Find export template by id
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query model.SysExportTemplate true "用id查询导出模板"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
+// @Param data query model.SysExportTemplate true "Find export template by id"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"OK"}"
 // @Router /sysExportTemplate/findSysExportTemplate [get]
 export const findSysExportTemplate = (params) => {
   return service({
@@ -81,16 +81,64 @@ export const findSysExportTemplate = (params) => {
 }
 
 // @Tags SysExportTemplate
-// @Summary 分页获取导出模板列表
+// @Summary Paginated export template list
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query request.PageInfo true "分页获取导出模板列表"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Param data query request.PageInfo true "Paginated export template list"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"OK"}"
 // @Router /sysExportTemplate/getSysExportTemplateList [get]
 export const getSysExportTemplateList = (params) => {
   return service({
     url: '/sysExportTemplate/getSysExportTemplateList',
+    method: 'get',
+    params
+  })
+}
+
+
+// ExportExcel export token
+// @Tags SysExportTemplate
+// @Summary Export excel
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Router /sysExportTemplate/exportExcel [get]
+export const exportExcel = (params) => {
+  return service({
+    url: '/sysExportTemplate/exportExcel',
+    method: 'get',
+    params
+  })
+}
+
+// ExportTemplate export template
+// @Tags SysExportTemplate
+// @Summary Export template
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Router /sysExportTemplate/exportTemplate [get]
+export const exportTemplate = (params) => {
+  return service({
+    url: '/sysExportTemplate/exportTemplate',
+    method: 'get',
+    params
+  })
+}
+
+// PreviewSQL Preview generated SQL
+// @Tags SysExportTemplate
+// @Summary Preview generated SQL
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Router /sysExportTemplate/previewSQL [get]
+// @Param templateID query string true  "Export template ID"
+// @Param params     query string false "Encoded query param string (see ExportExcel component)"
+export const previewSQL = (params) => {
+  return service({
+    url: '/sysExportTemplate/previewSQL',
     method: 'get',
     params
   })

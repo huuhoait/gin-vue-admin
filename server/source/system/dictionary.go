@@ -33,7 +33,7 @@ func (i *initDict) TableCreated(ctx context.Context) bool {
 	return db.Migrator().HasTable(&sysModel.SysDictionary{})
 }
 
-func (i initDict) InitializerName() string {
+func (i *initDict) InitializerName() string {
 	return sysModel.SysDictionary{}.TableName()
 }
 
@@ -44,16 +44,16 @@ func (i *initDict) InitializeData(ctx context.Context) (next context.Context, er
 	}
 	True := true
 	entities := []sysModel.SysDictionary{
-		{Name: "性别", Type: "gender", Status: &True, Desc: "性别字典"},
-		{Name: "数据库int类型", Type: "int", Status: &True, Desc: "int类型对应的数据库类型"},
-		{Name: "数据库时间日期类型", Type: "time.Time", Status: &True, Desc: "数据库时间日期类型"},
-		{Name: "数据库浮点型", Type: "float64", Status: &True, Desc: "数据库浮点型"},
-		{Name: "数据库字符串", Type: "string", Status: &True, Desc: "数据库字符串"},
-		{Name: "数据库bool类型", Type: "bool", Status: &True, Desc: "数据库bool类型"},
+		{Name: "Gender", Type: "gender", Status: &True, Desc: "GenderDictionary"},
+		{Name: "Database int type", Type: "int", Status: &True, Desc: "inttypeCorrespondingDatabasetype"},
+		{Name: "database date/timetype", Type: "time.Time", Status: &True, Desc: "database date/timetype"},
+		{Name: "database float", Type: "float64", Status: &True, Desc: "database float"},
+		{Name: "database string", Type: "string", Status: &True, Desc: "database string"},
+		{Name: "Database bool type", Type: "bool", Status: &True, Desc: "Database bool type"},
 	}
 
 	if err = db.Create(&entities).Error; err != nil {
-		return ctx, errors.Wrap(err, sysModel.SysDictionary{}.TableName()+"表数据初始化失败!")
+		return ctx, errors.Wrap(err, sysModel.SysDictionary{}.TableName()+"table data initialization failed!")
 	}
 	next = context.WithValue(ctx, i.InitializerName(), entities)
 	return next, nil
@@ -64,7 +64,7 @@ func (i *initDict) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	if errors.Is(db.Where("type = ?", "bool").First(&sysModel.SysDictionary{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
+	if errors.Is(db.Where("type = ?", "bool").First(&sysModel.SysDictionary{}).Error, gorm.ErrRecordNotFound) { // Check if data exists
 		return false
 	}
 	return true

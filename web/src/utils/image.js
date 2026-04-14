@@ -2,14 +2,14 @@ export default class ImageCompress {
   constructor(file, fileSize, maxWH = 1920) {
     this.file = file
     this.fileSize = fileSize
-    this.maxWH = maxWH // 最大长宽
+    this.maxWH = maxWH // max side length
   }
 
   compress() {
-    // 压缩
+    // Compress
     const fileType = this.file.type
     const fileSize = this.file.size / 1024
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const reader = new FileReader()
       reader.readAsDataURL(this.file)
       reader.onload = () => {
@@ -22,17 +22,17 @@ export default class ImageCompress {
           canvas.width = _dWH.width
           canvas.height = _dWH.height
 
-          // 清空后, 重写画布
+          // Clear and redraw canvas
           ctx.clearRect(0, 0, canvas.width, canvas.height)
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
-          const newImgData = canvas.toDataURL(fileType, 0.90)
+          const newImgData = canvas.toDataURL(fileType, 0.9)
 
-          // 压缩宽高后的图像大小
+          // Image size after resizing
           const newImgSize = this.fileSizeKB(newImgData)
 
           if (newImgSize > this.fileSize) {
-            console.log('图片尺寸太大!' + fileSize + ' >> ' + newImgSize)
+            console.log('Image is still too large: ' + fileSize + ' >> ' + newImgSize)
           }
 
           const blob = this.dataURLtoBlob(newImgData, fileType)
@@ -44,8 +44,8 @@ export default class ImageCompress {
   }
 
   /**
-   * 长宽等比缩小
-   * 图像的一边(长或宽)为最大目标值
+   * Scale down proportionally
+   * One side (width or height) will match the max target value
    */
   dWH(srcW, srcH, dMax) {
     const defaults = {
@@ -69,12 +69,12 @@ export default class ImageCompress {
 
   fileSizeKB(dataURL) {
     let sizeKB = 0
-    sizeKB = Math.round((dataURL.split(',')[1].length * 3 / 4) / 1024)
+    sizeKB = Math.round((dataURL.split(',')[1].length * 3) / 4 / 1024)
     return sizeKB
   }
 
   /**
-   * 转为Blob
+   * Convert to Blob
    */
   dataURLtoBlob(dataURL, fileType) {
     const byteString = atob(dataURL.split(',')[1])
@@ -93,21 +93,34 @@ export default class ImageCompress {
 
 const path = import.meta.env.VITE_FILE_API
 export const getUrl = (url) => {
-  if (url && url.slice(0, 4) !== 'http'){
-    if (path === "/"){
-        return url
+  if (url && url.slice(0, 4) !== 'http') {
+    if (path === '/') {
+      return url
     }
-    if (url.slice(0, 1) === "/"){
-       return path + url
+    if (url.slice(0, 1) === '/') {
+      return path + url
     }
-    return path + "/" + url
-  }else{
+    return path + '/' + url
+  } else {
     return url
   }
 }
 
-export const isVideoExt = (url) => url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm') || url.endsWith('.ogg');
+const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm', '.ogg']
+const VIDEO_MIME_TYPES = ['video/mp4', 'video/webm', 'video/ogg']
+const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']
 
-export const isVideoMime = (type) => type == 'video/mp4' || type == 'video/webm' || type == 'video/ogg';
+export const isVideoExt = (url) => {
+  const urlLower = url?.toLowerCase() || ''
+  return urlLower !== '' && VIDEO_EXTENSIONS.some(ext => urlLower.endsWith(ext))
+}
 
-export const isImageMime = (type) => type == 'image/jpeg' || type == 'image/png' || type == 'image/webp' || type == 'image/svg+xml';
+export const isVideoMime = (type) => {
+  const typeLower = type?.toLowerCase() || ''
+  return typeLower !== '' && VIDEO_MIME_TYPES.includes(typeLower)
+}
+
+export const isImageMime = (type) => {
+  const typeLower = type?.toLowerCase() || ''
+  return typeLower !== '' && IMAGE_MIME_TYPES.includes(typeLower)
+}

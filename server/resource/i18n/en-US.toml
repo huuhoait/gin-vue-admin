@@ -1,0 +1,61 @@
+# SkyAgent Admin — English message bundle (fallback locale)
+# Story reference: 8.3
+
+# --- Common CRUD / generic responses ----------------------------------------
+"admin.common.ok"               = "Success"
+"admin.common.fail"             = "Failed"
+"admin.common.create_success"   = "Created successfully"
+"admin.common.create_failed"    = "Create failed"
+"admin.common.update_success"   = "Updated successfully"
+"admin.common.update_failed"    = "Update failed"
+"admin.common.delete_success"   = "Deleted successfully"
+"admin.common.delete_failed"    = "Delete failed"
+"admin.common.get_success"      = "Fetched successfully"
+"admin.common.get_failed"       = "Fetch failed"
+"admin.common.not_found"        = "Record not found"
+"admin.common.invalid_params"   = "Invalid parameters"
+"admin.common.unauthorized"     = "Unauthorized"
+"admin.common.forbidden"        = "Forbidden"
+"admin.common.internal_error"   = "Internal server error"
+
+# --- Auth / session ---------------------------------------------------------
+"admin.auth.login_success"      = "Signed in successfully"
+"admin.auth.login_failed"       = "Sign-in failed"
+"admin.auth.logout_success"     = "Signed out successfully"
+"admin.auth.token_expired"      = "Session expired"
+"admin.auth.token_invalid"      = "Invalid token"
+"admin.auth.captcha_invalid"    = "Invalid captcha"
+"admin.auth.password_incorrect" = "Incorrect password"
+
+# --- RBAC / Casbin ----------------------------------------------------------
+"admin.rbac.permission_denied"  = "Permission denied"
+"admin.rbac.role_not_found"     = "Role not found"
+"admin.rbac.role_created"       = "Role created"
+"admin.rbac.role_updated"       = "Role updated"
+
+# --- Menus ------------------------------------------------------------------
+"admin.menu.skyagent"           = "SkyAgent"
+"admin.menu.kyc"                = "KYC Management"
+"admin.menu.kyc_cases"          = "Case List"
+"admin.menu.commission"         = "Commission"
+
+# --- Epic 9 menu titles -------------------------------------------------------
+"admin.agent.list"              = "Agent List"
+"admin.agent.pending"           = "Pending Approval"
+"admin.catalog.products"        = "Products"
+"admin.catalog.suppliers"       = "Suppliers"
+"admin.order.list"              = "Order List"
+"admin.onboarding.title"        = "Onboarding Agent"
+"admin.onboarding.ticket_list"  = "Ticket List"
+"admin.onboarding.create_ticket"= "Create Ticket"
+"admin.onboarding.review_queue" = "Review Queue"
+"admin.onboarding.create_agent_l0" = "Register Agent L0"
+
+# --- Proxy (Story 9.1) -------------------------------------------------------
+"admin.proxy.upstream_unavailable" = "Upstream service unavailable"
+"admin.proxy.request_failed"       = "Service request failed"
+
+# --- Dashboard (Story 9.2) ----------------------------------------------------
+"admin.dashboard.load_failed"      = "Failed to load dashboard"
+"admin.dashboard.unavailable"      = "Dashboard service unavailable"
+

@@ -1,0 +1,679 @@
+{
+  "admin": {
+    "common": {
+      "ok": "Success",
+      "fail": "Failed",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "generate": "Generate",
+      "search": "Search",
+      "reset": "Reset",
+      "refresh": "Refresh",
+      "export": "Export",
+      "import": "Import",
+      "select": "Please select",
+      "loading": "Loading...",
+      "no_data": "No data",
+      "operation": "Actions",
+      "status": "Status",
+      "created_at": "Created at",
+      "updated_at": "Updated at",
+      "are_you_sure": "Are you sure?",
+      "delete_confirm": "Delete this record?",
+      "yes": "Yes",
+      "no": "No",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "auth": {
+      "login": "Sign in",
+      "logout": "Sign out",
+      "username": "Username",
+      "password": "Password",
+      "captcha": "Captcha",
+      "remember_me": "Remember me",
+      "login_failed": "Sign-in failed",
+      "welcome_back": "Welcome back"
+    },
+    "menu": {
+      "dashboard": "Dashboard",
+      "user_mgmt": "User management",
+      "role_mgmt": "Role management",
+      "menu_mgmt": "Menu management",
+      "api_mgmt": "API management",
+      "system_tools": "System tools",
+      "kyc_mgmt": "KYC management",
+      "commission_mgmt": "Commission management",
+      "skyagent": "SkyAgent",
+      "kyc": "KYC Management",
+      "kyc_cases": "Case List",
+      "commission": "Commission"
+    },
+    "language": {
+      "switcher": "Language",
+      "vi_vn": "Tiếng Việt",
+      "en_us": "English"
+    },
+    "system_tools": {
+      "auto_code": {
+        "dev_only_warning": "Development-only feature. Not recommended for production. Click to watch a demo.",
+        "create_with_ai": "Create with AI",
+        "get_ai_path": "Get AI-Path",
+        "ai_prompt_placeholder": "Free to use now.\\nTry copying an image and press Ctrl+V (or Cmd+V).\\nDescribe your table and let AI help.\\nGet your AI-Path from the plugin market profile, put it into config.yaml (autocode -> ai-path), then restart the project.\\nPress Ctrl+Enter (or Cmd+Enter) to generate.",
+        "free_go_to": "Free: go to",
+        "plugin_market_profile": "Plugin market profile",
+        "apply_ai_path_hint": "Apply for an AI-Path and set it as ai-path in config.yaml.",
+        "image_to_text": "Image to text",
+        "create_from_database": "Create from database",
+        "business_db": "Business DB",
+        "business_db_tooltip": "Note: Configure multiple databases in db-list first. If not configured yet, configure and restart the service. (Select which database to pick tables from.)",
+        "select_business_db": "Select business DB",
+        "database": "Database",
+        "select_database": "Select database",
+        "table": "Table",
+        "select_table": "Select table",
+        "use_this_table": "Use this table",
+        "auto_code_structure": "Auto-code structure",
+        "struct_name": "Struct name",
+        "struct_name_placeholder": "Auto-capitalize first letter",
+        "abbreviation": "Abbreviation",
+        "abbreviation_placeholder": "Enter struct abbreviation",
+        "display_name": "Display name",
+        "file_name": "File name",
+        "template": "Template",
+        "expert_mode": "Expert mode",
+        "collapse": "Collapse",
+        "expand": "Expand",
+        "basic_settings": "Basic settings",
+        "automation_settings": "Automation settings",
+        "advanced_settings": "Advanced settings",
+        "tree_structure_settings": "Tree structure settings",
+        "column_table": "Table",
+        "display_name_placeholder": "Used as auto API description",
+        "file_name_tooltip": "Default generated file name (recommended: camelCase with lowercase first letter, e.g. sysXxxXxxx)",
+        "file_name_placeholder": "Enter file name",
+        "clear_stash": "Clear stash",
+        "stash": "Stash",
+        "generate_code": "Generate code",
+        "view_code": "View code",
+        "preview_code": "Preview code",
+        "field_editor": "Field editor",
+        "toolbar": "Toolbar",
+        "select_all": "Select all",
+        "copy": "Copy",
+        "generate_frontend": "Generate frontend",
+        "generate_backend": "Generate backend",
+        "msg_enter_struct_name": "Please enter struct name",
+        "msg_enter_description": "Please enter a description",
+        "confirm_ai_overwrite_message": "AI generation will clear current data. Continue?"
+      }
+    },
+    "login": {
+      "username_placeholder": "Please enter your username",
+      "password_placeholder": "Please enter your password",
+      "captcha_placeholder": "Please enter the captcha",
+      "go_to_init": "Go to setup",
+      "form_invalid": "Please fill in the sign-in form correctly",
+      "already_initialized": "Database already configured; cannot re-initialise",
+      "link_docs": "Docs",
+      "link_support": "Support",
+      "link_video": "Videos",
+      "validation": {
+        "username_invalid": "Invalid username",
+        "password_invalid": "Invalid password",
+        "captcha_required": "Captcha is required",
+        "captcha_numeric": "Captcha must be digits",
+        "captcha_length": "Captcha must be at least {n} digits"
+      }
+    },
+    "layout": {
+      "header": {
+        "current_role": "Current role",
+        "switch_to": "Switch to",
+        "profile": "Profile"
+      },
+      "tools": {
+        "video_tutorial": "Video tutorials",
+        "search": "Search",
+        "settings": "System settings",
+        "refresh": "Refresh",
+        "toggle_theme": "Toggle theme",
+        "change_language": "Change language"
+      },
+      "tabs": {
+        "home": "Home",
+        "close_all": "Close all",
+        "close_left": "Close left",
+        "close_right": "Close right",
+        "close_other": "Close others"
+      },
+      "settings": {
+        "title": "System settings",
+        "reset": "Reset settings",
+        "reset_description": "Restore all settings to defaults",
+        "reset_confirm_message": "Reset all settings? This cannot be undone.",
+        "reset_success": "Settings reset",
+        "export": "Export settings",
+        "export_description": "Export the current settings as a JSON file",
+        "export_success": "Settings exported",
+        "import": "Import settings",
+        "import_description": "Import settings from a JSON file",
+        "import_success": "Settings imported",
+        "import_format_error": "Invalid settings file format",
+        "save_success": "Saved successfully",
+        "tabs": {
+          "appearance": "Appearance",
+          "layout": "Layout",
+          "general": "General"
+        },
+        "sections": {
+          "theme_mode": "Theme mode",
+          "theme_color": "Theme color",
+          "global_size": "Global size",
+          "accessibility": "Visual accessibility",
+          "layout_mode": "Layout mode",
+          "ui_config": "Interface options",
+          "size_config": "Size options",
+          "system_info": "System information",
+          "config_mgmt": "Settings management",
+          "about": "About"
+        },
+        "sizes": {
+          "default": "Default",
+          "large": "Large",
+          "small": "Small"
+        },
+        "items": {
+          "global_size_hint": "Applies to all components",
+          "grey": {
+            "label": "Greyscale mode",
+            "hint": "Reduces colour saturation"
+          },
+          "weakness": {
+            "label": "Colour-weakness mode",
+            "hint": "Improves contrast"
+          },
+          "watermark": {
+            "label": "Show watermark",
+            "hint": "Overlay a watermark on pages"
+          },
+          "show_tabs": {
+            "label": "Show tab bar",
+            "hint": "Multi-page tab navigation"
+          },
+          "transition": {
+            "label": "Page transition",
+            "hint": "Choose a page transition effect"
+          },
+          "side_width": {
+            "label": "Sidebar width",
+            "hint": "Width when the sidebar is fully expanded"
+          },
+          "side_collapsed": {
+            "label": "Sidebar width (collapsed)",
+            "hint": "Minimum width when the sidebar is collapsed"
+          },
+          "side_item_height": {
+            "label": "Menu item height",
+            "hint": "Row height for sidebar menu items"
+          }
+        },
+        "transitions": {
+          "fade": "Fade",
+          "slide": "Slide",
+          "zoom": "Zoom",
+          "none": "None"
+        },
+        "theme_modes": {
+          "light": "Light",
+          "dark": "Dark",
+          "auto": "System"
+        },
+        "layout_modes": {
+          "normal": {
+            "label": "Classic layout",
+            "description": "Sidebar left, header on top"
+          },
+          "head": {
+            "label": "Top navigation",
+            "description": "Horizontal top navigation only"
+          },
+          "combination": {
+            "label": "Combination layout",
+            "description": "Multi-level navigation combined"
+          },
+          "sidebar": {
+            "label": "Persistent sidebar",
+            "description": "Secondary menu is always open"
+          }
+        },
+        "colors": {
+          "presets_title": "Preset colors",
+          "custom_title": "Custom color",
+          "custom_hint": "Pick any color as the theme color",
+          "current_title": "Current theme color",
+          "presets": {
+            "default": "Default",
+            "morning_mist": "Morning mist blue",
+            "mint": "Mint green",
+            "rose": "Rose pink",
+            "lavender": "Lavender",
+            "warm_sun": "Warm sun yellow",
+            "moon_silver": "Moon silver",
+            "coral": "Coral orange",
+            "sea_mist": "Sea mist cyan",
+            "olive": "Olive green",
+            "milk_tea": "Milk tea brown",
+            "dream_purple": "Dream purple",
+            "matcha": "Matcha green"
+          }
+        },
+        "info": {
+          "version": "Version",
+          "frontend": "Frontend framework",
+          "ui_library": "UI library",
+          "build_tool": "Build tool",
+          "browser": "Browser",
+          "screen": "Screen resolution"
+        },
+        "about": {
+          "description": "Full-stack scaffold built on Vue 3 + Gin, providing a complete admin back-office solution.",
+          "github": "GitHub repo",
+          "docs": "Official docs"
+        }
+      }
+    }
+    ,
+    "superadmin": {
+      "common": {
+        "title": "System administration"
+      },
+      "authority": {
+        "title": "Role configuration",
+        "add": "Add role",
+        "edit": "Edit role",
+        "copy": "Copy role",
+        "warning_switch_role": "You are operating role permissions; changes affect all users with this role.",
+        "role_id": "Role ID",
+        "role_name": "Role name",
+        "parent_role": "Parent role",
+        "set_permissions": "Set permissions",
+        "assign_to_users": "Assign to users",
+        "add_child": "Add child role",
+        "assign_title": "Assign users — {name}",
+        "assign_warning": "Saving overwrites user–role assignments for this role.",
+        "assign_success": "Assigned successfully",
+        "assign_failed": "Assignment failed",
+        "delete_confirm_message": "Delete this role? Child roles and bindings may be affected.",
+        "delete_success": "Role deleted",
+        "delete_cancelled": "Cancelled",
+        "add_success": "Saved successfully",
+        "copy_success": "Role copied",
+        "root_role_strict": "Root role (888)",
+        "root_role_user": "User role",
+        "tabs": {
+          "menus": "Role menus",
+          "apis": "Role APIs",
+          "data": "Data permissions"
+        },
+        "rules": {
+          "role_id_required": "Role ID is required",
+          "role_name_required": "Role name is required",
+          "parent_required": "Parent role is required",
+          "must_positive_int": "Must be a positive integer"
+        }
+      },
+      "user": {
+        "title": "User",
+        "warning_switch_role": "Switching roles in the list changes the active role for that user immediately.",
+        "username": "Username",
+        "nickname": "Nickname",
+        "phone": "Phone",
+        "email": "Email",
+        "add": "Add user",
+        "avatar": "Avatar",
+        "role": "Role",
+        "enabled": "Status",
+        "reset_password": "Reset password",
+        "new_password": "New password",
+        "new_password_placeholder": "Enter new password",
+        "generate_random": "Generate random",
+        "password": "Password",
+        "password_copied": "Password copied",
+        "password_copy_failed": "Copy failed",
+        "password_required": "Password is required",
+        "reset_password_success": "Password reset successfully",
+        "reset_password_failed": "Password reset failed",
+        "delete_success": "Deleted successfully",
+        "create_success": "User created",
+        "edit_success": "User updated",
+        "role_update_success": "Role updated",
+        "disable_success": "User disabled",
+        "enable_success": "User enabled",
+        "rules": {
+          "username_required": "Username is required",
+          "min5": "At least 5 characters",
+          "password_required": "Password is required",
+          "min6": "At least 6 characters",
+          "nickname_required": "Nickname is required",
+          "phone_invalid": "Invalid phone number",
+          "email_invalid": "Invalid email",
+          "role_required": "Please select a role"
+        }
+      },
+      "operation": {
+        "method": "HTTP method",
+        "path": "Path",
+        "status": "Status",
+        "operator": "Operator",
+        "date": "Time",
+        "ip": "IP",
+        "request": "Request body",
+        "response": "Response body",
+        "none": "None",
+        "delete_success": "Deleted successfully"
+      },
+      "menu": {
+        "add_root": "Add root menu",
+        "warning_add_menu": "Adding a menu requires assigning permissions in Role management",
+        "columns": {
+          "display_name": "Display name",
+          "icon": "Icon",
+          "route_name": "Route name",
+          "route_path": "Route path",
+          "hidden": "Hidden",
+          "parent": "Parent",
+          "sort": "Sort",
+          "component_path": "Component path"
+        },
+        "hidden": {
+          "hidden": "Hidden",
+          "visible": "Visible"
+        },
+        "actions": {
+          "add_child": "Add child",
+          "assign_roles": "Assign roles",
+          "add_params": "Add params",
+          "add_param": "Add menu param",
+          "add_button": "Add controllable button"
+        },
+        "sections": {
+          "basic_info": "Basic information",
+          "route_config": "Route configuration",
+          "display_settings": "Display settings",
+          "advanced_config": "Advanced configuration",
+          "params_config": "Menu params configuration",
+          "buttons_config": "Controllable buttons"
+        },
+        "fields": {
+          "component_path": "Component path",
+          "display_name": "Display name",
+          "route_name": "Route name",
+          "route_path": "Route path",
+          "parent_id": "Parent ID",
+          "icon": "Icon",
+          "sort": "Sort",
+          "hidden": "Hidden",
+          "active_menu": "Active menu",
+          "base_view": "Base view",
+          "transition": "Transition"
+        },
+        "tips": {
+          "component_router_view": "If the menu has children, use a router-view page or",
+          "click_to_set": "Click to set",
+          "active_menu_help": "When entering this route, the named sidebar menu will be highlighted. Can be empty (defaults to route name).",
+          "base_view_help": "If enabled, sidebar and header will be hidden.",
+          "transition_help": "A route-level transition overrides the global transition.",
+          "button_docs": "Open button-permission docs"
+        },
+        "placeholders": {
+          "display_name": "Enter menu display name",
+          "unique_name": "Unique English string",
+          "select_parent": "Select parent node",
+          "path_params_hint": "Recommended: only append params at the end",
+          "sort": "Enter sort number",
+          "hidden": "Hide in list?",
+          "active_menu": "Enter active menu name",
+          "keep_alive": "Cache page (keepAlive)?",
+          "close_tab": "Auto close tab?",
+          "base_view": "Is base view?",
+          "follow_global": "Follow global",
+          "param_key": "Enter key",
+          "param_value": "Enter value",
+          "button_name": "Enter button name",
+          "button_remark": "Enter remark"
+        },
+        "transitions": {
+          "fade": "Fade",
+          "slide": "Slide",
+          "zoom": "Zoom",
+          "none": "None"
+        },
+        "params": {
+          "type": "Type",
+          "key": "Key",
+          "value": "Value"
+        },
+        "buttons": {
+          "name": "Button name",
+          "remark": "Remark"
+        },
+        "assign": {
+          "title": "Assign roles - {name}",
+          "warning": "Saving overwrites all role relations for this menu. A role homepage menu cannot be unchecked.",
+          "success": "Assigned successfully",
+          "failed": "Assign failed, please try again"
+        },
+        "validation": {
+          "route_name_required": "Route name is required",
+          "component_required": "Component path is required",
+          "display_name_required": "Display name is required"
+        },
+        "messages": {
+          "delete_confirm_detail": "This will remove the menu from all roles. Continue?",
+          "delete_success": "Deleted",
+          "delete_cancelled": "Delete cancelled",
+          "add_success_assign_hint": "Added. Go to Role management to assign permissions",
+          "edit_success": "Updated"
+        },
+        "titles": {
+          "add_menu": "Add menu",
+          "edit_menu": "Edit menu"
+        },
+        "options": {
+          "root_menu": "Root menu",
+          "root_dir": "Root directory"
+        }
+      }
+      ,
+      "api": {
+        "fields": {
+          "path": "Path",
+          "description": "Description",
+          "group": "API group",
+          "method": "Method"
+        },
+        "columns": {
+          "api_path": "API path",
+          "api_group": "API group",
+          "api_desc": "API description",
+          "method": "Method"
+        },
+        "actions": {
+          "refresh_cache": "Refresh cache",
+          "sync_api": "Sync APIs",
+          "assign_roles": "Assign roles"
+        }
+      }
+    },
+    "agent": {
+      "title": "Agent Management",
+      "list": "Agent List",
+      "pending": "Pending Approval",
+      "code": "Code",
+      "full_name": "Full Name",
+      "phone": "Phone",
+      "email": "Email",
+      "level": "Level",
+      "status": "Status",
+      "kyc_tier": "KYC Tier",
+      "parent_id": "Parent Agent",
+      "partner_id": "Partner ID",
+      "user_id": "User ID",
+      "path": "Hierarchy Path",
+      "created_at": "Created At",
+      "updated_at": "Updated At",
+      "created_by": "Created By",
+      "updated_by": "Updated By",
+      "create": "Create Agent",
+      "edit": "Edit Agent",
+      "detail": "Agent Detail",
+      "basic_info": "Basic Information",
+      "kyc_profile": "KYC Profile",
+      "hierarchy": "Hierarchy",
+      "audit": "Audit Trail",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approve_confirm": "Approve this agent?",
+      "reject_reason": "Rejection Reason",
+      "approve_success": "Agent approved successfully",
+      "reject_success": "Agent rejected successfully",
+      "create_success": "Agent created successfully",
+      "update_success": "Agent updated successfully",
+      "status_pending": "Pending",
+      "status_pending_approval": "Pending Approval",
+      "status_active": "Active",
+      "status_suspended": "Suspended",
+      "status_terminated": "Terminated",
+      "status_rejected": "Rejected",
+      "kyc_tier_0": "Not Verified",
+      "kyc_tier_1": "Basic",
+      "kyc_tier_2": "Full",
+      "filter_status": "Filter by status",
+      "filter_level": "Filter by level",
+      "filter_kyc": "Filter by KYC tier",
+      "search_keyword": "Search by name, phone, code",
+      "province": "Province",
+      "tree_view": "Tree",
+      "flat_view": "List",
+      "referral_code": "Referral Code",
+      "filter_date": "Date Range"
+    },
+    "order": {
+      "title": "Order Management",
+      "list": "Order List",
+      "order_id": "Order ID",
+      "agent": "Agent",
+      "product": "Product",
+      "amount": "Amount",
+      "status": "Status",
+      "created_at": "Created At",
+      "detail": "Order Detail",
+      "info": "Order Information",
+      "request_payload": "Request Payload",
+      "supplier_response": "Supplier Response",
+      "webhook_history": "Webhook History",
+      "error_detail": "Error Detail",
+      "no_webhooks": "No webhook events",
+      "filter_date": "Date Range",
+      "filter_status": "Filter by status",
+      "search_placeholder": "Search by Order ID or Agent ID",
+      "status_pending": "Pending",
+      "status_success": "Success",
+      "status_failed": "Failed",
+      "status_refunded": "Refunded",
+      "export_coming_soon": "Export coming soon"
+    },
+    "catalog": {
+      "title": "Catalog",
+      "products": "Products",
+      "suppliers": "Suppliers",
+      "product_name": "Product Name",
+      "product_group": "Product Group",
+      "product_image": "Image",
+      "product_status": "Status",
+      "supplier_name": "Supplier Name",
+      "adapter_type": "Adapter Type",
+      "health_status": "Health Status",
+      "health_online": "Online",
+      "health_offline": "Offline",
+      "health_degraded": "Degraded",
+      "health_na": "N/A",
+      "group_telco": "Telco",
+      "group_bank": "Banking",
+      "group_travel": "Travel",
+      "group_insurance": "Insurance",
+      "filter_group": "Filter by group",
+      "filter_status": "Filter by status"
+    },
+    "onboarding": {
+      "title": "Onboarding Agent",
+      "ticket_list": "Ticket List",
+      "ticket_id": "Ticket ID",
+      "agent_id": "Agent ID",
+      "agent_name": "Agent Name",
+      "status": "Status",
+      "current_step": "Current Step",
+      "detail": "Ticket Detail",
+      "ticket_info": "Ticket Information",
+      "workflow_info": "Workflow Status",
+      "workflow_id": "Workflow ID",
+      "run_id": "Run ID",
+      "attachments": "Attachments",
+      "att_type": "Type",
+      "att_url": "URL",
+      "no_attachments": "No attachments uploaded",
+      "create_ticket": "Create Ticket",
+      "create_success": "Ticket created successfully",
+      "upload": "Upload",
+      "upload_success": "Attachment uploaded",
+      "submit": "Submit for Review",
+      "submit_success": "Ticket submitted for review",
+      "approve_confirm": "Approve this ticket?",
+      "search_ticket": "Search by Ticket ID",
+      "filter_status": "Filter by status",
+      "status_draft": "Draft",
+      "status_pending_upload": "Pending Upload",
+      "status_pending_review": "Pending Review",
+      "status_approved": "Approved",
+      "status_rejected": "Rejected",
+      "review_queue": "Review Queue",
+      "create_desc": "Create a new onboarding ticket for an Agent L0. Upload required documents and submit for review.",
+      "create_and_save": "Create & Save Draft",
+      "att_business_license": "Business License",
+      "att_agency_contract": "Agency Contract",
+      "att_ekyc_photos": "eKYC Photos",
+      "uploaded": "Uploaded",
+      "required": "Required",
+      "optional": "Optional",
+      "missing": "Missing",
+      "create_agent_l0": "Register Agent L0",
+      "create_agent_desc": "Register a new Level 0 agent with full business information, documents, and automatic ticket creation.",
+      "step_basic": "Basic Info",
+      "step_business": "Business",
+      "step_bank": "Bank & Address",
+      "step_docs": "Documents",
+      "step_confirm": "Confirm",
+      "business_name": "Business Name",
+      "business_type": "Business Type",
+      "tax_code": "Tax Code",
+      "representative_name": "Representative",
+      "representative_cccd": "Rep. CCCD",
+      "bank_name": "Bank Name",
+      "bank_account": "Bank Account",
+      "permanent_address": "Permanent Address",
+      "contact_address": "Contact Address",
+      "referral_name": "Referral Name",
+      "prev": "Previous",
+      "next": "Next",
+      "save_draft": "Save Draft",
+      "submit_review": "Create & Submit for Review",
+      "missing_docs_warning": "Missing required documents. You can save as draft and complete later.",
+      "go_tickets": "Go to Tickets"
+    }
+  }
+}

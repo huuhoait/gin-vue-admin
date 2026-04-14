@@ -28,7 +28,7 @@ type (
 )
 
 func (m *mongo) Indexes(ctx context.Context) error {
-	// 表名:索引列表 列: "表名": [][]string{{"index1", "index2"}}
+	// table name:IndexList column: "table name": [][]string{{"index1", "index2"}}
 	indexMap := map[string][][]string{}
 	for collection, indexes := range indexMap {
 		err := m.CreateIndexes(ctx, collection, indexes)
@@ -45,7 +45,7 @@ func (m *mongo) Initialization() error {
 		opts = internal.Mongo.GetClientOptions()
 	}
 	ctx := context.Background()
-	client, err := qmgo.Open(ctx, &qmgo.Config{
+	config := &qmgo.Config{
 		Uri:              global.GVA_CONFIG.Mongo.Uri(),
 		Coll:             global.GVA_CONFIG.Mongo.Coll,
 		Database:         global.GVA_CONFIG.Mongo.Database,
@@ -53,14 +53,18 @@ func (m *mongo) Initialization() error {
 		MaxPoolSize:      &global.GVA_CONFIG.Mongo.MaxPoolSize,
 		SocketTimeoutMS:  &global.GVA_CONFIG.Mongo.SocketTimeoutMs,
 		ConnectTimeoutMS: &global.GVA_CONFIG.Mongo.ConnectTimeoutMs,
-		Auth: &qmgo.Credential{
+	}
+	if global.GVA_CONFIG.Mongo.Username != "" && global.GVA_CONFIG.Mongo.Password != "" {
+		config.Auth = &qmgo.Credential{
 			Username:   global.GVA_CONFIG.Mongo.Username,
 			Password:   global.GVA_CONFIG.Mongo.Password,
 			AuthSource: global.GVA_CONFIG.Mongo.AuthSource,
-		},
-	}, opts...)
+		}
+	}
+	client, err := qmgo.Open(ctx, config, opts...)
+
 	if err != nil {
-		return errors.Wrap(err, "链接mongodb数据库失败!")
+		return errors.Wrap(err, "LinkmongodbDatabasefailed!")
 	}
 	global.GVA_MONGO = client
 	err = m.Indexes(ctx)
@@ -73,21 +77,21 @@ func (m *mongo) Initialization() error {
 func (m *mongo) CreateIndexes(ctx context.Context, name string, indexes [][]string) error {
 	collection, err := global.GVA_MONGO.Database.Collection(name).CloneCollection()
 	if err != nil {
-		return errors.Wrapf(err, "获取[%s]的表对象失败!", name)
+		return errors.Wrapf(err, "get[%s]ofTableObjectfailed!", name)
 	}
 	list, err := collection.Indexes().List(ctx)
 	if err != nil {
-		return errors.Wrapf(err, "获取[%s]的索引对象失败!", name)
+		return errors.Wrapf(err, "get[%s]ofIndexObjectfailed!", name)
 	}
 	var entities []Index
 	err = list.All(ctx, &entities)
 	if err != nil {
-		return errors.Wrapf(err, "获取[%s]的索引列表失败!", name)
+		return errors.Wrapf(err, "get[%s]ofIndexListfailed!", name)
 	}
 	length := len(indexes)
 	indexMap1 := make(map[string][]string, length)
 	for i := 0; i < length; i++ {
-		sort.Strings(indexes[i]) // 对索引key进行排序, 在使用bson.M搜索时, bson会自动按照key的字母顺序进行排序
+		sort.Strings(indexes[i]) // ToIndexkeyPerformsort, AtUsebson.MSearchWhen, bsonWillAutomaticAccording tokeyofLetterOrderPerformsort
 		length1 := len(indexes[i])
 		keys := make([]string, 0, length1)
 		for j := 0; j < length1; j++ {
@@ -100,7 +104,7 @@ func (m *mongo) CreateIndexes(ctx context.Context, name string, indexes [][]stri
 		key := strings.Join(keys, "_")
 		_, o1 := indexMap1[key]
 		if o1 {
-			return errors.Errorf("索引[%s]重复!", key)
+			return errors.Errorf("Index[%s]Duplicate!", key)
 		}
 		indexMap1[key] = indexes[i]
 	}
@@ -126,25 +130,25 @@ func (m *mongo) CreateIndexes(ctx context.Context, name string, indexes [][]stri
 		_, o2 := indexMap2[k1]
 		if o2 {
 			continue
-		} // 索引存在
+		} // IndexExists
 		if len(fmt.Sprintf("%s.%s.$%s", collection.Name(), name, v1)) > 127 {
 			err = global.GVA_MONGO.Database.Collection(name).CreateOneIndex(ctx, options.IndexModel{
 				Key:          v1,
 				IndexOptions: option.Index().SetName(utils.MD5V([]byte(k1))),
-				// IndexOptions: option.Index().SetName(utils.MD5V([]byte(k1))).SetExpireAfterSeconds(86400), // SetExpireAfterSeconds(86400) 设置索引过期时间, 86400 = 1天
+				// IndexOptions: option.Index().SetName(utils.MD5V([]byte(k1))).SetExpireAfterSeconds(86400), // SetExpireAfterSeconds(86400) setindex TTL, 86400 = 1Day
 			})
 			if err != nil {
-				return errors.Wrapf(err, "创建索引[%s]失败!", k1)
+				return errors.Wrapf(err, "create index [%s] failed!", k1)
 			}
 			return nil
 		}
 		err = global.GVA_MONGO.Database.Collection(name).CreateOneIndex(ctx, options.IndexModel{
 			Key:          v1,
 			IndexOptions: option.Index().SetExpireAfterSeconds(86400),
-			// IndexOptions: option.Index().SetName(utils.MD5V([]byte(k1))).SetExpireAfterSeconds(86400), // SetExpireAfterSeconds(86400) 设置索引过期时间(秒), 86400 = 1天
+			// IndexOptions: option.Index().SetName(utils.MD5V([]byte(k1))).SetExpireAfterSeconds(86400), // SetExpireAfterSeconds(86400) setindex TTL(Second), 86400 = 1Day
 		})
 		if err != nil {
-			return errors.Wrapf(err, "创建索引[%s]失败!", k1)
+			return errors.Wrapf(err, "create index [%s] failed!", k1)
 		}
 	}
 	return nil

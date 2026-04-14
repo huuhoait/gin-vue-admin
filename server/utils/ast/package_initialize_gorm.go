@@ -7,17 +7,17 @@ import (
 	"io"
 )
 
-// PackageInitializeGorm 包初始化gorm
+// PackageInitializeGorm Packageinitializegorm
 type PackageInitializeGorm struct {
 	Base
-	Type         Type   // 类型
-	Path         string // 文件路径
-	ImportPath   string // 导包路径
-	Business     string // 业务库 gva => gva, 不要传"gva"
-	StructName   string // 结构体名称
-	PackageName  string // 包名
-	RelativePath string // 相对路径
-	IsNew        bool   // 是否使用new关键字 true: new(PackageName.StructName) false: &PackageName.StructName{}
+	Type         Type   // type
+	Path         string // Filepath
+	ImportPath   string // GuidePackagepath
+	Business     string // business database gva => gva, NotRequireTransmit"gva"
+	StructName   string // struct name
+	PackageName  string // package name
+	RelativePath string // relative path
+	IsNew        bool   // YesNoUsenewkeyword true: new(PackageName.StructName) false: &PackageName.StructName{}
 }
 
 func (a *PackageInitializeGorm) Parse(filename string, writer io.Writer) (file *ast.File, err error) {
@@ -35,9 +35,9 @@ func (a *PackageInitializeGorm) Parse(filename string, writer io.Writer) (file *
 
 func (a *PackageInitializeGorm) Rollback(file *ast.File) error {
 	packageNameNum := 0
-	// 寻找目标结构
+	// find target struct
 	ast.Inspect(file, func(n ast.Node) bool {
-		// 总调用的db变量根据business来决定
+		// variable used for all callsdbvariable according tobusinessto decide
 		varDB := a.Business + "Db"
 
 		if a.Business == "" {
@@ -49,19 +49,19 @@ func (a *PackageInitializeGorm) Rollback(file *ast.File) error {
 			return true
 		}
 
-		// 检查是不是 db.AutoMigrate() 方法
+		// CheckYesNotYes db.AutoMigrate() method
 		selExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
 		if !ok || selExpr.Sel.Name != "AutoMigrate" {
 			return true
 		}
 
-		// 检查调用方是不是 db
+		// check callerYesNotYes db
 		ident, ok := selExpr.X.(*ast.Ident)
 		if !ok || ident.Name != varDB {
 			return true
 		}
 
-		// 删除结构体参数
+		// deleteStructureBodyParameter
 		for i := 0; i < len(callExpr.Args); i++ {
 			if com, comok := callExpr.Args[i].(*ast.CompositeLit); comok {
 				if selector, exprok := com.Type.(*ast.SelectorExpr); exprok {
@@ -92,9 +92,9 @@ func (a *PackageInitializeGorm) Injection(file *ast.File) error {
 	if bizModelDecl != nil {
 		a.addDbVar(bizModelDecl.Body)
 	}
-	// 寻找目标结构
+	// find target struct
 	ast.Inspect(file, func(n ast.Node) bool {
-		// 总调用的db变量根据business来决定
+		// variable used for all callsdbvariable according tobusinessto decide
 		varDB := a.Business + "Db"
 
 		if a.Business == "" {
@@ -106,19 +106,19 @@ func (a *PackageInitializeGorm) Injection(file *ast.File) error {
 			return true
 		}
 
-		// 检查是不是 db.AutoMigrate() 方法
+		// CheckYesNotYes db.AutoMigrate() method
 		selExpr, ok := callExpr.Fun.(*ast.SelectorExpr)
 		if !ok || selExpr.Sel.Name != "AutoMigrate" {
 			return true
 		}
 
-		// 检查调用方是不是 db
+		// check callerYesNotYes db
 		ident, ok := selExpr.X.(*ast.Ident)
 		if !ok || ident.Name != varDB {
 			return true
 		}
 
-		// 添加结构体参数
+		// AddStructureBodyParameter
 		callExpr.Args = append(callExpr.Args, &ast.CompositeLit{
 			Type: &ast.SelectorExpr{
 				X:   ast.NewIdent(a.PackageName),
@@ -137,19 +137,19 @@ func (a *PackageInitializeGorm) Format(filename string, writer io.Writer, file *
 	return a.Base.Format(filename, writer, file)
 }
 
-// 创建businessDB变量
+// CreatebusinessDBVariable
 func (a *PackageInitializeGorm) addDbVar(astBody *ast.BlockStmt) {
 	for i := range astBody.List {
 		if assignStmt, ok := astBody.List[i].(*ast.AssignStmt); ok {
 			if ident, ok := assignStmt.Lhs[0].(*ast.Ident); ok {
-				if ident.Name == "db" || ident.Name == a.Business+"Db" {
+				if (a.Business == "" && ident.Name == "db") || ident.Name == a.Business+"Db" {
 					return
 				}
 			}
 		}
 	}
 
-	// 添加 businessDb := global.GetGlobalDBByDBName("business") 变量
+	// Add businessDb := global.GetGlobalDBByDBName("business") Variable
 	assignNode := &ast.AssignStmt{
 		Lhs: []ast.Expr{
 			&ast.Ident{
@@ -177,7 +177,7 @@ func (a *PackageInitializeGorm) addDbVar(astBody *ast.BlockStmt) {
 		},
 	}
 
-	// 添加 businessDb.AutoMigrate() 方法
+	// Add businessDb.AutoMigrate() method
 	autoMigrateCall := &ast.ExprStmt{
 		X: &ast.CallExpr{
 			Fun: &ast.SelectorExpr{

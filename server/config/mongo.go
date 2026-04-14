@@ -9,20 +9,20 @@ type Mongo struct {
 	Coll             string       `json:"coll" yaml:"coll" mapstructure:"coll"`                                           // collection name
 	Options          string       `json:"options" yaml:"options" mapstructure:"options"`                                  // mongodb options
 	Database         string       `json:"database" yaml:"database" mapstructure:"database"`                               // database name
-	Username         string       `json:"username" yaml:"username" mapstructure:"username"`                               // 用户名
-	Password         string       `json:"password" yaml:"password" mapstructure:"password"`                               // 密码
-	AuthSource       string       `json:"auth-source" yaml:"auth-source" mapstructure:"auth-source"`                      // 验证数据库
-	MinPoolSize      uint64       `json:"min-pool-size" yaml:"min-pool-size" mapstructure:"min-pool-size"`                // 最小连接池
-	MaxPoolSize      uint64       `json:"max-pool-size" yaml:"max-pool-size" mapstructure:"max-pool-size"`                // 最大连接池
-	SocketTimeoutMs  int64        `json:"socket-timeout-ms" yaml:"socket-timeout-ms" mapstructure:"socket-timeout-ms"`    // socket超时时间
-	ConnectTimeoutMs int64        `json:"connect-timeout-ms" yaml:"connect-timeout-ms" mapstructure:"connect-timeout-ms"` // 连接超时时间
-	IsZap            bool         `json:"is-zap" yaml:"is-zap" mapstructure:"is-zap"`                                     // 是否开启zap日志
-	Hosts            []*MongoHost `json:"hosts" yaml:"hosts" mapstructure:"hosts"`                                        // 主机列表
+	Username         string       `json:"username" yaml:"username" mapstructure:"username"`                               // username
+	Password         string       `json:"password" yaml:"password" mapstructure:"password"`                               // password
+	AuthSource       string       `json:"auth-source" yaml:"auth-source" mapstructure:"auth-source"`                      // validate database
+	MinPoolSize      uint64       `json:"min-pool-size" yaml:"min-pool-size" mapstructure:"min-pool-size"`                // min connection pool
+	MaxPoolSize      uint64       `json:"max-pool-size" yaml:"max-pool-size" mapstructure:"max-pool-size"`                // max connection pool
+	SocketTimeoutMs  int64        `json:"socket-timeout-ms" yaml:"socket-timeout-ms" mapstructure:"socket-timeout-ms"`    // sockettimeout
+	ConnectTimeoutMs int64        `json:"connect-timeout-ms" yaml:"connect-timeout-ms" mapstructure:"connect-timeout-ms"` // connection timeout
+	IsZap            bool         `json:"is-zap" yaml:"is-zap" mapstructure:"is-zap"`                                     // YesNoEnablezapLog
+	Hosts            []*MongoHost `json:"hosts" yaml:"hosts" mapstructure:"hosts"`                                        // MainMachineList
 }
 
 type MongoHost struct {
-	Host string `json:"host" yaml:"host" mapstructure:"host"` // ip地址
-	Port string `json:"port" yaml:"port" mapstructure:"port"` // 端口
+	Host string `json:"host" yaml:"host" mapstructure:"host"` // ipAddress
+	Port string `json:"port" yaml:"port" mapstructure:"port"` // port
 }
 
 // Uri .

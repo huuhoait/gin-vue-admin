@@ -14,20 +14,20 @@ import (
 )
 
 type LimitConfig struct {
-	// GenerationKey 根据业务生成key 下面CheckOrMark查询生成
+	// GenerationKey generates key based on business logic, used by CheckOrMark below
 	GenerationKey func(c *gin.Context) string
-	// 检查函数,用户可修改具体逻辑,更加灵活
+	// CheckOrMark check function, users can modify the specific logic for more flexibility
 	CheckOrMark func(key string, expire int, limit int) error
-	// Expire key 过期时间
+	// Expire key expiration time
 	Expire int
-	// Limit 周期时间
+	// Limit rate limit count per period
 	Limit int
 }
 
 func (l LimitConfig) LimitWithTime() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if err := l.CheckOrMark(l.GenerationKey(c), l.Expire, l.Limit); err != nil {
-			c.JSON(http.StatusOK, gin.H{"code": response.ERROR, "msg": err})
+			c.JSON(http.StatusOK, gin.H{"code": response.ERROR, "msg": err.Error()})
 			c.Abort()
 			return
 		} else {
@@ -36,13 +36,13 @@ func (l LimitConfig) LimitWithTime() gin.HandlerFunc {
 	}
 }
 
-// DefaultGenerationKey 默认生成key
+// DefaultGenerationKey generates the default key
 func DefaultGenerationKey(c *gin.Context) string {
 	return "GVA_Limit" + c.ClientIP()
 }
 
 func DefaultCheckOrMark(key string, expire int, limit int) (err error) {
-	// 判断是否开启redis
+	// check if redis is enabled
 	if global.GVA_REDIS == nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func DefaultLimit() gin.HandlerFunc {
 	}.LimitWithTime()
 }
 
-// SetLimitWithTime 设置访问次数
+// SetLimitWithTime sets access count limit
 func SetLimitWithTime(key string, limit int, expiration time.Duration) error {
 	count, err := global.GVA_REDIS.Exists(context.Background(), key).Result()
 	if err != nil {
@@ -74,15 +74,15 @@ func SetLimitWithTime(key string, limit int, expiration time.Duration) error {
 		_, err = pipe.Exec(context.Background())
 		return err
 	} else {
-		// 次数
+		// check count
 		if times, err := global.GVA_REDIS.Get(context.Background(), key).Int(); err != nil {
 			return err
 		} else {
 			if times >= limit {
 				if t, err := global.GVA_REDIS.PTTL(context.Background(), key).Result(); err != nil {
-					return errors.New("请求太过频繁，请稍后再试")
+					return errors.New("requests too frequent, please try again later")
 				} else {
-					return errors.New("请求太过频繁, 请 " + t.String() + " 秒后尝试")
+					return errors.New("requests too frequent, please try again after " + t.String())
 				}
 			} else {
 				return global.GVA_REDIS.Incr(context.Background(), key).Err()

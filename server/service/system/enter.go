@@ -16,9 +16,15 @@ type ServiceGroup struct {
 	DictionaryDetailService
 	AuthorityBtnService
 	SysExportTemplateService
-
-	AutoCodePlugin   autoCodePlugin
-	AutoCodePackage  autoCodePackage
-	AutoCodeHistory  autoCodeHistory
-	AutoCodeTemplate autoCodeTemplate
+	SysParamsService
+	SysVersionService
+	SkillsService
+	AIWorkflowSession aiWorkflowSession
+	AutoCodePlugin    autoCodePlugin
+	AutoCodePackage   autoCodePackage
+	AutoCodeHistory   autoCodeHistory
+	AutoCodeTemplate  autoCodeTemplate
+	SysErrorService
+	LoginLogService
+	ApiTokenService
 }

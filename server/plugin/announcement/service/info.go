@@ -10,50 +10,50 @@ var Info = new(info)
 
 type info struct{}
 
-// CreateInfo 创建公告记录
+// CreateInfo create announcementRecord
 // Author [piexlmax](https://github.com/piexlmax)
 func (s *info) CreateInfo(info *model.Info) (err error) {
 	err = global.GVA_DB.Create(info).Error
 	return err
 }
 
-// DeleteInfo 删除公告记录
+// DeleteInfo delete announcementRecord
 // Author [piexlmax](https://github.com/piexlmax)
 func (s *info) DeleteInfo(ID string) (err error) {
 	err = global.GVA_DB.Delete(&model.Info{}, "id = ?", ID).Error
 	return err
 }
 
-// DeleteInfoByIds 批量删除公告记录
+// DeleteInfoByIds batch delete announcementsRecord
 // Author [piexlmax](https://github.com/piexlmax)
 func (s *info) DeleteInfoByIds(IDs []string) (err error) {
 	err = global.GVA_DB.Delete(&[]model.Info{}, "id in ?", IDs).Error
 	return err
 }
 
-// UpdateInfo 更新公告记录
+// UpdateInfo update announcementRecord
 // Author [piexlmax](https://github.com/piexlmax)
 func (s *info) UpdateInfo(info model.Info) (err error) {
 	err = global.GVA_DB.Model(&model.Info{}).Where("id = ?", info.ID).Updates(&info).Error
 	return err
 }
 
-// GetInfo 根据ID获取公告记录
+// GetInfo get by IDAnnouncementRecord
 // Author [piexlmax](https://github.com/piexlmax)
 func (s *info) GetInfo(ID string) (info model.Info, err error) {
 	err = global.GVA_DB.Where("id = ?", ID).First(&info).Error
 	return
 }
 
-// GetInfoInfoList 分页获取公告记录
+// GetInfoInfoList PaginationgetAnnouncementRecord
 // Author [piexlmax](https://github.com/piexlmax)
 func (s *info) GetInfoInfoList(info request.InfoSearch) (list []model.Info, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	// 创建db
+	// Createdb
 	db := global.GVA_DB.Model(&model.Info{})
 	var infos []model.Info
-	// 如果有条件搜索 下方会自动创建搜索语句
+	// If search conditions exist, search queries will be auto-generated below
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {
 		db = db.Where("created_at BETWEEN ? AND ?", info.StartCreatedAt, info.EndCreatedAt)
 	}
