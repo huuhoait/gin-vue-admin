@@ -36,6 +36,18 @@ func Viper() *viper.Viper {
 		panic(fmt.Errorf("fatal error unmarshal config: %w", err))
 	}
 
+	// Environment-variable overrides for sensitive values. Config files are
+	// often committed to VCS; secrets must be overridable at deploy time.
+	if key := os.Getenv("GVA_JWT_SIGNING_KEY"); key != "" {
+		global.GVA_CONFIG.JWT.SigningKey = key
+	}
+	if global.GVA_CONFIG.JWT.SigningKey == "" || global.GVA_CONFIG.JWT.SigningKey == "88c21ee8-5769-417e-b3ee-e1a309d15c88" {
+		if gin.Mode() == gin.ReleaseMode {
+			panic("refusing to start in release mode with default/empty JWT signing key; set GVA_JWT_SIGNING_KEY or jwt.signing-key")
+		}
+		fmt.Println("[WARN] JWT signing key is empty or using the committed default. Set GVA_JWT_SIGNING_KEY env var before production.")
+	}
+
 	// root AdaptNature According torootPositionSetGoFindToCorrespondingmigrateMovePositionSet,EnsurerootpathHaveEffect
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return v

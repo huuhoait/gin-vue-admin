@@ -1,22 +1,38 @@
 package middleware
 
 import (
+	"fmt"
+	"net/http"
+	"sync"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/config"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
-// Cors allows all cross-origin requests and passes through all OPTIONS methods
+var corsWarnOnce sync.Once
+
+// Cors allows all cross-origin requests and passes through all OPTIONS methods.
+// In release mode this reflects a warning — the allow-all mode reflects the
+// request Origin *with* Access-Control-Allow-Credentials:true, which defeats
+// the Same-Origin Policy for credentialed requests and should never be used
+// in production. Configure Cors.Mode = "strict-whitelist" for prod.
 func Cors() gin.HandlerFunc {
+	if gin.Mode() == gin.ReleaseMode {
+		corsWarnOnce.Do(func() {
+			fmt.Println("[WARN] CORS allow-all mode is enabled in release; switch cors.mode to 'strict-whitelist' in production")
+		})
+	}
 	return func(c *gin.Context) {
 		method := c.Request.Method
 		origin := c.Request.Header.Get("Origin")
-		c.Header("Access-Control-Allow-Origin", origin)
+		if origin != "" {
+			c.Header("Access-Control-Allow-Origin", origin)
+			c.Header("Access-Control-Allow-Credentials", "true")
+		}
 		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id")
 		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS,DELETE,PUT")
 		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At")
-		c.Header("Access-Control-Allow-Credentials", "true")
 
 		// allow all OPTIONS methods
 		if method == "OPTIONS" {

@@ -1,6 +1,10 @@
 package example
 
 import (
+	"path/filepath"
+	"strconv"
+	"strings"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
@@ -8,8 +12,20 @@ import (
 	exampleRes "github.com/flipped-aurora/gin-vue-admin/server/model/example/response"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"strconv"
 )
+
+const maxUploadSizeBytes = 20 * 1024 * 1024 // 20 MiB
+
+// allowedUploadExt is a conservative default whitelist of safe file extensions.
+// Executable, script and archive extensions that are common vectors for
+// server-side code execution or phishing are deliberately excluded.
+var allowedUploadExt = map[string]struct{}{
+	".jpg": {}, ".jpeg": {}, ".png": {}, ".gif": {}, ".webp": {}, ".svg": {},
+	".pdf": {}, ".txt": {}, ".md": {}, ".csv": {},
+	".doc": {}, ".docx": {}, ".xls": {}, ".xlsx": {}, ".ppt": {}, ".pptx": {},
+	".mp3": {}, ".mp4": {}, ".wav": {}, ".webm": {},
+	".zip": {},
+}
 
 type FileUploadAndDownloadApi struct{}
 
@@ -30,6 +46,15 @@ func (b *FileUploadAndDownloadApi) UploadFile(c *gin.Context) {
 	if err != nil {
 		global.GVA_LOG.Error("Failed to receive file!", zap.Error(err))
 		response.FailWithMessage("Failed to receive file", c)
+		return
+	}
+	if header.Size > maxUploadSizeBytes {
+		response.FailWithMessage("File exceeds the maximum upload size", c)
+		return
+	}
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	if _, ok := allowedUploadExt[ext]; !ok {
+		response.FailWithMessage("File type not allowed", c)
 		return
 	}
 	file, err = fileUploadAndDownloadService.UploadFile(header, noSave, classId) // Get file path after upload

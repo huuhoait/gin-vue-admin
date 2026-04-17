@@ -54,16 +54,23 @@ func JWTAuth() gin.HandlerFunc {
 		//}
 		c.Set("claims", claims)
 		if claims.ExpiresAt.Unix()-time.Now().Unix() < claims.BufferTime {
-			dr, _ := utils.ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
-			claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(dr))
-			newToken, _ := j.CreateTokenByOldToken(token, *claims)
-			newClaims, _ := j.ParseToken(newToken)
-			c.Header("new-token", newToken)
-			c.Header("new-expires-at", strconv.FormatInt(newClaims.ExpiresAt.Unix(), 10))
-			utils.SetToken(c, newToken, int(dr.Seconds()/60))
-			if global.GVA_CONFIG.System.UseMultipoint {
-				// record new active JWT
-				_ = utils.SetRedisJWT(newToken, newClaims.Username)
+			// Cooldown: once a token has been refreshed in the last 5 minutes
+			// skip re-issuance. Prevents a storm of Redis writes on every
+			// request once we enter the BufferTime window (commonly 1 day).
+			refreshKey := "jwt-refresh:" + token
+			if _, hit := global.BlackCache.Get(refreshKey); !hit {
+				global.BlackCache.Set(refreshKey, struct{}{}, 5*time.Minute)
+				dr, _ := utils.ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
+				claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(dr))
+				newToken, _ := j.CreateTokenByOldToken(token, *claims)
+				newClaims, _ := j.ParseToken(newToken)
+				c.Header("new-token", newToken)
+				c.Header("new-expires-at", strconv.FormatInt(newClaims.ExpiresAt.Unix(), 10))
+				utils.SetToken(c, newToken, int(dr.Seconds()/60))
+				if global.GVA_CONFIG.System.UseMultipoint {
+					// record new active JWT
+					_ = utils.SetRedisJWT(newToken, newClaims.Username)
+				}
 			}
 		}
 		c.Next()

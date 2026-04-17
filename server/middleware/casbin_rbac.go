@@ -21,6 +21,11 @@ func CasbinHandler() gin.HandlerFunc {
 		// get user's role
 		sub := strconv.Itoa(int(waitUse.AuthorityId))
 		e := utils.GetCasbin() // check if policy exists
+		if e == nil {
+			response.FailWithDetailed(gin.H{}, "Authorization subsystem unavailable", c)
+			c.Abort()
+			return
+		}
 		success, _ := e.Enforce(sub, obj, act)
 		if !success {
 			response.FailWithDetailed(gin.H{}, "Insufficient permissions", c)

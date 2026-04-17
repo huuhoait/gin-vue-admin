@@ -90,6 +90,13 @@ func (*Local) DeleteFile(key string) error {
 	}
 
 	p := filepath.Join(global.GVA_CONFIG.Local.StorePath, key)
+	// Defense-in-depth: resolve both paths and verify p stays inside StorePath.
+	// Protects against edge cases where the key check above is bypassed.
+	absStore, absErr := filepath.Abs(global.GVA_CONFIG.Local.StorePath)
+	absP, absErr2 := filepath.Abs(p)
+	if absErr != nil || absErr2 != nil || !strings.HasPrefix(absP+string(filepath.Separator), absStore+string(filepath.Separator)) {
+		return errors.New("Non-methodofkey")
+	}
 
 	// CheckFileYesNoExists
 	if _, err := os.Stat(p); os.IsNotExist(err) {
