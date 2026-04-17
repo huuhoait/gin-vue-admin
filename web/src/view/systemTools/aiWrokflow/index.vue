@@ -983,6 +983,7 @@
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import {
   Delete,
   DocumentCopy,
@@ -991,6 +992,8 @@ import {
   Promotion,
   RefreshRight
 } from '@element-plus/icons-vue'
+
+const { t } = useI18n()
 import {
   analyzeRequirementByAISSEStream,
   dumpAIWorkflowMarkdown,
@@ -1878,8 +1881,8 @@ const dumpCurrentMarkdown = async () => {
   if (!hasResult) {
     ElMessage.warning(
       tab === 'analysis'
-        ? 'No analysis result to dump yet'
-        : 'No prompt workflow to dump yet'
+        ? t('admin.systemtools.aiworkflow.no_analysis_dump')
+        : t('admin.systemtools.aiworkflow.no_workflow_dump')
     )
     return
   }
@@ -1896,10 +1899,10 @@ const dumpCurrentMarkdown = async () => {
     const result = data.result || data
     const path = firstText(result.filePath, result.relativePath)
     await ElMessageBox.alert(
-      path || 'Markdown dump completed',
-      tab === 'analysis' ? 'Analysis dumped' : 'Prompts dumped',
+      path || t('admin.systemtools.aiworkflow.markdown_dump_done'),
+      tab === 'analysis' ? t('admin.systemtools.aiworkflow.analysis_dumped') : t('admin.systemtools.aiworkflow.prompts_dumped'),
       {
-        confirmButtonText: 'OK'
+        confirmButtonText: t('admin.systemtools.aiworkflow.ok')
       }
     )
   } finally {
@@ -1919,7 +1922,7 @@ const startNewConversation = (tab = activeTab.value) => {
   }
   if (activeTab.value === tab) followUpInput.value = ''
   ElMessage.success(
-    tab === 'analysis' ? 'New analysis session created' : 'New workflow session created'
+    tab === 'analysis' ? t('admin.systemtools.aiworkflow.new_analysis_session') : t('admin.systemtools.aiworkflow.new_workflow_session')
   )
 }
 
@@ -1988,18 +1991,18 @@ const persistSession = async (tab, refreshList = true) => {
 
 const removeSession = async (item) => {
   await ElMessageBox.confirm(
-    'This history item cannot be recovered after deletion. Continue?',
-    'Delete session',
+    t('admin.systemtools.aiworkflow.delete_session_confirm'),
+    t('admin.systemtools.aiworkflow.delete_session_title'),
     {
       type: 'warning',
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel'
+      confirmButtonText: t('admin.common.delete'),
+      cancelButtonText: t('admin.common.cancel')
     }
   )
   await deleteAIWorkflowSession({ id: Number(item.ID || item.id || 0) })
   if (isSessionActive(item)) startNewConversation(activeTab.value)
   await loadSessionList(activeTab.value)
-  ElMessage.success('Session deleted')
+  ElMessage.success(t('admin.systemtools.aiworkflow.session_deleted'))
 }
 
 const selectMessageNode = async (messageId) => {
@@ -2018,12 +2021,12 @@ const rollbackToMessage = async (messageId) => {
   )
   if (idx < 0) return
   await ElMessageBox.confirm(
-    'Rollback will delete all messages after this node and continue follow-ups from here. Continue?',
-    'Rollback session',
+    t('admin.systemtools.aiworkflow.rollback_session_confirm'),
+    t('admin.systemtools.aiworkflow.rollback_session_title'),
     {
       type: 'warning',
-      confirmButtonText: 'Rollback',
-      cancelButtonText: 'Cancel'
+      confirmButtonText: t('admin.systemtools.aiworkflow.rollback_action'),
+      cancelButtonText: t('admin.common.cancel')
     }
   )
   const message = currentSession.value.messages[idx]
@@ -2036,7 +2039,7 @@ const rollbackToMessage = async (messageId) => {
   currentSession.value.messageId = ''
   applyMessage(activeTab.value, message)
   await persistSession(activeTab.value)
-  ElMessage.success('Rolled back to the selected node. Follow-ups will continue from here.')
+  ElMessage.success(t('admin.systemtools.aiworkflow.rolled_back_node'))
 }
 
 const parseExtraPayload = () => {
@@ -2045,7 +2048,7 @@ const parseExtraPayload = () => {
     const parsed = JSON.parse(settings.extraPayload)
     return parsed && typeof parsed === 'object' ? parsed : {}
   } catch (error) {
-    ElMessage.error('Extra payload is not valid JSON')
+    ElMessage.error(t('admin.systemtools.aiworkflow.invalid_extra_payload'))
     throw error
   }
 }
@@ -2080,7 +2083,7 @@ const sendChat = async ({ tab, query, inputs, onProgress }) => {
     scene: 'gva_ai_workflow'
   }
   if (!String(requestData.query || '').trim()) {
-    ElMessage.error('Missing query. Request blocked.')
+    ElMessage.error(t('admin.systemtools.aiworkflow.missing_query'))
     return null
   }
   if (sessions[tab].conversationId)
@@ -2096,7 +2099,7 @@ const sendChat = async ({ tab, query, inputs, onProgress }) => {
           }))
     )
   } catch (error) {
-    ElMessage.error(error?.message || 'AI request failed')
+    ElMessage.error(error?.message || t('admin.systemtools.aiworkflow.ai_request_failed'))
     return null
   }
 }
@@ -2152,7 +2155,7 @@ const updateStreamMessage = (tab, message, payload = {}) => {
 }
 
 const runAnalysis = async () => {
-  if (!analysisForm.requirement.trim()) return ElMessage.warning('Please enter a requirement first')
+  if (!analysisForm.requirement.trim()) return ElMessage.warning(t('admin.systemtools.aiworkflow.enter_requirement_first'))
   analysisLoading.value = true
   streamingPreviewText.value = ''
   const streamUserMessage = addMessage(
@@ -2192,7 +2195,7 @@ const runAnalysis = async () => {
     sessions.analysis.messageId =
       result.messageId || sessions.analysis.messageId
     streamAssistant.content =
-      result.answerText || streamAssistant.content || 'Model returned no text'
+      result.answerText || streamAssistant.content || t('admin.systemtools.aiworkflow.model_no_text')
     streamAssistant.snapshot = snapshot
     streamAssistant.conversationId =
       result.conversationId || streamAssistant.conversationId
@@ -2201,7 +2204,7 @@ const runAnalysis = async () => {
     sessions.analysis.title = sessionTitle('analysis')
     analysisResult.value = snapshot
     await persistSession('analysis')
-    ElMessage.success('Analysis completed')
+    ElMessage.success(t('admin.systemtools.aiworkflow.analysis_completed'))
   } finally {
     analysisLoading.value = false
     streamingPreviewText.value = ''
@@ -2209,15 +2212,15 @@ const runAnalysis = async () => {
 }
 
 const pushAnalysisToWorkflow = async () => {
-  if (!hasAnalysisResult.value) return ElMessage.warning('No analysis result available yet')
+  if (!hasAnalysisResult.value) return ElMessage.warning(t('admin.systemtools.aiworkflow.no_analysis_yet'))
   await switchTab('workflow')
   workflowForm.source = buildAnalysisTransferText()
-  ElMessage.success('Sent to prompt workflow')
+  ElMessage.success(t('admin.systemtools.aiworkflow.sent_to_workflow'))
 }
 
 const runWorkflow = async () => {
   if (!workflowForm.source.trim())
-    return ElMessage.warning('Please enter requirements or analysis result first')
+    return ElMessage.warning(t('admin.systemtools.aiworkflow.enter_requirements_or_analysis'))
   workflowLoading.value = true
   streamingPreviewText.value = ''
   const streamUserMessage = addMessage('workflow', 'user', '')
@@ -2253,7 +2256,7 @@ const runWorkflow = async () => {
     sessions.workflow.messageId =
       result.messageId || sessions.workflow.messageId
     streamAssistant.content =
-      result.answerText || streamAssistant.content || 'Model returned no text'
+      result.answerText || streamAssistant.content || t('admin.systemtools.aiworkflow.model_no_text')
     streamAssistant.snapshot = snapshot
     streamAssistant.conversationId =
       result.conversationId || streamAssistant.conversationId
@@ -2262,7 +2265,7 @@ const runWorkflow = async () => {
     sessions.workflow.title = sessionTitle('workflow')
     workflowResult.value = snapshot
     await persistSession('workflow')
-    ElMessage.success('Prompt workflow generated')
+    ElMessage.success(t('admin.systemtools.aiworkflow.workflow_generated'))
   } finally {
     workflowLoading.value = false
     streamingPreviewText.value = ''
@@ -2271,9 +2274,9 @@ const runWorkflow = async () => {
 
 const sendFollowUp = async () => {
   const query = followUpInput.value.trim()
-  if (!query) return ElMessage.warning('Please enter a follow-up message')
+  if (!query) return ElMessage.warning(t('admin.systemtools.aiworkflow.enter_followup'))
   if (!currentSession.value.messages.length)
-    return ElMessage.warning('No session content yet. Run analysis or generate workflow first.')
+    return ElMessage.warning(t('admin.systemtools.aiworkflow.no_session_content'))
   const tab = activeTab.value
   if (tab === 'analysis') analysisLoading.value = true
   else workflowLoading.value = true
@@ -2318,7 +2321,7 @@ const sendFollowUp = async () => {
       result.conversationId || sessions[tab].conversationId
     sessions[tab].messageId = result.messageId || sessions[tab].messageId
     streamAssistant.content =
-      result.answerText || streamAssistant.content || 'Model returned no text'
+      result.answerText || streamAssistant.content || t('admin.systemtools.aiworkflow.model_no_text')
     streamAssistant.snapshot = snapshot
     streamAssistant.conversationId =
       result.conversationId || streamAssistant.conversationId
@@ -2329,7 +2332,7 @@ const sendFollowUp = async () => {
     else workflowResult.value = snapshot
     followUpInput.value = ''
     await persistSession(tab)
-    ElMessage.success('Follow-up sent')
+    ElMessage.success(t('admin.systemtools.aiworkflow.followup_sent'))
   } finally {
     if (tab === 'analysis') analysisLoading.value = false
     else workflowLoading.value = false
@@ -2337,8 +2340,8 @@ const sendFollowUp = async () => {
   }
 }
 
-const copyText = async (text, successMessage = 'Copied') => {
-  if (!text) return ElMessage.warning('Nothing to copy')
+const copyText = async (text, successMessage = t('admin.systemtools.aiworkflow.copied')) => {
+  if (!text) return ElMessage.warning(t('admin.systemtools.aiworkflow.nothing_to_copy'))
   try {
     await navigator.clipboard.writeText(text)
   } catch (error) {

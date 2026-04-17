@@ -3,7 +3,7 @@
     <el-card class="mb-2">
       <template #header>
         <div class="flex flex-wrap items-center justify-between gap-3 font-bold">
-          <span>MCP server config example</span>
+          <span>{{ t('admin.system_tools.mcp_test.server_config_example') }}</span>
           <div class="flex flex-wrap items-center gap-2">
             <el-button
               size="small"
@@ -12,7 +12,7 @@
               :disabled="disableStart"
               @click="handleStartMcp"
             >
-              Start
+              {{ t('admin.system_tools.mcp_test.start') }}
             </el-button>
             <el-button
               size="small"
@@ -20,7 +20,7 @@
               :disabled="disableStop"
               @click="handleStopMcp"
             >
-              Stop
+              {{ t('admin.system_tools.mcp_test.stop') }}
             </el-button>
             <el-button
               size="small"
@@ -28,9 +28,9 @@
               :loading="statusLoading"
               @click="refreshMcpOverview"
             >
-              Refresh
+              {{ t('admin.system_tools.mcp_test.refresh') }}
             </el-button>
-            <el-tooltip content="Copy config" placement="top">
+            <el-tooltip :content="t('admin.system_tools.mcp_test.copy_config')" placement="top">
               <el-button :icon="DocumentCopy" circle @click="copyMcpConfig" />
             </el-tooltip>
           </div>
@@ -46,25 +46,25 @@
         class="mb-3 rounded border border-dashed border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-500"
       >
         <div>
-          Service URL:
+          {{ t('admin.system_tools.mcp_test.service_url') }}:
           <span class="break-all font-mono text-gray-700">{{
             mcpServiceStatus.baseURL
           }}</span>
         </div>
         <div class="mt-1">
-          Health check:
+          {{ t('admin.system_tools.mcp_test.health_check') }}:
           <span class="break-all font-mono text-gray-700">{{
             mcpServiceStatus.healthURL
           }}</span>
         </div>
         <div v-if="mcpServiceStatus.startedAt" class="mt-1">
-          Started at:
+          {{ t('admin.system_tools.mcp_test.started_at') }}:
           <span class="font-mono text-gray-700">{{
             formatTime(mcpServiceStatus.startedAt)
           }}</span>
         </div>
         <div v-if="mcpServiceStatus.lastError" class="mt-1">
-          Last error:
+          {{ t('admin.system_tools.mcp_test.last_error') }}:
           <span class="break-all text-red-600">{{
             mcpServiceStatus.lastError
           }}</span>
@@ -79,7 +79,7 @@
     <el-empty
       v-if="!mcpTools.length && !serviceReachable && !statusLoading"
       class="mb-4"
-      description="MCP service is not running. Click Start above to load tools."
+      :description="t('admin.system_tools.mcp_test.service_not_running')"
     />
 
     <el-row :gutter="8">
@@ -95,7 +95,7 @@
           <template #header>
             <div class="flex items-center justify-between font-bold">
               <span>{{ tool.name }}</span>
-              <el-tooltip content="Test tool" placement="top">
+              <el-tooltip :content="t('admin.system_tools.mcp_test.test_tool')" placement="top">
                 <el-button
                   :icon="VideoPlay"
                   circle
@@ -116,7 +116,7 @@
             class="mt-1 max-h-[100px] overflow-y-auto rounded-b border-t border-gray-200 bg-gray-50 p-2 text-xs"
           >
             <p class="my-2 flex items-center font-semibold text-gray-700">
-              <span class="mr-1">Parameters</span>
+              <span class="mr-1">{{ t('admin.system_tools.mcp_test.parameters') }}</span>
               <span class="text-xs text-gray-500"
                 >({{ Object.keys(tool.inputSchema.properties).length }})</span
               >
@@ -148,9 +148,9 @@
                 </div>
                 <div
                   class="mt-0.5 line-clamp-2 text-xs text-gray-500"
-                  :title="propDetails.description || 'No description'"
+                  :title="propDetails.description || t('admin.system_tools.mcp_test.no_description')"
                 >
-                  {{ propDetails.description || 'No description' }}
+                  {{ propDetails.description || t('admin.system_tools.mcp_test.no_description') }}
                 </div>
               </div>
             </div>
@@ -160,7 +160,7 @@
             v-else
             class="mt-1 flex items-center justify-center rounded-b border-t border-gray-200 bg-gray-50 p-2 text-xs"
           >
-            <span class="py-3 italic text-gray-500">No input parameters</span>
+            <span class="py-3 italic text-gray-500">{{ t('admin.system_tools.mcp_test.no_input_params') }}</span>
           </div>
         </el-card>
       </el-col>
@@ -168,7 +168,7 @@
 
     <el-dialog
       v-model="testDialogVisible"
-      :title="currentTestingTool ? `${currentTestingTool.name} - Parameter test` : 'Parameter test'"
+      :title="currentTestingTool ? t('admin.system_tools.mcp_test.tool_parameter_test', { name: currentTestingTool.name }) : t('admin.system_tools.mcp_test.parameter_test')"
       width="60%"
       :before-close="handleCloseDialog"
     >
@@ -191,7 +191,7 @@
               ? [
                   {
                     required: true,
-                    message: 'Please enter ' + (propDetails.description || propName),
+                    message: t('admin.system_tools.mcp_test.please_enter', { field: propDetails.description || propName }),
                     trigger: 'blur'
                   }
                 ]
@@ -201,26 +201,26 @@
           <el-input
             v-if="propDetails.type === 'string' && !propDetails.enum"
             v-model="testParamsForm[propName]"
-            :placeholder="propDetails.description || `Enter ${propName}`"
+            :placeholder="propDetails.description || t('admin.system_tools.mcp_test.enter_field', { field: propName })"
           />
           <el-input
             v-else-if="propDetails.type === 'number'"
             v-model.number="testParamsForm[propName]"
             type="number"
-            :placeholder="propDetails.description || `Enter number ${propName}`"
+            :placeholder="propDetails.description || t('admin.system_tools.mcp_test.enter_number_field', { field: propName })"
           />
           <el-select
             v-else-if="propDetails.type === 'boolean'"
             v-model="testParamsForm[propName]"
-            :placeholder="propDetails.description || 'Select'"
+            :placeholder="propDetails.description || t('admin.system_tools.mcp_test.select')"
           >
-            <el-option label="True" :value="true" />
-            <el-option label="False" :value="false" />
+            <el-option :label="t('admin.system_tools.mcp_test.true')" :value="true" />
+            <el-option :label="t('admin.system_tools.mcp_test.false')" :value="false" />
           </el-select>
           <el-select
             v-else-if="propDetails.type === 'string' && propDetails.enum"
             v-model="testParamsForm[propName]"
-            :placeholder="propDetails.description || `Select ${propName}`"
+            :placeholder="propDetails.description || t('admin.system_tools.mcp_test.select_field', { field: propName })"
           >
             <el-option
               v-for="enumValue in propDetails.enum"
@@ -233,7 +233,7 @@
             v-else
             v-model="testParamsForm[propName]"
             type="textarea"
-            :placeholder="`${propDetails.description || propName} (enter JSON)`"
+            :placeholder="t('admin.system_tools.mcp_test.field_json_hint', { field: propDetails.description || propName })"
             :autosize="{ minRows: 2, maxRows: 6 }"
           />
         </el-form-item>
@@ -243,7 +243,7 @@
         v-if="apiDialogResponse"
         class="mt-5 rounded border border-gray-200 bg-gray-50 p-[15px]"
       >
-        <h4 class="mb-2.5 mt-0 text-base">API response:</h4>
+        <h4 class="mb-2.5 mt-0 text-base">{{ t('admin.system_tools.mcp_test.api_response') }}</h4>
         <div v-if="typeof apiDialogResponse === 'string'">
           <pre
             class="overflow-y-auto whitespace-pre-wrap break-words rounded bg-gray-100 p-2.5"
@@ -275,9 +275,9 @@
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="testDialogVisible = false">Cancel</el-button>
+          <el-button @click="testDialogVisible = false">{{ t('admin.system_tools.mcp_test.cancel') }}</el-button>
           <el-button type="primary" @click="handleDialogTestTool">
-            Test
+            {{ t('admin.system_tools.mcp_test.test') }}
           </el-button>
         </span>
       </template>
@@ -301,6 +301,9 @@ import {
   mcpTest
 } from '@/api/autoCode'
 import { useUserStore } from '@/pinia/modules/user'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineOptions({
   name: 'MCPTest'
@@ -320,7 +323,7 @@ const emptyStatus = () => ({
   authHeader: 'x-token',
   startedAt: '',
   lastError: '',
-  message: 'MCP service is not running'
+  message: t('admin.system_tools.mcp_test.service_stopped_hint')
 })
 
 const defaultServerConfig = {
@@ -398,20 +401,20 @@ const statusTagType = computed(() => {
 const statusText = computed(() => {
   switch (mcpServiceStatus.value.state) {
     case 'running':
-      return 'Hosted mode'
+      return t('admin.system_tools.mcp_test.status_running')
     case 'starting':
-      return 'Starting'
+      return t('admin.system_tools.mcp_test.status_starting')
     case 'external':
-      return 'External service running'
+      return t('admin.system_tools.mcp_test.status_external')
     case 'error':
-      return 'Start error'
+      return t('admin.system_tools.mcp_test.status_error')
     default:
-      return 'Stopped'
+      return t('admin.system_tools.mcp_test.status_stopped')
   }
 })
 
 const statusHint = computed(
-  () => mcpServiceStatus.value.message || 'MCP service is not running'
+  () => mcpServiceStatus.value.message || t('admin.system_tools.mcp_test.service_stopped_hint')
 )
 
 const applyMcpOverview = (payload = {}) => {
@@ -442,7 +445,7 @@ const fetchMcpTools = async ({ silent = false } = {}) => {
   mcpTools.value = []
   await refreshMcpOverview({ silent: true, loadTools: false })
   if (!silent) {
-    ElMessage.error(res.msg || 'Failed to load tools')
+    ElMessage.error(res.msg || t('admin.system_tools.mcp_test.load_tools_failed'))
   }
 }
 
@@ -452,7 +455,7 @@ const refreshMcpOverview = async ({ silent = false, loadTools = true } = {}) => 
     const res = await mcpStatus()
     if (res.code !== 0) {
       if (!silent) {
-        ElMessage.error(res.msg || 'Failed to load MCP status')
+        ElMessage.error(res.msg || t('admin.system_tools.mcp_test.load_status_failed'))
       }
       return
     }
@@ -480,10 +483,10 @@ const handleStartMcp = async () => {
       applyMcpOverview(res.data)
     }
     if (res.code !== 0) {
-      ElMessage.error(res.msg || 'Failed to start MCP')
+      ElMessage.error(res.msg || t('admin.system_tools.mcp_test.start_failed'))
       return
     }
-    ElMessage.success(res.msg || 'MCP service started')
+    ElMessage.success(res.msg || t('admin.system_tools.mcp_test.start_success'))
     await refreshMcpOverview({ silent: true, loadTools: true })
   } finally {
     actionLoading.start = false
@@ -498,10 +501,10 @@ const handleStopMcp = async () => {
       applyMcpOverview(res.data)
     }
     if (res.code !== 0) {
-      ElMessage.error(res.msg || 'Failed to stop MCP')
+      ElMessage.error(res.msg || t('admin.system_tools.mcp_test.stop_failed'))
       return
     }
-    ElMessage.success(res.msg || 'MCP service stopped')
+    ElMessage.success(res.msg || t('admin.system_tools.mcp_test.stop_success'))
     mcpTools.value = []
     await refreshMcpOverview({ silent: true, loadTools: false })
   } finally {
@@ -512,9 +515,9 @@ const handleStopMcp = async () => {
 const copyMcpConfig = async () => {
   try {
     await navigator.clipboard.writeText(mcpServerConfig.value)
-    ElMessage.success('Config copied')
+    ElMessage.success(t('admin.system_tools.mcp_test.config_copied'))
   } catch (error) {
-    ElMessage.error(`Copy failed: ${error}`)
+    ElMessage.error(t('admin.system_tools.mcp_test.copy_failed', { error }))
   }
 }
 
@@ -571,12 +574,12 @@ const normalizeToolPayload = (tool, payload) => {
 
 const handleDialogTestTool = async () => {
   if (!currentTestingTool.value) {
-    ElMessage.warning('No tool selected')
+    ElMessage.warning(t('admin.system_tools.mcp_test.no_tool_selected'))
     return
   }
 
   if (!serviceReachable.value) {
-    ElMessage.warning('MCP is not running. Please start it first.')
+    ElMessage.warning(t('admin.system_tools.mcp_test.mcp_not_running'))
     return
   }
 
@@ -595,12 +598,12 @@ const handleDialogTestTool = async () => {
     })
 
     if (res.code !== 0) {
-      ElMessage.error(res.msg || 'Tool call failed')
+      ElMessage.error(res.msg || t('admin.system_tools.mcp_test.tool_call_failed'))
       return
     }
 
     apiDialogResponse.value = res.data
-    ElMessage.success('API call succeeded')
+    ElMessage.success(t('admin.system_tools.mcp_test.api_call_success'))
   } catch (error) {
     if (error?.message) {
       ElMessage.error(error.message)

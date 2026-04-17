@@ -523,37 +523,19 @@
   import { getDB, getTable, getColumn, llmAuto } from '@/api/autoCode'
   import { getCode } from './code'
   import { VAceEditor } from 'vue3-ace-editor'
+  import { useI18n } from 'vue-i18n'
 
   import 'ace-builds/src-noconflict/mode-vue'
   import 'ace-builds/src-noconflict/theme-github_dark'
   import 'ace-builds/src-noconflict/mode-sql'
 
+  const { t } = useI18n()
+
   defineOptions({
     name: 'ExportTemplate'
   })
 
-  const templatePlaceholder = `Template info format:
-- Key: database column name (for JOIN mode use table.column)
-- Value: Excel column header
-
-If the key is a DB keyword/function, handle it accordingly (MySQL examples):
-{
-  "table_column1": "Column 1",
-  "table_column3": "Column 3",
-  "table_column4": "Column 4",
-  "\`rows\`": "DB keyword/function example"
-}
-
-SQL mode:
-- Use the alias key from your SQL. Example: "xxx as k1" -> {"k1":"Header name"}
-
-JOIN export:
-- Keys should be like: {table_name1.table_column1:"Column 1", table_name2.table_column2:"Column 2"}
-- If column names are duplicated, use aliases:
-  {table_name1.table_column1 as key:"Column 1", table_name2.table_column2 as key2:"Column 2"}
-
-Import is not supported in JOIN mode.
-`
+  const templatePlaceholder = t('admin.systemtools.export_template.template_placeholder')
 
   // Auto-generated dictionary (optional) and fields
   const formData = ref({
@@ -825,7 +807,7 @@ Import is not supported in JOIN mode.
           formData.value.templateID = aiData.templateID
           return
         }
-    ElMessage.warning('AI auto-fill failed; switched to manual mode')
+    ElMessage.warning(t('admin.systemtools.export_template.ai_autofill_failed'))
       }
 
     // Convert data.columns to a JSON map: columnName -> columnComment
@@ -899,9 +881,9 @@ Import is not supported in JOIN mode.
 
   // Delete row
   const deleteRow = (row) => {
-  ElMessageBox.confirm('Delete this item?', 'Confirm', {
-    confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(t('admin.common.confirms.delete_item'), t('admin.common.confirms.delete_title'), {
+    confirmButtonText: t('admin.common.delete'),
+    cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(() => {
       deleteSysExportTemplateFunc(row)
@@ -910,16 +892,16 @@ Import is not supported in JOIN mode.
 
   // Bulk delete
   const onDelete = async () => {
-  ElMessageBox.confirm('Delete selected items?', 'Confirm', {
-    confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(t('admin.systemtools.export_template.delete_selected_confirm'), t('admin.common.confirms.delete_title'), {
+    confirmButtonText: t('admin.common.delete'),
+    cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const ids = []
       if (multipleSelection.value.length === 0) {
         ElMessage({
           type: 'warning',
-          message: 'Please select items to delete'
+          message: t('admin.common.validation.select_at_least_one')
         })
         return
       }
@@ -931,7 +913,7 @@ Import is not supported in JOIN mode.
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         if (tableData.value.length === ids.length && page.value > 1) {
           page.value--

@@ -1,12 +1,12 @@
 <template>
   <div class="break-point">
     <div class="gva-table-box">
-      <el-divider content-position="left">Large file upload</el-divider>
+      <el-divider content-position="left">{{ t('admin.components.breakpoint.large_file_upload') }}</el-divider>
       <form id="fromCont" method="post">
         <!-- Button container (Flexbox alignment) -->
         <div class="button-container">
           <div class="fileUpload" @click="inputChange">
-            <span class="takeFile">Choose file</span>
+            <span class="takeFile">{{ t('admin.components.breakpoint.choose_file') }}</span>
             <input
               v-show="false"
               id="file"
@@ -21,10 +21,10 @@
             type="primary"
             class="uploadBtn"
             @click="getFile"
-          >Upload</el-button>
+          >{{ t('admin.common.upload') }}</el-button>
         </div>
       </form>
-      <div class="el-upload__tip">Please upload a file up to 5MB</div>
+      <div class="el-upload__tip">{{ t('admin.components.breakpoint.file_size_hint') }}</div>
       <div class="list">
         <transition name="list" tag="p">
           <div v-if="file" class="list-item">
@@ -43,7 +43,7 @@
         </transition>
       </div>
       <div class="tips">
-        This is a preview build for testing. Styling and performance are still in progress. Uploaded chunks and merged files are stored under QMPlusserver (breakpointDir / fileDir).
+        {{ t('admin.components.breakpoint.preview_note') }}
       </div>
     </div>
   </div>
@@ -59,6 +59,9 @@ import {
 } from '@/api/breakpoint'
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineOptions({
   name: 'BreakPoint'
@@ -129,25 +132,25 @@ const choseFile = async (e) => {
         })
       } else {
         waitUpLoad.value = [] // instant upload: nothing to upload
-        ElMessage.success('Instant upload completed')
+        ElMessage.success(t('admin.components.breakpoint.instant_complete'))
       }
       waitNum.value = waitUpLoad.value.length // track for progress display
     }
   } else {
     limitFileSize.value = true
-    ElMessage('Please upload a file smaller than 5MB')
+    ElMessage(t('admin.components.breakpoint.file_too_large'))
   }
 }
 
 const getFile = () => {
   // Upload action
   if (file.value === null) {
-    ElMessage('Please choose a file first')
+    ElMessage(t('admin.components.breakpoint.choose_file_first'))
     return
   }
   // Check progress
   if (percentage.value === 100) {
-    ElMessage.success('Upload already completed')
+    ElMessage.success(t('admin.components.breakpoint.already_complete'))
     percentageFlage.value = false
     return // stop if already completed
   }
@@ -204,7 +207,7 @@ const upLoadFileSlice = async (item) => {
         fileMd5: fileMd5.value,
         filePath: res.data.filePath
       }
-      ElMessage.success('Upload succeeded')
+      ElMessage.success(t('admin.components.breakpoint.upload_success'))
       await removeChunk(params)
     }
   }

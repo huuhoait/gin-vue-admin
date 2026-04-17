@@ -28,7 +28,7 @@
       />
     </div>
 
-    <el-drawer v-model="drawer" title="Media library | Click the file name to edit. The selected category will be used for uploads." :size="880">
+    <el-drawer v-model="drawer" :title="t('admin.components.select_image.drawer_title')" :size="880">
       <div class="flex">
         <div class="w-64" style="border-right: solid 1px var(--el-border-color);">
           <el-scrollbar style="height: calc(100vh - 110px)">
@@ -47,9 +47,9 @@
                   <el-icon class="ml-3 text-right mt-1" v-else><Plus /></el-icon>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item @click="addCategoryFun(data)">Add category</el-dropdown-item>
-                      <el-dropdown-item @click="editCategory(data)" v-if="data.ID > 0">Edit category</el-dropdown-item>
-                      <el-dropdown-item @click="deleteCategoryFun(data.ID)" v-if="data.ID > 0">Delete category</el-dropdown-item>
+                      <el-dropdown-item @click="addCategoryFun(data)">{{ t('admin.components.select_image.add_category') }}</el-dropdown-item>
+                      <el-dropdown-item @click="editCategory(data)" v-if="data.ID > 0">{{ t('admin.components.select_image.edit_category') }}</el-dropdown-item>
+                      <el-dropdown-item @click="deleteCategoryFun(data.ID)" v-if="data.ID > 0">{{ t('admin.components.select_image.delete_category') }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
@@ -59,11 +59,11 @@
         </div>
         <div class="ml-4 w-[605px]">
           <div class="gva-btn-list gap-2">
-            <el-input v-model.trim="search.keyword" class="w-96" placeholder="Enter file name or note" clearable />
+            <el-input v-model.trim="search.keyword" class="w-96" :placeholder="t('admin.components.select_image.search_placeholder')" clearable />
             <el-button type="primary" icon="search" @click="onSubmit"></el-button>
           </div>
           <div class="gva-btn-list gap-2">
-            <el-button @click="useSelectedImages" type="danger" :disabled="selectedImages.length === 0" :icon="ArrowLeftBold">Use selected</el-button>
+            <el-button @click="useSelectedImages" type="danger" :disabled="selectedImages.length === 0" :icon="ArrowLeftBold">{{ t('admin.components.select_image.use_selected') }}</el-button>
             <upload-common :image-common="imageCommon" :classId="search.classId" @on-success="onSuccess" />
             <cropper-image :classId="search.classId" @on-success="onSuccess" />
             <QRCodeUpload :classId="search.classId" @on-success="onSuccess" />
@@ -85,7 +85,7 @@
                            :class="{ selected: isSelected(item) }"
                     >
                       <source :src="getUrl(item.url) + '#t=1'">
-                      Your browser does not support video playback
+                      {{ t('admin.components.select_image.video_unsupported') }}
                     </video>
                     <div v-else class="w-full h-full object-cover flex items-center justify-center">
                       <el-icon :size="32">
@@ -121,11 +121,11 @@
 
     <!-- Add category dialog -->
     <el-dialog v-model="categoryDialogVisible" @close="closeAddCategoryDialog" width="520"
-               :title="(categoryFormData.ID === 0 ? 'Add' : 'Edit') + ' category'"
+               :title="(categoryFormData.ID === 0 ? t('admin.components.select_image.add_prefix') : t('admin.components.select_image.edit_prefix')) + ' ' + t('admin.components.select_image.category_suffix')"
                draggable
     >
       <el-form ref="categoryForm" :rules="rules" :model="categoryFormData" label-width="80px">
-        <el-form-item label="Parent category">
+        <el-form-item :label="t('admin.components.select_image.category_parent')">
           <el-tree-select
               v-model="categoryFormData.pid"
               :data="categories"
@@ -135,13 +135,13 @@
               style="width: 240px"
           />
         </el-form-item>
-        <el-form-item label="Category name" prop="name">
-          <el-input v-model.trim="categoryFormData.name" placeholder="Category name"></el-input>
+        <el-form-item :label="t('admin.components.select_image.category_name')" prop="name">
+          <el-input v-model.trim="categoryFormData.name" :placeholder="t('admin.components.select_image.category_name_placeholder')"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="closeAddCategoryDialog">Cancel</el-button>
-        <el-button type="primary" @click="confirmAddCategory">Confirm</el-button>
+        <el-button @click="closeAddCategoryDialog">{{ t('admin.common.cancel') }}</el-button>
+        <el-button type="primary" @click="confirmAddCategory">{{ t('admin.common.confirm') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -155,6 +155,9 @@ import UploadImage from '@/components/upload/image.vue'
 import UploadCommon from '@/components/upload/common.vue'
 import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 import {
   ArrowLeftBold,
   CloseBold,
@@ -223,11 +226,11 @@ const onSubmit = () => {
 }
 
 const editFileNameFunc = async(row) => {
-  ElMessageBox.prompt('Enter file name or note', 'Edit', {
-    confirmButtonText: 'Confirm',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.prompt(t('admin.components.select_image.edit_file_name_prompt'), t('admin.components.select_image.edit_file_name_title'), {
+    confirmButtonText: t('admin.common.confirm'),
+    cancelButtonText: t('admin.common.cancel'),
     inputPattern: /\S/,
-    inputErrorMessage: 'Required',
+    inputErrorMessage: t('admin.components.select_image.required_value'),
     inputValue: row.name
   }).then(async({ value }) => {
     row.name = value
@@ -235,14 +238,14 @@ const editFileNameFunc = async(row) => {
     if (res.code === 0) {
       ElMessage({
         type: 'success',
-        message: 'Saved'
+        message: t('admin.common.messages.saved')
       })
       await getImageList()
     }
   }).catch(() => {
     ElMessage({
       type: 'info',
-      message: 'Cancelled'
+      message: t('admin.components.select_image.cancelled')
     })
   })
 }
@@ -268,7 +271,7 @@ const chooseImg = (url) => {
     if (!typeSuccess) {
       ElMessage({
         type: 'error',
-        message: 'This file type is not supported'
+        message: t('admin.components.select_image.file_type_not_supported')
       })
       return
     }
@@ -302,23 +305,23 @@ const getImageList = async() => {
 }
 
 const deleteCheck = (item) => {
-  ElMessageBox.confirm('Delete this file?', 'Confirm', {
-    confirmButtonText: 'Confirm',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(t('admin.common.confirms.delete_file'), t('admin.common.confirms.delete_title'), {
+    confirmButtonText: t('admin.common.confirm'),
+    cancelButtonText: t('admin.common.cancel'),
     type: 'warning'
   }).then(async() => {
     const res = await deleteFile(item)
     if (res.code === 0) {
       ElMessage({
         type: 'success',
-        message: 'Deleted'
+        message: t('admin.common.messages.deleted')
       })
       await getImageList()
     }
   }).catch(() => {
     ElMessage({
       type: 'info',
-      message: 'Cancelled'
+      message: t('admin.components.select_image.cancelled')
     })
   })
 }
@@ -333,7 +336,7 @@ const categories = ref([])
 const fetchCategories = async() => {
   const res = await getCategoryList()
   let data = {
-    name: 'All categories',
+    name: t('admin.components.select_image.all_categories'),
     ID: 0,
     pid: 0,
     children:[]
@@ -367,8 +370,8 @@ const categoryFormData = ref({
 const categoryForm = ref(null)
 const rules = ref({
   name: [
-    { required: true, message: 'Category name is required', trigger: 'blur' },
-    { max: 20, message: 'Max 20 characters', trigger: 'blur' }
+    { required: true, message: t('admin.components.select_image.rule_name_required'), trigger: 'blur' },
+    { max: 20, message: t('admin.components.select_image.rule_name_max'), trigger: 'blur' }
   ]
 })
 
@@ -390,7 +393,7 @@ const editCategory = (category) => {
 const deleteCategoryFun = async(id) => {
   const res = await deleteCategory({ id: id })
   if (res.code === 0) {
-    ElMessage.success({ type: 'success', message: 'Deleted' })
+    ElMessage.success({ type: 'success', message: t('admin.common.messages.deleted') })
     await fetchCategories()
   }
 }
@@ -400,7 +403,7 @@ const confirmAddCategory = async() => {
     if (valid) {
       const res = await addCategory(categoryFormData.value)
       if (res.code === 0) {
-        ElMessage({ type: 'success', message: 'Success' })
+        ElMessage({ type: 'success', message: t('admin.common.messages.success') })
         await fetchCategories()
         closeAddCategoryDialog()
       }

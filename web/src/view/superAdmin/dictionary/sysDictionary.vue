@@ -1,7 +1,7 @@
 <template>
   <div>
     <warning-bar
-      title="Dictionary caching is already implemented in frontend utils/dictionary. See comments in that file for usage."
+      :title="t('admin.superadmin.dictionary.cache_warning')"
     />
     <el-splitter class="h-full">
       <el-splitter-panel size="300px" min="200px" max="800px" collapsible>
@@ -9,10 +9,10 @@
           class="flex-none bg-white text-slate-700 dark:text-slate-400 dark:bg-slate-900 rounded p-4"
         >
           <div class="flex justify-between items-center relative">
-            <span class="text font-bold">Dictionaries</span>
+            <span class="text font-bold">{{ t('admin.superadmin.dictionary.title') }}</span>
             <el-input
               class="!absolute top-0 left-0 z-2 ease-in-out animate-slide-left"
-              placeholder="Search"
+              :placeholder="t('admin.superadmin.dictionary.search_placeholder')"
               v-if="showSearchInput"
               v-model="searchName"
               clearable
@@ -26,25 +26,25 @@
                 <el-button
                   :type="searchName ? 'primary' : 'info'"
                   @click="getTableData"
-                  >Search</el-button
+                  >{{ t('admin.superadmin.dictionary.search') }}</el-button
                 >
               </template>
             </el-input>
             <el-button-group class="ml-auto">
-              <el-tooltip content="Search" placement="top">
+              <el-tooltip :content="t('admin.superadmin.dictionary.tooltips.search')" placement="top">
                 <el-button
                   :icon="Search"
                   @click="showSearchInputHandler"
                 />
               </el-tooltip>
-              <el-tooltip content="Import dictionaries" placement="top">
+              <el-tooltip :content="t('admin.superadmin.dictionary.tooltips.import')" placement="top">
                 <el-button
                   type="success"
                   :icon="Upload"
                   @click="openImportDialog"
                 />
               </el-tooltip>
-              <el-tooltip content="Generate with AI" placement="top">
+              <el-tooltip :content="t('admin.superadmin.dictionary.tooltips.ai_generate')" placement="top">
                 <el-button
                   type="warning"
                   @click="openAiDialog"
@@ -52,7 +52,7 @@
                   AI
                 </el-button>
               </el-tooltip>
-              <el-tooltip content="New dictionary" placement="top">
+              <el-tooltip :content="t('admin.superadmin.dictionary.tooltips.new_dictionary')" placement="top">
                 <el-button
                   type="primary"
                   :icon="Plus"
@@ -88,7 +88,7 @@
                 <el-icon
                   class="!text-green-500"
                   @click.stop="exportDictionary(dictionary)"
-                  title="Export dictionary"
+                  :title="t('admin.superadmin.dictionary.tooltips.export')"
                 >
                   <Download />
                 </el-icon>
@@ -127,11 +127,11 @@
       <template #header>
         <div class="flex justify-between items-center">
           <span class="text-lg">{{
-            type === 'create' ? 'Add dictionary' : 'Edit dictionary'
+            type === 'create' ? t('admin.superadmin.dictionary.add_dictionary') : t('admin.superadmin.dictionary.edit_dictionary')
           }}</span>
           <div>
-            <el-button @click="closeDrawer">Cancel</el-button>
-            <el-button type="primary" @click="enterDrawer">Confirm</el-button>
+            <el-button @click="closeDrawer">{{ t('admin.common.cancel') }}</el-button>
+            <el-button type="primary" @click="enterDrawer">{{ t('admin.common.confirm') }}</el-button>
           </div>
         </div>
       </template>
@@ -141,10 +141,10 @@
         :rules="rules"
         label-width="110px"
       >
-        <el-form-item label="Parent dictionary" prop="parentID">
+        <el-form-item :label="t('admin.superadmin.dictionary.parent_dictionary')" prop="parentID">
           <el-select
             v-model="formData.parentID"
-            placeholder="Select parent dictionary (optional)"
+            :placeholder="t('admin.superadmin.dictionary.select_parent_placeholder')"
             clearable
             filterable
             :style="{ width: '100%' }"
@@ -157,33 +157,33 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Name" prop="name">
+        <el-form-item :label="t('admin.superadmin.dictionary.name')" prop="name">
           <el-input
             v-model="formData.name"
-            placeholder="Enter name"
+            :placeholder="t('admin.superadmin.dictionary.enter_name')"
             clearable
             :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item label="Type" prop="type">
+        <el-form-item :label="t('admin.superadmin.dictionary.type')" prop="type">
           <el-input
             v-model="formData.type"
-            placeholder="Enter type"
+            :placeholder="t('admin.superadmin.dictionary.enter_type')"
             clearable
             :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item label="Status" prop="status" required>
+        <el-form-item :label="t('admin.superadmin.dictionary.status')" prop="status" required>
           <el-switch
             v-model="formData.status"
-            :active-text="$t('admin.common.enabled')"
-            :inactive-text="$t('admin.common.disabled')"
+            :active-text="t('admin.common.enabled')"
+            :inactive-text="t('admin.common.disabled')"
           />
         </el-form-item>
-        <el-form-item label="Description" prop="desc">
+        <el-form-item :label="t('admin.superadmin.dictionary.description')" prop="desc">
           <el-input
             v-model="formData.desc"
-            placeholder="Enter description"
+            :placeholder="t('admin.superadmin.dictionary.enter_description')"
             clearable
             :style="{ width: '100%' }"
           />
@@ -200,20 +200,20 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">Import dictionary JSON</span>
+          <span class="text-lg">{{ t('admin.superadmin.dictionary.import_title') }}</span>
           <div>
-            <el-button @click="closeImportDrawer">Cancel</el-button>
+            <el-button @click="closeImportDrawer">{{ t('admin.common.cancel') }}</el-button>
             <el-button type="primary" @click="handleImport" :loading="importing">
-              Import
+              {{ t('admin.superadmin.dictionary.import') }}
             </el-button>
           </div>
         </div>
       </template>
-      
+
       <div class="import-drawer-content">
         <div class="mb-4">
           <el-alert
-            title="Paste, edit, or drag a JSON file into the area below"
+            :title="t('admin.superadmin.dictionary.import_hint')"
             type="info"
             :closable="false"
             show-icon
@@ -231,8 +231,8 @@
         >
           <el-icon class="upload-icon"><Upload /></el-icon>
           <div class="upload-text">
-            <p>Drag a JSON file here, or click to choose a file</p>
-            <p class="upload-hint">You can also edit directly in the textbox below</p>
+            <p>{{ t('admin.superadmin.dictionary.drag_hint') }}</p>
+            <p class="upload-hint">{{ t('admin.superadmin.dictionary.edit_hint') }}</p>
           </div>
           <input
             ref="fileInputRef"
@@ -248,27 +248,7 @@
             v-model="importJsonText"
             type="textarea"
             :rows="15"
-            placeholder='Enter JSON, for example:
-{
-  "name": "gender",
-  "type": "gender",
-  "status": true,
-  "desc": "gender dictionary",
-  "sysDictionaryDetails": [
-    {
-      "label": "male",
-      "value": "1",
-      "status": true,
-      "sort": 1
-    },
-    {
-      "label": "female",
-      "value": "2",
-      "status": true,
-      "sort": 2
-    }
-  ]
-}'
+            :placeholder="t('admin.superadmin.dictionary.json_placeholder')"
             class="json-textarea"
           />
         </div>
@@ -289,7 +269,7 @@
     <!-- AI dialog -->
     <el-dialog
       v-model="aiDialogVisible"
-      title="Generate dictionary with AI"
+      :title="t('admin.superadmin.dictionary.ai_title')"
       width="520px"
       :before-close="closeAiDialog"
     >
@@ -299,7 +279,7 @@
           type="textarea"
           :rows="6"
           :maxlength="2000"
-          placeholder="Describe the dictionary to generate (e.g. user status: enabled/disabled). You can paste or upload an image to extract text."
+          :placeholder="t('admin.superadmin.dictionary.ai_placeholder')"
           resize="none"
           @keydown.ctrl.enter="handleAiGenerate"
           @paste="handlePaste"
@@ -318,22 +298,22 @@
         <div class="flex absolute right-2 bottom-2">
           <el-tooltip effect="light">
             <template #content>
-              <div>Paste or upload an image, then extract its contents to generate the dictionary.</div>
+              <div>{{ t('admin.superadmin.dictionary.ai_tooltip') }}</div>
             </template>
             <el-button type="primary" @click="eyeFunc">
                 <el-icon size="18">
                 <ai-gva />
               </el-icon>
-              Extract
+              {{ t('admin.superadmin.dictionary.ai_extract') }}
             </el-button>
           </el-tooltip>
         </div>
       </div>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="closeAiDialog">Cancel</el-button>
+          <el-button @click="closeAiDialog">{{ t('admin.common.cancel') }}</el-button>
           <el-button type="primary" @click="handleAiGenerate" :loading="aiGenerating">
-            Confirm
+            {{ t('admin.common.confirm') }}
           </el-button>
         </div>
       </template>
@@ -359,11 +339,13 @@
   import sysDictionaryDetail from './sysDictionaryDetail.vue'
   import { Edit, Plus, Search, Download, Upload } from '@element-plus/icons-vue'
   import { useAppStore } from '@/pinia'
+  import { useI18n } from 'vue-i18n'
 
   defineOptions({
     name: 'SysDictionary'
   })
 
+  const { t } = useI18n()
   const appStore = useAppStore()
 
   const selectID = ref(0)
@@ -381,21 +363,21 @@
     name: [
       {
         required: true,
-        message: 'Name is required',
+        message: () => t('admin.superadmin.dictionary.rules.name_required'),
         trigger: 'blur'
       }
     ],
     type: [
       {
         required: true,
-        message: 'Type is required',
+        message: () => t('admin.superadmin.dictionary.rules.type_required'),
         trigger: 'blur'
       }
     ],
     desc: [
       {
         required: true,
-        message: 'Description is required',
+        message: () => t('admin.superadmin.dictionary.rules.description_required'),
         trigger: 'blur'
       }
     ]
@@ -489,7 +471,7 @@
       jsonPreview.value = JSON.parse(newVal)
       jsonPreviewError.value = ''
     } catch (e) {
-      jsonPreviewError.value = 'Invalid JSON: ' + e.message
+      jsonPreviewError.value = t('admin.superadmin.dictionary.messages.invalid_json_prefix') + e.message
       jsonPreview.value = null
     }
   })
@@ -569,16 +551,16 @@
     }
   }
   const deleteSysDictionaryFunc = async (row) => {
-    ElMessageBox.confirm('Delete this dictionary?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.superadmin.dictionary.messages.delete_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const res = await deleteSysDictionary({ ID: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         getTableData()
       }
@@ -602,7 +584,7 @@
           break
       }
       if (res.code === 0) {
-        ElMessage.success('Success')
+        ElMessage.success(t('admin.common.messages.success'))
         closeDrawer()
         getTableData()
       }
@@ -653,10 +635,10 @@
         link.click()
         document.body.removeChild(link)
         URL.revokeObjectURL(url)
-        ElMessage.success('Exported')
+        ElMessage.success(t('admin.common.messages.exported'))
       }
     } catch (error) {
-      ElMessage.error('Export failed: ' + error.message)
+      ElMessage.error(t('admin.superadmin.dictionary.messages.export_failed_prefix') + error.message)
     }
   }
 
@@ -718,7 +700,7 @@
   const readJsonFile = (file) => {
     // Check file type
     if (!file.name.endsWith('.json')) {
-      ElMessage.warning('Please upload a JSON file')
+      ElMessage.warning(t('admin.superadmin.dictionary.messages.please_upload_json'))
       return
     }
 
@@ -730,13 +712,13 @@
         // Validate JSON
         JSON.parse(content)
         importJsonText.value = content
-        ElMessage.success('File loaded')
+        ElMessage.success(t('admin.common.messages.file_loaded'))
       } catch (error) {
-        ElMessage.error('File content is not valid JSON')
+        ElMessage.error(t('admin.superadmin.dictionary.messages.invalid_json_content'))
       }
     }
     reader.onerror = () => {
-      ElMessage.error('Failed to read file')
+      ElMessage.error(t('admin.superadmin.dictionary.messages.file_read_failed'))
     }
     reader.readAsText(file)
   }
@@ -744,12 +726,12 @@
   // Import
   const handleImport = async () => {
     if (!importJsonText.value.trim()) {
-      ElMessage.warning('Please enter JSON')
+      ElMessage.warning(t('admin.superadmin.dictionary.messages.please_enter_json'))
       return
     }
 
     if (jsonPreviewError.value) {
-      ElMessage.error('Invalid JSON, please retry')
+      ElMessage.error(t('admin.superadmin.dictionary.messages.invalid_json_retry'))
       return
     }
 
@@ -757,12 +739,12 @@
       importing.value = true
       const res = await importSysDictionary({ json: importJsonText.value })
       if (res.code === 0) {
-        ElMessage.success('Imported')
+        ElMessage.success(t('admin.common.messages.imported'))
         closeImportDrawer()
         getTableData()
       }
     } catch (error) {
-      ElMessage.error('Import failed: ' + error.message)
+      ElMessage.error(t('admin.superadmin.dictionary.messages.import_failed_prefix') + error.message)
     } finally {
       importing.value = false
     }
@@ -783,7 +765,7 @@
   // Generate with AI
   const handleAiGenerate = async () => {
     if (!aiPrompt.value.trim()) {
-      ElMessage.warning('Please enter a description')
+      ElMessage.warning(t('admin.superadmin.dictionary.messages.please_enter_description'))
       return
     }
     try {
@@ -793,7 +775,7 @@
         mode: 'dict'
       })
       if (aiRes && aiRes.code === 0) {
-        ElMessage.success('AI generation succeeded')
+        ElMessage.success(t('admin.superadmin.dictionary.messages.ai_success'))
         try {
           // Fill the returned data into import textbox (string or object)
           if (typeof aiRes.data === 'string') {
@@ -806,11 +788,11 @@
           importDrawerVisible.value = true
           closeAiDialog()
         } catch (e) {
-          ElMessage.error('Failed to process AI result: ' + (e.message || e))
+          ElMessage.error(t('admin.superadmin.dictionary.messages.ai_process_failed_prefix') + (e.message || e))
         }
-      } 
+      }
     } catch (err) {
-      ElMessage.error('AI request failed: ' + (err.message || err))
+      ElMessage.error(t('admin.superadmin.dictionary.messages.ai_request_failed_prefix') + (err.message || err))
     } finally {
       aiGenerating.value = false
     }

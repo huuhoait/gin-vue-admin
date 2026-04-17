@@ -29,17 +29,17 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item @click="addCategoryFun(data)"
-                      >Add category</el-dropdown-item
+                      >{{ t('admin.example.upload.add_category') }}</el-dropdown-item
                     >
                     <el-dropdown-item
                       @click="editCategory(data)"
                       v-if="data.ID > 0"
-                      >Edit category</el-dropdown-item
+                      >{{ t('admin.example.upload.edit_category') }}</el-dropdown-item
                     >
                     <el-dropdown-item
                       @click="deleteCategoryFun(data.ID)"
                       v-if="data.ID > 0"
-                      >Delete category</el-dropdown-item
+                      >{{ t('admin.example.upload.delete_category') }}</el-dropdown-item
                     >
                   </el-dropdown-menu>
                 </template>
@@ -53,7 +53,7 @@
       >
         <div class="gva-table-box mt-0 mb-0">
           <warning-bar
-            title="Click the file name to edit. The selected category will be used for uploads."
+            :title="t('admin.example.upload.warning_bar')"
           />
           <div class="gva-btn-list gap-3">
             <upload-common
@@ -71,27 +71,27 @@
               @on-success="onSuccess"
             />
             <el-button type="primary" icon="upload" @click="importUrlFunc">
-              Import URL
+              {{ t('admin.example.upload.import_url') }}
             </el-button>
             <el-input
               v-model="search.keyword"
               class="w-72"
-              placeholder="Enter file name or note"
+              :placeholder="t('admin.example.upload.search_placeholder')"
             />
             <el-button type="primary" icon="search" @click="onSubmit"
-              >Search
+              >{{ t('admin.common.search') }}
             </el-button>
           </div>
 
           <el-table :data="tableData">
-            <el-table-column align="left" label="Preview" width="100">
+            <el-table-column align="left" :label="t('admin.example.upload.preview')" width="100">
               <template #default="scope">
                 <CustomPic pic-type="file" :pic-src="scope.row.url" preview />
               </template>
             </el-table-column>
             <el-table-column
               align="left"
-              label="Updated at"
+              :label="t('admin.example.upload.updated_at')"
               prop="UpdatedAt"
               width="180"
             >
@@ -101,7 +101,7 @@
             </el-table-column>
             <el-table-column
               align="left"
-              label="Name / note"
+              :label="t('admin.example.upload.name_note')"
               prop="name"
               width="180"
             >
@@ -116,11 +116,11 @@
             </el-table-column>
             <el-table-column
               align="left"
-              label="URL"
+              :label="t('admin.example.upload.url')"
               prop="url"
               min-width="300"
             />
-            <el-table-column align="left" label="Tag" prop="tag" width="100">
+            <el-table-column align="left" :label="t('admin.example.upload.tag')" prop="tag" width="100">
               <template #default="scope">
                 <el-tag
                   :type="
@@ -131,21 +131,21 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column align="left" label="Actions" width="160">
+            <el-table-column align="left" :label="t('admin.example.upload.actions')" width="160">
               <template #default="scope">
                 <el-button
                   icon="download"
                   type="primary"
                   link
                   @click="downloadFile(scope.row)"
-                  >Download
+                  >{{ t('admin.example.upload.download') }}
                 </el-button>
                 <el-button
                   icon="delete"
                   type="primary"
                   link
                   @click="deleteFileFunc(scope.row)"
-                  >Delete
+                  >{{ t('admin.common.delete') }}
                 </el-button>
               </template>
             </el-table-column>
@@ -171,7 +171,7 @@
       v-model="categoryDialogVisible"
       @close="closeAddCategoryDialog"
       width="520"
-      :title="(categoryFormData.ID === 0 ? 'Add' : 'Edit') + ' category'"
+      :title="categoryFormData.ID === 0 ? t('admin.example.upload.category_dialog_add') : t('admin.example.upload.category_dialog_edit')"
       draggable
     >
       <el-form
@@ -180,7 +180,7 @@
         :model="categoryFormData"
         label-width="80px"
       >
-        <el-form-item label="Parent category">
+        <el-form-item :label="t('admin.example.upload.parent_category')">
           <el-tree-select
             v-model="categoryFormData.pid"
             :data="categories"
@@ -190,16 +190,16 @@
             style="width: 240px"
           />
         </el-form-item>
-        <el-form-item label="Category name" prop="name">
+        <el-form-item :label="t('admin.example.upload.category_name')" prop="name">
           <el-input
             v-model.trim="categoryFormData.name"
-            placeholder="Category name"
+            :placeholder="t('admin.example.upload.category_name_placeholder')"
           ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="closeAddCategoryDialog">Cancel</el-button>
-        <el-button type="primary" @click="confirmAddCategory">Confirm</el-button>
+        <el-button @click="closeAddCategoryDialog">{{ t('admin.common.cancel') }}</el-button>
+        <el-button type="primary" @click="confirmAddCategory">{{ t('admin.common.confirm') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -220,6 +220,7 @@
   import WarningBar from '@/components/warningBar/warningBar.vue'
 
   import { ref } from 'vue'
+  import { useI18n } from 'vue-i18n'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import {
     addCategory,
@@ -232,6 +233,8 @@
   defineOptions({
     name: 'Upload'
   })
+
+  const { t } = useI18n()
 
   const fullscreenLoading = ref(false)
   const path = ref(import.meta.env.VITE_BASE_API)
@@ -282,9 +285,9 @@
   getTableData()
 
   const deleteFileFunc = async (row) => {
-  ElMessageBox.confirm('This will permanently delete the file. Continue?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(t('admin.example.upload.delete_file_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     })
       .then(async () => {
@@ -292,7 +295,7 @@
         if (res.code === 0) {
           ElMessage({
             type: 'success',
-            message: 'Deleted'
+            message: t('admin.common.messages.deleted')
           })
           if (tableData.value.length === 1 && page.value > 1) {
             page.value--
@@ -303,7 +306,7 @@
       .catch(() => {
         ElMessage({
           type: 'info',
-          message: 'Cancelled'
+          message: t('admin.components.select_image.cancelled')
         })
       })
   }
@@ -322,11 +325,11 @@
    * @returns {Promise<void>}
    */
   const editFileNameFunc = async (row) => {
-    ElMessageBox.prompt('Enter file name or note', 'Edit', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.prompt(t('admin.example.upload.edit_file_name_prompt'), t('admin.example.upload.edit_file_name_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       inputPattern: /\S/,
-      inputErrorMessage: 'Required',
+      inputErrorMessage: t('admin.example.upload.required'),
       inputValue: row.name
     })
       .then(async ({ value }) => {
@@ -336,7 +339,7 @@
         if (res.code === 0) {
           ElMessage({
             type: 'success',
-            message: 'Saved'
+            message: t('admin.common.messages.saved')
           })
           await getTableData()
         }
@@ -344,7 +347,7 @@
       .catch(() => {
         ElMessage({
           type: 'info',
-          message: 'Cancelled'
+          message: t('admin.components.select_image.cancelled')
         })
       })
   }
@@ -353,14 +356,13 @@
    * Import URL
    */
   const importUrlFunc = () => {
-    ElMessageBox.prompt('Format: name|url or url only.', 'Import', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.prompt(t('admin.example.upload.import_prompt'), t('admin.example.upload.import_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       inputType: 'textarea',
-      inputPlaceholder:
-        'my-image|https://my-oss.com/my.png\nhttps://my-oss.com/my_1.png',
+      inputPlaceholder: t('admin.example.upload.import_placeholder'),
       inputPattern: /\S/,
-      inputErrorMessage: 'Required'
+      inputErrorMessage: t('admin.example.upload.required')
     })
       .then(async ({ value }) => {
         let data = value.split('\n')
@@ -391,7 +393,7 @@
         if (res.code === 0) {
           ElMessage({
             type: 'success',
-            message: 'Imported'
+            message: t('admin.example.upload.imported')
           })
           await getTableData()
         }
@@ -399,7 +401,7 @@
       .catch(() => {
         ElMessage({
           type: 'info',
-          message: 'Cancelled'
+          message: t('admin.components.select_image.cancelled')
         })
       })
   }
@@ -420,7 +422,7 @@
   const fetchCategories = async () => {
     const res = await getCategoryList()
     let data = {
-      name: 'All categories',
+      name: t('admin.example.upload.all_categories'),
       ID: 0,
       pid: 0,
       children: []
@@ -448,8 +450,8 @@
   const categoryForm = ref(null)
   const rules = ref({
     name: [
-      { required: true, message: 'Category name is required', trigger: 'blur' },
-      { max: 20, message: 'Max 20 characters', trigger: 'blur' }
+      { required: true, message: t('admin.example.upload.category_name_required'), trigger: 'blur' },
+      { max: 20, message: t('admin.example.upload.category_name_max'), trigger: 'blur' }
     ]
   })
 
@@ -471,7 +473,7 @@
   const deleteCategoryFun = async (id) => {
     const res = await deleteCategory({ id: id })
     if (res.code === 0) {
-      ElMessage.success({ type: 'success', message: 'Deleted' })
+      ElMessage.success({ type: 'success', message: t('admin.common.messages.deleted') })
       await fetchCategories()
     }
   }
@@ -481,7 +483,7 @@
       if (valid) {
         const res = await addCategory(categoryFormData.value)
         if (res.code === 0) {
-          ElMessage({ type: 'success', message: 'Success' })
+          ElMessage({ type: 'success', message: t('admin.example.upload.success') })
           await fetchCategories()
           closeAddCategoryDialog()
         }

@@ -232,10 +232,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="abbreviation" prop="abbreviation" class="w-full">
+            <el-form-item :label="t('admin.system_tools.auto_code.abbreviation')" prop="abbreviation" class="w-full">
               <template #label>
                 <el-tooltip
-                  content="Used as request object name and route group."
+                  :content="t('admin.system_tools.auto_code.abbreviation_tooltip')"
                   placement="bottom"
                   effect="light"
                 >
@@ -264,10 +264,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Table name" prop="tableName" class="w-full">
+            <el-form-item :label="t('admin.system_tools.auto_code.table_name')" prop="tableName" class="w-full">
               <el-input
                 v-model="form.tableName"
-                placeholder="Specify table name (optional)"
+                :placeholder="t('admin.system_tools.auto_code.table_name_placeholder')"
               />
             </el-form-item>
           </el-col>
@@ -325,15 +325,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="Business DB" prop="businessDB" class="w-full">
+            <el-form-item :label="t('admin.system_tools.auto_code.business_db')" prop="businessDB" class="w-full">
               <template #label>
                 <el-tooltip
-                  content="Note: Configure multiple databases in db-list first. If empty, it uses the default GVA DB (global.GVA_DB). If set, it generates code for the specified DB (global.MustGetGlobalDBByDBName(dbname))."
+                  :content="t('admin.system_tools.auto_code.business_db_label_tooltip')"
                   placement="bottom"
                   effect="light"
                 >
                   <div>
-                    Business DB <el-icon><QuestionFilled /></el-icon>
+                    {{ t('admin.system_tools.auto_code.business_db') }} <el-icon><QuestionFilled /></el-icon>
                   </div>
                 </el-tooltip>
               </template>
@@ -386,22 +386,22 @@
               <el-row :gutter="20">
                 <el-col :span="3">
                   <el-tooltip
-                      content="Note: Automatically embeds global.Model fields (primary key and soft delete)."
+                      :content="t('admin.system_tools.auto_code.use_gva_model_tooltip')"
                       placement="top"
                       effect="light"
                   >
-                    <el-form-item label="Use GVA model">
+                    <el-form-item :label="t('admin.system_tools.auto_code.use_gva_model')">
                       <el-checkbox v-model="form.gvaModel" @change="useGva" />
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
                 <el-col :span="3">
                   <el-tooltip
-                      content="Note: Generates page button-permission config. If you don't assign buttons in role management, they won't be visible."
+                      :content="t('admin.system_tools.auto_code.create_btn_auth_tooltip')"
                       placement="top"
                       effect="light"
                   >
-                    <el-form-item label="Create button permissions">
+                    <el-form-item :label="t('admin.system_tools.auto_code.create_btn_auth')">
                       <el-checkbox :disabled="!form.generateWeb" v-model="form.autoCreateBtnAuth" />
                     </el-form-item>
                   </el-tooltip>
@@ -427,33 +427,33 @@
               <el-row :gutter="20">
                 <el-col :span="3">
                   <el-tooltip
-                      content="Note: Register generated APIs into the database."
+                      :content="t('admin.system_tools.auto_code.auto_create_api_tooltip')"
                       placement="top"
                       effect="light"
                   >
-                    <el-form-item label="Auto-create APIs">
+                    <el-form-item :label="t('admin.system_tools.auto_code.auto_create_api')">
                       <el-checkbox  :disabled="!form.generateServer" v-model="form.autoCreateApiToSql" />
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
                 <el-col :span="3">
                   <el-tooltip
-                      content="Note: Register generated menus into the database."
+                      :content="t('admin.system_tools.auto_code.auto_create_menu_tooltip')"
                       placement="top"
                       effect="light"
                   >
-                    <el-form-item label="Auto-create menus">
+                    <el-form-item :label="t('admin.system_tools.auto_code.auto_create_menu')">
                       <el-checkbox :disabled="!form.generateWeb" v-model="form.autoCreateMenuToSql" />
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
                 <el-col :span="3">
                   <el-tooltip
-                      content="Note: Auto-migrate database table structure. Disable if not needed."
+                      :content="t('admin.system_tools.auto_code.auto_migrate_tooltip')"
                       placement="top"
                       effect="light"
                   >
-                    <el-form-item label="Auto-migrate tables">
+                    <el-form-item :label="t('admin.system_tools.auto_code.auto_migrate')">
                       <el-checkbox  :disabled="!form.generateServer" v-model="form.autoMigrate" />
                     </el-form-item>
                   </el-tooltip>
@@ -469,22 +469,22 @@
               <el-row :gutter="20">
                 <el-col :span="3">
                   <el-tooltip
-                      content="Note: Adds created_by/updated_by/deleted_by for resource access control."
+                      :content="t('admin.system_tools.auto_code.add_resource_markers_tooltip')"
                       placement="top"
                       effect="light"
                   >
-                    <el-form-item label="Add resource markers">
+                    <el-form-item :label="t('admin.system_tools.auto_code.add_resource_markers')">
                       <el-checkbox v-model="form.autoCreateResource" />
                     </el-form-item>
                   </el-tooltip>
                 </el-col>
                 <el-col :span="3">
                   <el-tooltip
-                      content="Note: Base template generates no structs or CRUD. It only configures properties like enter to support custom non-CRUD logic."
+                      :content="t('admin.system_tools.auto_code.base_template_tooltip')"
                       placement="top"
                       effect="light"
                   >
-                    <el-form-item label="Base template">
+                    <el-form-item :label="t('admin.system_tools.auto_code.base_template')">
                       <el-checkbox v-model="form.onlyTemplate" />
                     </el-form-item>
                   </el-tooltip>
@@ -499,10 +499,10 @@
               </h3>
               <el-row :gutter="20" align="middle">
                 <el-col :span="24">
-                    <el-form-item label="Tree structure">
+                    <el-form-item :label="t('admin.system_tools.auto_code.tree_structure')">
                       <div class="flex items-center gap-4">
                         <el-tooltip
-                            content="Note: Creates parentID for parent/child relations. Only supports int primary keys."
+                            :content="t('admin.system_tools.auto_code.tree_structure_tooltip')"
                             placement="top"
                             effect="light"
                         >
@@ -511,7 +511,7 @@
                         <el-input
                             v-model="form.treeJson"
                             :disabled="!form.isTree"
-                            placeholder="Frontend display JSON property"
+                            :placeholder="t('admin.system_tools.auto_code.tree_json_placeholder')"
                             class="flex-1"
                         />
                       </div>
@@ -531,7 +531,7 @@
           @click="editAndAddField()"
           :disabled="form.onlyTemplate"
         >
-          Add field
+          {{ t('admin.system_tools.auto_code.add_field') }}
         </el-button>
       </div>
       <div class="draggable">
@@ -553,14 +553,14 @@
             fixed="left"
             align="left"
             type="index"
-            label="#"
+            :label="t('admin.system_tools.auto_code.field_index')"
             width="60"
           />
           <el-table-column
             fixed="left"
             align="left"
             type="index"
-            label="PK"
+            :label="t('admin.system_tools.auto_code.field_pk')"
             width="60"
           >
             <template #default="{ row }">
@@ -571,7 +571,7 @@
             fixed="left"
             align="left"
             prop="fieldName"
-            label="Field name"
+            :label="t('admin.system_tools.auto_code.field_name_col')"
             width="160"
           >
             <template #default="{ row }">
@@ -581,7 +581,7 @@
           <el-table-column
             align="left"
             prop="fieldDesc"
-            label="Label"
+            :label="t('admin.system_tools.auto_code.field_label_col')"
             width="160"
           >
             <template #default="{ row }">
@@ -591,19 +591,19 @@
           <el-table-column
             align="left"
             prop="defaultValue"
-            label="Default"
+            :label="t('admin.system_tools.auto_code.field_default_col')"
             width="160"
           >
             <template #default="{ row }">
               <el-input :disabled="row.disabled" v-model="row.defaultValue" />
             </template>
           </el-table-column>
-          <el-table-column align="left" prop="require" label="Required">
+          <el-table-column align="left" prop="require" :label="t('admin.system_tools.auto_code.field_required_col')">
             <template #default="{ row }">
               <el-checkbox :disabled="row.disabled" v-model="row.require" />
             </template>
           </el-table-column>
-          <el-table-column align="left" prop="sort" label="Sort">
+          <el-table-column align="left" prop="sort" :label="t('admin.system_tools.auto_code.field_sort_col')">
             <template #default="{ row }">
               <el-checkbox :disabled="row.disabled" v-model="row.sort" />
             </template>
@@ -612,7 +612,7 @@
             align="left"
             prop="form"
             width="100"
-            label="Create/Edit"
+            :label="t('admin.system_tools.auto_code.field_form_col')"
           >
             <template #default="{ row }">
               <el-checkbox :disabled="row.disabled" v-model="row.form" />
@@ -627,7 +627,7 @@
               <el-checkbox :disabled="row.disabled" v-model="row.table" />
             </template>
           </el-table-column>
-          <el-table-column align="left" prop="desc" label="Detail">
+          <el-table-column align="left" prop="desc" :label="t('admin.system_tools.auto_code.field_detail_col')">
             <template #default="{ row }">
               <el-checkbox :disabled="row.disabled" v-model="row.desc" />
             </template>
@@ -636,7 +636,7 @@
             align="left"
             prop="excel"
             width="100"
-            label="Import/Export"
+            :label="t('admin.system_tools.auto_code.field_excel_col')"
             v-if="!isAdd"
           >
             <template #default="{ row }">
@@ -647,7 +647,7 @@
             align="left"
             prop="fieldJson"
             width="160px"
-            label="Field JSON"
+            :label="t('admin.system_tools.auto_code.field_json_col')"
           >
             <template #default="{ row }">
               <el-input :disabled="row.disabled" v-model="row.fieldJson" />
@@ -656,14 +656,14 @@
           <el-table-column
             align="left"
             prop="fieldType"
-            label="Field type"
+            :label="t('admin.system_tools.auto_code.field_type_col')"
             width="160"
           >
             <template #default="{ row }">
               <el-select
                 v-model="row.fieldType"
                 style="width: 100%"
-                placeholder="Select field type"
+                :placeholder="t('admin.system_tools.auto_code.select_field_type')"
                 :disabled="row.disabled"
                 clearable
               >
@@ -679,14 +679,14 @@
           <el-table-column
             align="left"
             prop="fieldIndexType"
-            label="Index type"
+            :label="t('admin.system_tools.auto_code.field_index_type_col')"
             width="160"
           >
             <template #default="{ row }">
               <el-select
                 v-model="row.fieldIndexType"
                 style="width: 100%"
-                placeholder="Select index type"
+                :placeholder="t('admin.system_tools.auto_code.select_index_type')"
                 :disabled="row.disabled"
                 clearable
               >
@@ -702,7 +702,7 @@
           <el-table-column
             align="left"
             prop="dataTypeLong"
-            label="Length / enum"
+            :label="t('admin.system_tools.auto_code.field_length_enum_col')"
             width="160"
           >
             <template #default="{ row }">
@@ -712,7 +712,7 @@
           <el-table-column
             align="left"
             prop="columnName"
-            label="DB column"
+            :label="t('admin.system_tools.auto_code.field_db_column_col')"
             width="160"
           >
             <template #default="{ row }">
@@ -722,7 +722,7 @@
           <el-table-column
             align="left"
             prop="comment"
-            label="DB comment"
+            :label="t('admin.system_tools.auto_code.field_db_comment_col')"
             width="160"
           >
             <template #default="{ row }">
@@ -732,14 +732,14 @@
           <el-table-column
             align="left"
             prop="fieldSearchType"
-            label="Search"
+            :label="t('admin.system_tools.auto_code.field_search_col')"
             width="130"
           >
             <template #default="{ row }">
               <el-select
                 v-model="row.fieldSearchType"
                 style="width: 100%"
-                placeholder="Select search condition"
+                :placeholder="t('admin.system_tools.auto_code.select_search_cond')"
                 clearable
                 :disabled="row.fieldType === 'json' || row.disabled"
               >
@@ -753,7 +753,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column align="left" label="Actions" width="300" fixed="right">
+          <el-table-column align="left" :label="t('admin.system_tools.auto_code.field_actions_col')" width="300" fixed="right">
             <template #default="scope">
               <el-button
                 v-if="!scope.row.disabled"
@@ -762,7 +762,7 @@
                 icon="edit"
                 @click="editAndAddField(scope.row)"
               >
-                Advanced edit
+                {{ t('admin.system_tools.auto_code.advanced_edit') }}
               </el-button>
               <el-button
                 v-if="!scope.row.disabled"
@@ -771,7 +771,7 @@
                 icon="delete"
                 @click="deleteField(scope.$index)"
               >
-                Delete
+                {{ t('admin.system_tools.auto_code.delete') }}
               </el-button>
             </template>
           </el-table-column>
@@ -1035,58 +1035,19 @@
   const dataModelList = ['created_by', 'updated_by', 'deleted_by']
 
   const typeOptions = ref([
-    {
-      label: 'String',
-      value: 'string'
-    },
-    {
-      label: 'Rich text',
-      value: 'richtext'
-    },
-    {
-      label: 'Integer',
-      value: 'int'
-    },
-    {
-      label: 'Boolean',
-      value: 'bool'
-    },
-    {
-      label: 'Float',
-      value: 'float64'
-    },
-    {
-      label: 'Time',
-      value: 'time.Time'
-    },
-    {
-      label: 'Enum',
-      value: 'enum'
-    },
-    {
-      label: 'Single image (string)',
-      value: 'picture'
-    },
-    {
-      label: 'Multiple images (JSON string)',
-      value: 'pictures'
-    },
-    {
-      label: 'Video (string)',
-      value: 'video'
-    },
-    {
-      label: 'File (JSON string)',
-      value: 'file'
-    },
-    {
-      label: 'JSON',
-      value: 'json'
-    },
-    {
-      label: 'Array',
-      value: 'array'
-    }
+    { label: t('admin.system_tools.auto_code.type_string'), value: 'string' },
+    { label: t('admin.system_tools.auto_code.type_richtext'), value: 'richtext' },
+    { label: t('admin.system_tools.auto_code.type_int'), value: 'int' },
+    { label: t('admin.system_tools.auto_code.type_bool'), value: 'bool' },
+    { label: t('admin.system_tools.auto_code.type_float'), value: 'float64' },
+    { label: t('admin.system_tools.auto_code.type_time'), value: 'time.Time' },
+    { label: t('admin.system_tools.auto_code.type_enum'), value: 'enum' },
+    { label: t('admin.system_tools.auto_code.type_picture'), value: 'picture' },
+    { label: t('admin.system_tools.auto_code.type_pictures'), value: 'pictures' },
+    { label: t('admin.system_tools.auto_code.type_video'), value: 'video' },
+    { label: t('admin.system_tools.auto_code.type_file'), value: 'file' },
+    { label: t('admin.system_tools.auto_code.type_json'), value: 'json' },
+    { label: t('admin.system_tools.auto_code.type_array'), value: 'array' }
   ])
 
   const typeSearchOptions = ref([
@@ -1196,22 +1157,22 @@
   })
   const rules = ref({
     structName: [
-      { required: true, message: 'Please enter struct name', trigger: 'blur' }
+      { required: true, message: t('admin.system_tools.auto_code.enter_struct_name_rule'), trigger: 'blur' }
     ],
     abbreviation: [
-      { required: true, message: 'Please enter struct abbreviation', trigger: 'blur' }
+      { required: true, message: t('admin.system_tools.auto_code.enter_struct_abbr_rule'), trigger: 'blur' }
     ],
     description: [
-      { required: true, message: 'Please enter struct description', trigger: 'blur' }
+      { required: true, message: t('admin.system_tools.auto_code.enter_struct_desc_rule'), trigger: 'blur' }
     ],
     packageName: [
       {
         required: true,
-        message: 'File name: sysXxxxXxxx',
+        message: t('admin.system_tools.auto_code.file_name_rule'),
         trigger: 'blur'
       }
     ],
-    package: [{ required: true, message: 'Please select a template', trigger: 'blur' }]
+    package: [{ required: true, message: t('admin.system_tools.auto_code.select_template_rule'), trigger: 'blur' }]
   })
   const dialogMiddle = ref({})
   const bk = ref({})
@@ -1221,11 +1182,11 @@
   const useGva = (e) => {
     if (e && form.value.fields.length) {
       ElMessageBox.confirm(
-        'Enabling the default GVA model will auto-add ID/CreatedAt/UpdatedAt/DeletedAt fields. This will remove any duplicate fields you created below. Continue?',
-        'Warning',
+        t('admin.system_tools.auto_code.use_gva_model_confirm'),
+        t('admin.system_tools.auto_code.warning_title'),
         {
-          confirmButtonText: 'Continue',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: t('admin.system_tools.auto_code.continue'),
+          cancelButtonText: t('admin.common.cancel'),
           type: 'warning'
         }
       )
@@ -1295,9 +1256,9 @@
     dialogFlag.value = false
   }
   const deleteField = (index) => {
-    ElMessageBox.confirm('Delete this field?', 'Confirmation', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.system_tools.auto_code.delete_field_confirm'), t('admin.system_tools.auto_code.delete_field_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       form.value.fields.splice(index, 1)
@@ -1308,14 +1269,14 @@
     if (form.value.isTree && !form.value.treeJson){
       ElMessage({
         type: 'error',
-        message: 'Please fill in the frontend display JSON property for tree structure'
+        message: t('admin.system_tools.auto_code.tree_json_required')
       })
       return false
     }
     if(!form.value.generateWeb && !form.value.generateServer){
       ElMessage({
         type: 'error',
-        message: 'Please select at least one generation target'
+        message: t('admin.system_tools.auto_code.select_generate_target')
       })
       return false
     }
@@ -1323,7 +1284,7 @@
       if (form.value.fields.length <= 0) {
         ElMessage({
           type: 'error',
-          message: 'Please add at least one field'
+          message: t('admin.system_tools.auto_code.add_one_field')
         })
         return false
       }
@@ -1334,7 +1295,7 @@
       ) {
         ElMessage({
           type: 'error',
-          message: 'You need at least one primary key to generate code reliably'
+          message: t('admin.system_tools.auto_code.need_primary_key')
         })
         return false
       }
@@ -1346,7 +1307,7 @@
       ) {
         ElMessage({
           type: 'error',
-          message: 'A field name conflicts with the struct name'
+          message: t('admin.system_tools.auto_code.field_conflict_struct')
         })
         return false
       }
@@ -1356,7 +1317,7 @@
       ) {
         ElMessage({
           type: 'error',
-          message: 'A field JSON key conflicts with the template name'
+          message: t('admin.system_tools.auto_code.field_json_conflict_template')
         })
         return false
       }
@@ -1364,7 +1325,7 @@
       if (form.value.fields.some((item) => !item.fieldType)) {
         ElMessage({
           type: 'error',
-          message: 'Please select field types for all fields before submitting'
+          message: t('admin.system_tools.auto_code.select_field_types')
         })
         return false
       }
@@ -1372,7 +1333,7 @@
       if (form.value.package === form.value.abbreviation) {
         ElMessage({
           type: 'error',
-          message: 'Template and struct abbreviation must not be the same'
+          message: t('admin.system_tools.auto_code.template_abbr_same')
         })
         return false
       }
@@ -1393,7 +1354,7 @@
         if (form.value.structName === form.value.abbreviation) {
           ElMessage({
             type: 'error',
-            message: 'Struct name and abbreviation must not be the same'
+            message: t('admin.system_tools.auto_code.struct_abbr_same')
           })
           return false
         }
@@ -1433,7 +1394,7 @@
           }
           ElMessage({
             type: 'success',
-            message: 'Auto-code created and moved successfully'
+            message: t('admin.system_tools.auto_code.auto_code_created')
           })
           clearCatch()
         }
@@ -1609,7 +1570,7 @@
 
   const catchData = () => {
     window.sessionStorage.setItem('autoCode', JSON.stringify(form.value))
-    ElMessage.success('Stashed')
+    ElMessage.success(t('admin.system_tools.auto_code.stashed'))
   }
 
   const getCatch = () => {
@@ -1665,9 +1626,9 @@
         form.value = JSON.parse(e.target.result)
         form.value.generateServer = true
         form.value.generateWeb = true
-        ElMessage.success('JSON imported')
+        ElMessage.success(t('admin.system_tools.auto_code.json_imported'))
       } catch (_) {
-        ElMessage.error('Invalid JSON file')
+        ElMessage.error(t('admin.common.messages.invalid_json_file'))
       }
     }
     reader.readAsText(file)
@@ -1679,11 +1640,11 @@
     (val) => {
       if (val) {
         ElMessageBox.confirm(
-          'Base template will not generate any structs or CRUD. It only configures properties like enter to support custom non-CRUD logic.',
-          'Warning',
+          t('admin.system_tools.auto_code.only_template_confirm'),
+          t('admin.system_tools.auto_code.warning_title'),
           {
-            confirmButtonText: 'Continue',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: t('admin.system_tools.auto_code.continue'),
+            cancelButtonText: t('admin.common.cancel'),
             type: 'warning'
           }
         )

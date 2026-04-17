@@ -50,10 +50,10 @@
   <!-- Toolbar -->
   <div class="toolbar">
     <el-button-group v-if="isCrop">
-      <el-tooltip content="Rotate left">
+      <el-tooltip :content="t('admin.components.upload.rotate_left')">
         <el-button @click="rotate(-90)" :icon="RefreshLeft" />
       </el-tooltip>
-      <el-tooltip content="Rotate right">
+      <el-tooltip :content="t('admin.components.upload.rotate_right')">
         <el-button @click="rotate(90)" :icon="RefreshRight" />
       </el-tooltip>
       <el-button :icon="Plus" @click="changeScale(1)"></el-button>
@@ -65,11 +65,11 @@
         size="large"
         v-model="isCrop"
         inline-prompt
-        active-text="Crop"
-        inactive-text="Crop"
+        :active-text="t('admin.components.scan_upload.crop')"
+        :inactive-text="t('admin.components.scan_upload.crop')"
     />
 
-    <el-button type="primary" @click="handleUpload" :loading="uploading"> {{ uploading ? 'Uploading...' : 'Upload' }}
+    <el-button type="primary" @click="handleUpload" :loading="uploading"> {{ uploading ? t('admin.common.uploading') : t('admin.common.upload') }}
     </el-button>
   </div>
 
@@ -79,12 +79,15 @@
 <script setup>
 import { ref, getCurrentInstance, onMounted } from 'vue'
 import { ElLoading, ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { RefreshLeft, RefreshRight, Plus, Minus } from '@element-plus/icons-vue'
 import 'vue-cropper/dist/index.css'
 import { VueCropper } from 'vue-cropper'
 import { getBaseUrl } from '@/utils/format'
 import { useRouter } from 'vue-router'
 import { useUserStore } from "@/pinia";
+
+const { t } = useI18n()
 
 defineOptions({
   name: 'scanUpload'
@@ -140,18 +143,18 @@ const fixedRatio = ref(false)
 const handleFileChange = (file) => {
   const isImage = file.raw.type.includes('image')
   if (!isImage) {
-    ElMessage.error('Please select an image file')
+    ElMessage.error(t('admin.common.validation.image_file_required'))
     return
   }
 
   if (file.raw.size / 1024 / 1024 > 8) {
-    ElMessage.error('File size must be <= 8MB')
+    ElMessage.error(t('admin.common.validation.file_size_limit', { size: '8MB' }))
     return false
   }
 
   const loading = ElLoading.service({
     lock: true,
-    text: 'Please wait',
+    text: t('admin.components.scan_upload.please_wait'),
     background: 'rgba(0, 0, 0, 0.7)',
   })
 
@@ -188,7 +191,7 @@ const handleUpload = () => {
 
     } catch (error) {
       uploading.value = false
-      ElMessage.error('Upload failed: ' + error.message)
+      ElMessage.error(t('admin.common.messages.upload_failed') + ': ' + error.message)
     }
   })
 }
@@ -199,7 +202,7 @@ const handleImageSuccess = (res) => {
     imgSrc.value = null
     uploading.value = false
     previews.value = {}
-    ElMessage.success('Uploaded')
+    ElMessage.success(t('admin.common.messages.uploaded'))
   }
 }
 

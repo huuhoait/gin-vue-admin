@@ -19,7 +19,7 @@ const routes = [
     path: '/scanUpload',
     name: 'ScanUpload',
     meta: {
-      title: 'Scan to upload',
+      title: 'admin.router.scan_upload',
       client: true
     },
     component: () => import('@/view/example/upload/scanUpload.vue')

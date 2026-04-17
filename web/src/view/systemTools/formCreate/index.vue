@@ -3,24 +3,24 @@
     <fc-designer ref="designer" :config="config" height="calc(100vh - 160px)">
       <template #handle>
         <el-button type="primary" size="small" plain @click="exportVueTemplate">
-          Export as native Vue template
+          {{ t('admin.systemtools.form_create.export_as_vue') }}
         </el-button>
       </template>
     </fc-designer>
 
-    <el-dialog v-model="dialogVisible" title="Generated Vue template" width="70%" top="5vh">
-      <el-input 
-        type="textarea" 
-        :rows="25" 
-        v-model="vueCode" 
-        readonly 
+    <el-dialog v-model="dialogVisible" :title="t('admin.systemtools.form_create.generated_vue_template')" width="70%" top="5vh">
+      <el-input
+        type="textarea"
+        :rows="25"
+        v-model="vueCode"
+        readonly
         class="code-input"
         resize="none"
       />
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">Close</el-button>
-          <el-button type="primary" @click="copyCode">Copy</el-button>
+          <el-button @click="dialogVisible = false">{{ t('admin.systemtools.form_create.close') }}</el-button>
+          <el-button type="primary" @click="copyCode">{{ t('admin.systemtools.form_create.copy') }}</el-button>
         </span>
       </template>
     </el-dialog>
@@ -31,6 +31,9 @@
   import { ref } from 'vue'
   import { ElMessage } from 'element-plus'
   import FcDesigner from '@form-create/designer'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'FormGenerator'
@@ -194,10 +197,10 @@ const resetForm = () => {
   const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(vueCode.value)
-      ElMessage.success('Copied to clipboard')
+      ElMessage.success(t('admin.common.messages.copy_success'))
       dialogVisible.value = false
     } catch (err) {
-      ElMessage.error('Copy failed. Please copy manually.')
+      ElMessage.error(t('admin.common.messages.copy_failed'))
     }
   }
 </script>

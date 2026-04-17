@@ -2,16 +2,16 @@
   <div class="gva-form-box">
     <div class="p-4 bg-white dark:bg-slate-900">
       <WarningBar
-        title="Only standard plugins are supported (generated from the plugin template). For non-standard plugins, please package manually."
+        :title="t('admin.systemtools.pubplug.warning_standard')"
       />
       <div class="flex items-center gap-3">
-        <el-input v-model="plugName" placeholder='Plugin name (from template)' />
+        <el-input v-model="plugName" :placeholder="t('admin.systemtools.pubplug.plugin_name_placeholder')" />
       </div>
       <el-card class="mt-2 text-center">
-        <WarningBar title="In the transfer box, only select leaf menus." />
+        <WarningBar :title="t('admin.systemtools.pubplug.leaf_menu_warning')" />
         <el-input
           v-model="parentMenu"
-          placeholder="Enter menu group name, e.g. Announcement Management"
+          :placeholder="t('admin.systemtools.pubplug.menu_group_placeholder')"
           class="mb-2"
         ></el-input>
         <el-transfer
@@ -23,9 +23,9 @@
           :data="menusData"
           filterable
           :filter-method="filterMenuMethod"
-          filter-placeholder="Search by menu name/path"
-          :titles="['Available menus', 'Selected menus']"
-          :button-texts="['Remove', 'Select']"
+          :filter-placeholder="t('admin.systemtools.pubplug.search_menu')"
+          :titles="[t('admin.systemtools.pubplug.available_menus'), t('admin.systemtools.pubplug.selected_menus')]"
+          :button-texts="[t('admin.systemtools.pubplug.remove'), t('admin.systemtools.pubplug.select')]"
         >
           <template #default="{ option }">
             {{ option.meta.title }} {{ option.component }}
@@ -33,7 +33,7 @@
         </el-transfer>
         <div class="flex justify-end mt-2">
           <el-button type="primary" @click="fmtInitMenu">
-            Generate install menus
+            {{ t('admin.systemtools.pubplug.generate_menus') }}
           </el-button>
         </div>
       </el-card>
@@ -47,9 +47,9 @@
           :data="apisData"
           filterable
           :filter-method="filterApiMethod"
-          filter-placeholder="Search by API description/path"
-          :titles="['Available APIs', 'Selected APIs']"
-          :button-texts="['Remove', 'Select']"
+          :filter-placeholder="t('admin.systemtools.pubplug.search_api')"
+          :titles="[t('admin.systemtools.pubplug.available_apis'), t('admin.systemtools.pubplug.selected_apis')]"
+          :button-texts="[t('admin.systemtools.pubplug.remove'), t('admin.systemtools.pubplug.select')]"
         >
           <template #default="{ option }">
             {{ option.description }} {{ option.path }}
@@ -57,7 +57,7 @@
         </el-transfer>
         <div class="flex justify-end mt-2">
           <el-button type="primary" @click="fmtInitAPI">
-            Generate install APIs
+            {{ t('admin.systemtools.pubplug.generate_apis') }}
           </el-button>
         </div>
       </el-card>
@@ -71,9 +71,9 @@
           :data="dictionariesData"
           filterable
           :filter-method="filterDictionaryMethod"
-          filter-placeholder="Search by dictionary name/type"
-          :titles="['Available dictionaries', 'Selected dictionaries']"
-          :button-texts="['Remove', 'Select']"
+          :filter-placeholder="t('admin.systemtools.pubplug.search_dict')"
+          :titles="[t('admin.systemtools.pubplug.available_dicts'), t('admin.systemtools.pubplug.selected_dicts')]"
+          :button-texts="[t('admin.systemtools.pubplug.remove'), t('admin.systemtools.pubplug.select')]"
         >
           <template #default="{ option }">
             {{ option.name }} {{ option.type }}
@@ -81,13 +81,13 @@
         </el-transfer>
         <div class="flex justify-end mt-2">
           <el-button type="primary" @click="fmtInitDictionary">
-            Generate install dictionaries
+            {{ t('admin.systemtools.pubplug.generate_dicts') }}
           </el-button>
         </div>
       </el-card>
     </div>
     <div class="flex justify-end">
-      <el-button type="primary" @click="pubPlugin"> Package plugin </el-button>
+      <el-button type="primary" @click="pubPlugin"> {{ t('admin.systemtools.pubplug.package_plugin') }} </el-button>
     </div>
   </div>
 </template>
@@ -100,6 +100,9 @@
   import { getAllApis } from '@/api/api'
   import { getMenuList } from '@/api/menu'
   import { getSysDictionaryList } from '@/api/sysDictionary'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   const plugName = ref('')
 
@@ -161,11 +164,11 @@
 
   const pubPlugin = async () => {
     ElMessageBox.confirm(
-      `Please check whether required exports are enabled in server/plugin/${plugName.value}/plugin.go (initialize.Api(ctx), initialize.Menu(ctx), initialize.Dictionary(ctx)).`,
-      'Package',
+      t('admin.systemtools.pubplug.package_confirm', { name: plugName.value }),
+      t('admin.systemtools.pubplug.package_title'),
       {
-        confirmButtonText: 'Package',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: t('admin.systemtools.pubplug.package_action'),
+        cancelButtonText: t('admin.systemtools.pubplug.cancel'),
         type: 'warning'
       }
     )
@@ -178,30 +181,30 @@
       .catch(() => {
         ElMessage({
           type: 'info',
-          message: 'Cancelled'
+          message: t('admin.systemtools.pubplug.cancelled')
         })
       })
   }
 
   const fmtInitMenu = () => {
     if (!parentMenu.value) {
-      ElMessage.error('Please enter a menu group name')
+      ElMessage.error(t('admin.systemtools.pubplug.enter_menu_group'))
       return
     }
     if (menus.value.length === 0) {
-      ElMessage.error('Please select at least one menu')
+      ElMessage.error(t('admin.systemtools.pubplug.select_at_least_one_menu'))
       return
     }
     if (plugName.value === '') {
-      ElMessage.error('Please enter a plugin name')
+      ElMessage.error(t('admin.systemtools.pubplug.enter_plugin_name'))
       return
     }
     ElMessageBox.confirm(
-      `This will overwrite server/plugin/${plugName.value}/initialize/menu. Continue?`,
-      'Generate initial menus',
+      t('admin.systemtools.pubplug.menu_overwrite_confirm', { name: plugName.value }),
+      t('admin.systemtools.pubplug.generate_menu_title'),
       {
-        confirmButtonText: 'Generate',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: t('admin.systemtools.pubplug.generate_action'),
+        cancelButtonText: t('admin.systemtools.pubplug.cancel'),
         type: 'warning'
       }
     )
@@ -213,31 +216,31 @@
         }
         const res = await initMenu(req)
         if (res.code === 0) {
-          ElMessage.success('Menus initialized')
+          ElMessage.success(t('admin.systemtools.pubplug.menus_initialized'))
         }
       })
       .catch(() => {
         ElMessage({
           type: 'info',
-          message: 'Cancelled'
+          message: t('admin.systemtools.pubplug.cancelled')
         })
       })
   }
   const fmtInitAPI = () => {
     if (apis.value.length === 0) {
-      ElMessage.error('Please select at least one API')
+      ElMessage.error(t('admin.systemtools.pubplug.select_at_least_one_api'))
       return
     }
     if (plugName.value === '') {
-      ElMessage.error('Please enter a plugin name')
+      ElMessage.error(t('admin.systemtools.pubplug.enter_plugin_name'))
       return
     }
     ElMessageBox.confirm(
-      `This will overwrite server/plugin/${plugName.value}/initialize/api. Continue?`,
-      'Generate initial APIs',
+      t('admin.systemtools.pubplug.api_overwrite_confirm', { name: plugName.value }),
+      t('admin.systemtools.pubplug.generate_api_title'),
       {
-        confirmButtonText: 'Generate',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: t('admin.systemtools.pubplug.generate_action'),
+        cancelButtonText: t('admin.systemtools.pubplug.cancel'),
         type: 'warning'
       }
     )
@@ -248,32 +251,32 @@
         }
         const res = await initAPI(req)
         if (res.code === 0) {
-          ElMessage.success('APIs initialized')
+          ElMessage.success(t('admin.systemtools.pubplug.apis_initialized'))
         }
       })
       .catch(() => {
         ElMessage({
           type: 'info',
-          message: 'Cancelled'
+          message: t('admin.systemtools.pubplug.cancelled')
         })
       })
   }
 
   const fmtInitDictionary = () => {
     if (dictionaries.value.length === 0) {
-      ElMessage.error('Please select at least one dictionary')
+      ElMessage.error(t('admin.systemtools.pubplug.select_at_least_one_dict'))
       return
     }
     if (plugName.value === '') {
-      ElMessage.error('Please enter a plugin name')
+      ElMessage.error(t('admin.systemtools.pubplug.enter_plugin_name'))
       return
     }
     ElMessageBox.confirm(
-      `This will overwrite server/plugin/${plugName.value}/initialize/dictionary. Continue?`,
-      'Generate initial dictionaries',
+      t('admin.systemtools.pubplug.dict_overwrite_confirm', { name: plugName.value }),
+      t('admin.systemtools.pubplug.generate_dict_title'),
       {
-        confirmButtonText: 'Generate',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: t('admin.systemtools.pubplug.generate_action'),
+        cancelButtonText: t('admin.systemtools.pubplug.cancel'),
         type: 'warning'
       }
     )
@@ -284,13 +287,13 @@
         }
         const res = await initDictionary(req)
         if (res.code === 0) {
-          ElMessage.success('Dictionaries initialized')
+          ElMessage.success(t('admin.systemtools.pubplug.dicts_initialized'))
         }
       })
       .catch(() => {
         ElMessage({
           type: 'info',
-          message: 'Cancelled'
+          message: t('admin.systemtools.pubplug.cancelled')
         })
       })
   }

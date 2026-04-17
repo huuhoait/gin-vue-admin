@@ -1,12 +1,12 @@
 <template>
   <div>
     <warning-bar
-      title="To hide these customer resources, clear this role's resource permissions or exclude the creator role in resource permissions."
+      :title="t('admin.example.customer.warning_bar')"
     />
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-button type="primary" icon="plus" @click="openDrawer"
-          >Add</el-button
+          >{{ t('admin.common.add') }}</el-button
         >
       </div>
       <el-table
@@ -17,44 +17,44 @@
         row-key="ID"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="Created at" width="180">
+        <el-table-column align="left" :label="t('admin.example.customer.created_at')" width="180">
           <template #default="scope">
             <span>{{ formatDate(scope.row.CreatedAt) }}</span>
           </template>
         </el-table-column>
         <el-table-column
           align="left"
-          label="Name"
+          :label="t('admin.example.customer.name')"
           prop="customerName"
           width="120"
         />
         <el-table-column
           align="left"
-          label="Phone"
+          :label="t('admin.example.customer.phone')"
           prop="customerPhoneData"
           width="120"
         />
         <el-table-column
           align="left"
-          label="Creator ID"
+          :label="t('admin.example.customer.creator_id')"
           prop="sysUserId"
           width="120"
         />
-        <el-table-column align="left" label="Actions" min-width="160">
+        <el-table-column align="left" :label="t('admin.example.customer.actions')" min-width="160">
           <template #default="scope">
             <el-button
               type="primary"
               link
               icon="edit"
               @click="updateCustomer(scope.row)"
-              >Edit</el-button
+              >{{ t('admin.common.edit') }}</el-button
             >
             <el-button
               type="primary"
               link
               icon="delete"
               @click="deleteCustomer(scope.row)"
-              >Delete</el-button
+              >{{ t('admin.common.delete') }}</el-button
             >
           </template>
         </el-table-column>
@@ -78,18 +78,18 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">Customer</span>
+          <span class="text-lg">{{ t('admin.example.customer.customer') }}</span>
           <div>
-            <el-button @click="closeDrawer">Cancel</el-button>
-            <el-button type="primary" @click="enterDrawer">Confirm</el-button>
+            <el-button @click="closeDrawer">{{ t('admin.common.cancel') }}</el-button>
+            <el-button type="primary" @click="enterDrawer">{{ t('admin.common.confirm') }}</el-button>
           </div>
         </div>
       </template>
       <el-form :inline="true" :model="form" label-width="80px">
-        <el-form-item label="Customer name">
+        <el-form-item :label="t('admin.example.customer.customer_name')">
           <el-input v-model="form.customerName" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="Customer phone">
+        <el-form-item :label="t('admin.example.customer.customer_phone')">
           <el-input v-model="form.customerPhoneData" autocomplete="off" />
         </el-form-item>
       </el-form>
@@ -107,12 +107,15 @@
   } from '@/api/customer'
   import WarningBar from '@/components/warningBar/warningBar.vue'
   import { ref } from 'vue'
+  import { useI18n } from 'vue-i18n'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatDate } from '@/utils/format'
 
   defineOptions({
     name: 'Customer'
   })
+
+  const { t } = useI18n()
 
   const form = ref({
     customerName: '',
@@ -169,16 +172,16 @@
     }
   }
   const deleteCustomer = async (row) => {
-    ElMessageBox.confirm('Delete this item?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.example.customer.delete_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const res = await deleteExaCustomer({ ID: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         if (tableData.value.length === 1 && page.value > 1) {
           page.value--

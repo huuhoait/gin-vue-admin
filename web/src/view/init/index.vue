@@ -18,42 +18,42 @@
           >
             GIN-VUE-ADMIN
           </div>
-          <p class="text-gray-600 dark:text-gray-300 mb-2">Initialization notes</p>
+          <p class="text-gray-600 dark:text-gray-300 mb-2">{{ t('admin.init.notes_title') }}</p>
           <p class="text-gray-600 dark:text-gray-300 mb-2">
-            1. You should have basic knowledge of Vue and Go.
+            {{ t('admin.init.note_1') }}
           </p>
           <p class="text-gray-600 dark:text-gray-300 mb-2">
-            2. Please confirm you have read the <a
+            {{ t('admin.init.note_2_prefix') }} <a
               class="text-blue-600 font-bold"
               href="https://www.gin-vue-admin.com"
               target="_blank"
-              >official documentation</a
+              >{{ t('admin.init.note_2_doc') }}</a
             >
             <a
               class="text-blue-600 font-bold"
               href="https://www.bilibili.com/video/BV1kv4y1g7nT?p=2"
               target="_blank"
-              >initialization video</a
+              >{{ t('admin.init.note_2_video') }}</a
             >
           </p>
           <p class="text-gray-600 dark:text-gray-300 mb-2">
-            3. Please confirm you understand the follow-up configuration process.
+            {{ t('admin.init.note_3') }}
           </p>
           <p class="text-gray-600 dark:text-gray-300 mb-2">
-            4. If you use MySQL, please confirm the engine is <span
+            {{ t('admin.init.note_4_prefix') }} <span
               class="text-red-600 font-bold text-3xl ml-2"
               >innoDB</span
             >
           </p>
           <p class="text-gray-600 dark:text-gray-300 mb-2">
-            Note: The dev team does not provide free support for items already covered in the docs.
+            {{ t('admin.init.note_5') }}
           </p>
           <p class="flex items-center justify-between mt-8">
             <el-button type="primary" size="large" @click="goDoc">
-              Read docs
+              {{ t('admin.init.read_docs') }}
             </el-button>
             <el-button type="primary" size="large" @click="showNext">
-              I understand
+              {{ t('admin.init.understand') }}
             </el-button>
           </p>
         </div>
@@ -64,16 +64,16 @@
         class="w-96"
       >
         <el-form ref="formRef" :model="form" label-width="100px" size="large">
-          <el-form-item label="Admin password">
+          <el-form-item :label="t('admin.init.admin_password')">
             <el-input
               v-model="form.adminPassword"
-              placeholder="Default password for the admin account"
+              :placeholder="t('admin.init.admin_password_placeholder')"
             ></el-input>
           </el-form-item>
-          <el-form-item label="Database type">
+          <el-form-item :label="t('admin.init.db_type')">
             <el-select
               v-model="form.dbType"
-              placeholder="Select"
+              :placeholder="t('admin.init.select')"
               class="w-full"
               @change="changeDB"
             >
@@ -85,41 +85,41 @@
             </el-select>
           </el-form-item>
           <el-form-item v-if="form.dbType !== 'sqlite'" label="host">
-            <el-input v-model="form.host" placeholder="Enter database host" />
+            <el-input v-model="form.host" :placeholder="t('admin.init.enter_host')" />
           </el-form-item>
           <el-form-item v-if="form.dbType !== 'sqlite'" label="port">
-            <el-input v-model="form.port" placeholder="Enter database port" />
+            <el-input v-model="form.port" :placeholder="t('admin.init.enter_port')" />
           </el-form-item>
           <el-form-item v-if="form.dbType !== 'sqlite'" label="userName">
             <el-input
               v-model="form.userName"
-              placeholder="Enter database username"
+              :placeholder="t('admin.init.enter_user')"
             />
           </el-form-item>
           <el-form-item v-if="form.dbType !== 'sqlite'" label="password">
             <el-input
               v-model="form.password"
-              placeholder="Enter database password (leave blank if none)"
+              :placeholder="t('admin.init.enter_password')"
             />
           </el-form-item>
           <el-form-item label="dbName">
-            <el-input v-model="form.dbName" placeholder="Enter database name" />
+            <el-input v-model="form.dbName" :placeholder="t('admin.init.enter_dbname')" />
           </el-form-item>
           <el-form-item v-if="form.dbType === 'sqlite'" label="dbPath">
             <el-input
               v-model="form.dbPath"
-              placeholder="Enter sqlite database file path"
+              :placeholder="t('admin.init.enter_dbpath')"
             />
           </el-form-item>
           <el-form-item v-if="form.dbType === 'pgsql'" label="template">
             <el-input
               v-model="form.template"
-              placeholder="Enter PostgreSQL template"
+              :placeholder="t('admin.init.enter_template')"
             />
           </el-form-item>
           <el-form-item>
             <div style="text-align: right">
-              <el-button type="primary" @click="onSubmit">Initialize now</el-button>
+              <el-button type="primary" @click="onSubmit">{{ t('admin.init.initialize_now') }}</el-button>
             </div>
           </el-form-item>
         </el-form>
@@ -137,7 +137,10 @@
   import { initDB } from '@/api/initdb'
   import { reactive, ref } from 'vue'
   import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { useRouter } from 'vue-router'
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'Init'
@@ -255,14 +258,14 @@
     if (form.adminPassword.length < 6) {
       ElMessage({
         type: 'error',
-        message: 'Password must be at least 6 characters'
+        message: t('admin.init.password_min_length')
       })
       return
     }
 
     const loading = ElLoading.service({
       lock: true,
-      text: 'Initializing database, please wait',
+      text: t('admin.init.initializing'),
       spinner: 'loading',
       background: 'rgba(0, 0, 0, 0.7)'
     })
@@ -277,11 +280,11 @@
         
         // Show AI assistant configuration hint
         ElMessageBox.confirm(
-          'Database initialization is complete. It is recommended to configure your editor AI assistant for a better developer experience.',
-          'Next steps',
+          t('admin.init.next_steps_content'),
+          t('admin.init.next_steps_title'),
           {
-            confirmButtonText: 'View AI setup docs',
-            cancelButtonText: 'Later',
+            confirmButtonText: t('admin.init.view_ai_docs'),
+            cancelButtonText: t('admin.init.later'),
             type: 'success',
             center: true
           }

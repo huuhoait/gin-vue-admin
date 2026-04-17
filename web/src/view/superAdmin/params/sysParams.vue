@@ -1,6 +1,6 @@
 <template>
   <div>
-    <warning-bar title="Parameter caching is already implemented in frontend utils/params. See comments in that file for usage." />
+    <warning-bar :title="t('admin.superadmin.params.cache_warning')" />
     <div class="gva-search-box">
       <el-form
         ref="elSearchFormRef"
@@ -10,12 +10,12 @@
         :rules="searchRule"
         @keyup.enter="onSubmit"
       >
-        <el-form-item label="Created at" prop="createdAt">
+        <el-form-item :label="t('admin.superadmin.params.created_at')" prop="createdAt">
           <template #label>
             <span>
-              Created at
+              {{ t('admin.superadmin.params.created_at') }}
               <el-tooltip
-                content="Search range: start time (inclusive) to end time (exclusive)"
+                :content="t('admin.superadmin.params.created_at_tooltip')"
               >
                 <el-icon><QuestionFilled /></el-icon>
               </el-tooltip>
@@ -24,7 +24,7 @@
           <el-date-picker
             v-model="searchInfo.startCreatedAt"
             type="datetime"
-            placeholder="Start time"
+            :placeholder="t('admin.superadmin.params.start_time')"
             :disabled-date="
               (time) =>
                 searchInfo.endCreatedAt
@@ -36,7 +36,7 @@
           <el-date-picker
             v-model="searchInfo.endCreatedAt"
             type="datetime"
-            placeholder="End time"
+            :placeholder="t('admin.superadmin.params.end_time')"
             :disabled-date="
               (time) =>
                 searchInfo.startCreatedAt
@@ -46,11 +46,11 @@
           ></el-date-picker>
         </el-form-item>
 
-        <el-form-item label="Name" prop="name">
-          <el-input v-model="searchInfo.name" placeholder="Search" />
+        <el-form-item :label="t('admin.superadmin.params.name')" prop="name">
+          <el-input v-model="searchInfo.name" :placeholder="t('admin.superadmin.params.search_placeholder')" />
         </el-form-item>
-        <el-form-item label="Key" prop="key">
-          <el-input v-model="searchInfo.key" placeholder="Search" />
+        <el-form-item :label="t('admin.superadmin.params.key')" prop="key">
+          <el-input v-model="searchInfo.key" :placeholder="t('admin.superadmin.params.search_placeholder')" />
         </el-form-item>
 
         <template v-if="showAllQuery">
@@ -59,16 +59,16 @@
 
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit"
-            >Search</el-button
+            >{{ t('admin.common.search') }}</el-button
           >
-          <el-button icon="refresh" @click="onReset">Reset</el-button>
+          <el-button icon="refresh" @click="onReset">{{ t('admin.common.reset') }}</el-button>
           <el-button
             link
             type="primary"
             icon="arrow-down"
             @click="showAllQuery = true"
             v-if="!showAllQuery"
-            >Expand</el-button
+            >{{ t('admin.superadmin.params.expand') }}</el-button
           >
           <el-button
             link
@@ -76,7 +76,7 @@
             icon="arrow-up"
             @click="showAllQuery = false"
             v-else
-            >Collapse</el-button
+            >{{ t('admin.superadmin.params.collapse') }}</el-button
           >
         </el-form-item>
       </el-form>
@@ -84,14 +84,14 @@
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-button type="primary" icon="plus" @click="openDialog"
-          >Add</el-button
+          >{{ t('admin.common.add') }}</el-button
         >
         <el-button
           icon="delete"
           style="margin-left: 10px"
           :disabled="!multipleSelection.length"
           @click="onDelete"
-          >Delete</el-button
+          >{{ t('admin.common.delete') }}</el-button
         >
       </div>
       <el-table
@@ -104,7 +104,7 @@
       >
         <el-table-column type="selection" width="55" />
 
-        <el-table-column align="left" label="Created at" prop="createdAt" width="180">
+        <el-table-column align="left" :label="t('admin.superadmin.params.created_at')" prop="createdAt" width="180">
           <template #default="scope">{{
             formatDate(scope.row.CreatedAt)
           }}</template>
@@ -112,21 +112,21 @@
 
         <el-table-column
           align="left"
-          label="Name"
+          :label="t('admin.superadmin.params.name')"
           prop="name"
           width="120"
         />
-        <el-table-column align="left" label="Key" prop="key" width="120" />
-        <el-table-column align="left" label="Value" prop="value" width="120" />
+        <el-table-column align="left" :label="t('admin.superadmin.params.key')" prop="key" width="120" />
+        <el-table-column align="left" :label="t('admin.superadmin.params.value')" prop="value" width="120" />
         <el-table-column
           align="left"
-          label="Description"
+          :label="t('admin.superadmin.params.description')"
           prop="desc"
           width="120"
         />
         <el-table-column
           align="left"
-          label="Actions"
+          :label="t('admin.superadmin.params.actions')"
           fixed="right"
           min-width="240"
         >
@@ -137,7 +137,7 @@
               class="table-button"
               @click="getDetails(scope.row)"
               ><el-icon style="margin-right: 5px"><InfoFilled /></el-icon
-              >Details</el-button
+              >{{ t('admin.superadmin.params.details') }}</el-button
             >
             <el-button
               type="primary"
@@ -145,14 +145,14 @@
               icon="edit"
               class="table-button"
               @click="updateSysParamsFunc(scope.row)"
-              >Edit</el-button
+              >{{ t('admin.common.edit') }}</el-button
             >
             <el-button
               type="primary"
               link
               icon="delete"
               @click="deleteRow(scope.row)"
-              >Delete</el-button
+              >{{ t('admin.common.delete') }}</el-button
             >
           </template>
         </el-table-column>
@@ -178,10 +178,10 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">{{ type === 'create' ? 'Add' : 'Edit' }}</span>
+          <span class="text-lg">{{ type === 'create' ? t('admin.common.add') : t('admin.common.edit') }}</span>
           <div>
-            <el-button type="primary" @click="enterDialog">Confirm</el-button>
-            <el-button @click="closeDialog">Cancel</el-button>
+            <el-button type="primary" @click="enterDialog">{{ t('admin.common.confirm') }}</el-button>
+            <el-button @click="closeDialog">{{ t('admin.common.cancel') }}</el-button>
           </div>
         </div>
       </template>
@@ -193,34 +193,34 @@
         :rules="rule"
         label-width="80px"
       >
-        <el-form-item label="Name:" prop="name">
+        <el-form-item :label="t('admin.superadmin.params.name') + ':'" prop="name">
           <el-input
             v-model="formData.name"
             :clearable="true"
-            placeholder="Enter name"
+            :placeholder="t('admin.superadmin.params.enter_name')"
           />
         </el-form-item>
-        <el-form-item label="Key:" prop="key">
+        <el-form-item :label="t('admin.superadmin.params.key') + ':'" prop="key">
           <el-input
             v-model="formData.key"
             :clearable="true"
-            placeholder="Enter key"
+            :placeholder="t('admin.superadmin.params.enter_key')"
           />
         </el-form-item>
-        <el-form-item label="Value:" prop="value">
+        <el-form-item :label="t('admin.superadmin.params.value') + ':'" prop="value">
           <el-input
             type="textarea"
             :rows="5"
             v-model="formData.value"
             :clearable="true"
-            placeholder="Enter value"
+            :placeholder="t('admin.superadmin.params.enter_value')"
           />
         </el-form-item>
-        <el-form-item label="Description:" prop="desc">
+        <el-form-item :label="t('admin.superadmin.params.description') + ':'" prop="desc">
           <el-input
             v-model="formData.desc"
             :clearable="true"
-            placeholder="Enter description"
+            :placeholder="t('admin.superadmin.params.enter_description')"
           />
         </el-form-item>
       </el-form>
@@ -228,33 +228,33 @@
       <div
         class="usage-instructions bg-gray-100 border border-gray-300 rounded-lg p-4 mt-5"
       >
-        <h3 class="mb-3 text-lg text-gray-800">Usage</h3>
+        <h3 class="mb-3 text-lg text-gray-800">{{ t('admin.superadmin.params.usage.title') }}</h3>
         <p class="mb-2 text-sm text-gray-600">
-          On the frontend, import
+          {{ t('admin.superadmin.params.usage.frontend_prefix') }}
           <code class="bg-blue-100 px-1 py-0.5 rounded"
             >import { getParams } from '@/utils/params'</code
           >
-          then call
+          {{ t('admin.superadmin.params.usage.frontend_then') }}
           <code class="bg-blue-100 px-1 py-0.5 rounded"
             >await getParams("{{ formData.key }}")</code
           >
-          to fetch the parameter.
+          {{ t('admin.superadmin.params.usage.frontend_suffix') }}
         </p>
         <p class="text-sm text-gray-600">
-          On the backend, register
+          {{ t('admin.superadmin.params.usage.backend_prefix') }}
           <code class="bg-blue-100 px-1 py-0.5 rounded"
             >import
             "github.com/flipped-aurora/gin-vue-admin/server/service/system"</code
           >
         </p>
         <p class="mb-2 text-sm text-gray-600">
-          then call
+          {{ t('admin.superadmin.params.usage.backend_then') }}
           <code class="bg-blue-100 px-1 py-0.5 rounded"
             >new(system.SysParamsService).GetSysParam("{{
               formData.key
             }}")</code
           >
-          to fetch the value.
+          {{ t('admin.superadmin.params.usage.backend_suffix') }}
         </p>
       </div>
     </el-drawer>
@@ -267,16 +267,16 @@
       :before-close="closeDetailShow"
     >
       <el-descriptions :column="1" border>
-        <el-descriptions-item label="Name">
+        <el-descriptions-item :label="t('admin.superadmin.params.name')">
           {{ detailForm.name }}
         </el-descriptions-item>
-        <el-descriptions-item label="Key">
+        <el-descriptions-item :label="t('admin.superadmin.params.key')">
           {{ detailForm.key }}
         </el-descriptions-item>
-        <el-descriptions-item label="Value">
+        <el-descriptions-item :label="t('admin.superadmin.params.value')">
           {{ detailForm.value }}
         </el-descriptions-item>
-        <el-descriptions-item label="Description">
+        <el-descriptions-item :label="t('admin.superadmin.params.description')">
           {{ detailForm.desc }}
         </el-descriptions-item>
       </el-descriptions>
@@ -298,11 +298,14 @@
   import { formatDate } from '@/utils/format'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { ref, reactive } from 'vue'
+  import { useI18n } from 'vue-i18n'
   import WarningBar from "@/components/warningBar/warningBar.vue";
 
   defineOptions({
     name: 'SysParams'
   })
+
+  const { t } = useI18n()
 
   // Toggle additional query conditions
   const showAllQuery = ref(false)
@@ -325,7 +328,7 @@
       },
       {
         whitespace: true,
-        message: 'Cannot be only whitespace',
+        message: () => t('admin.superadmin.params.whitespace_invalid'),
         trigger: ['input', 'blur']
       }
     ],
@@ -337,7 +340,7 @@
       },
       {
         whitespace: true,
-        message: 'Cannot be only whitespace',
+        message: () => t('admin.superadmin.params.whitespace_invalid'),
         trigger: ['input', 'blur']
       }
     ],
@@ -349,7 +352,7 @@
       },
       {
         whitespace: true,
-        message: 'Cannot be only whitespace',
+        message: () => t('admin.superadmin.params.whitespace_invalid'),
         trigger: ['input', 'blur']
       }
     ]
@@ -363,12 +366,12 @@
             searchInfo.value.startCreatedAt &&
             !searchInfo.value.endCreatedAt
           ) {
-            callback(new Error('End time is required'))
+            callback(new Error(t('admin.superadmin.params.end_time_required')))
           } else if (
             !searchInfo.value.startCreatedAt &&
             searchInfo.value.endCreatedAt
           ) {
-            callback(new Error('Start time is required'))
+            callback(new Error(t('admin.superadmin.params.start_time_required')))
           } else if (
             searchInfo.value.startCreatedAt &&
             searchInfo.value.endCreatedAt &&
@@ -377,7 +380,7 @@
               searchInfo.value.startCreatedAt.getTime() >
                 searchInfo.value.endCreatedAt.getTime())
           ) {
-            callback(new Error('Start time must be earlier than end time'))
+            callback(new Error(t('admin.superadmin.params.start_before_end')))
           } else {
             callback()
           }
@@ -458,9 +461,9 @@
 
   // Delete row
   const deleteRow = (row) => {
-    ElMessageBox.confirm('Delete this item?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.superadmin.params.messages.delete_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(() => {
       deleteSysParamsFunc(row)
@@ -469,16 +472,16 @@
 
   // Delete selected
   const onDelete = async () => {
-    ElMessageBox.confirm('Delete selected items?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.superadmin.params.messages.delete_selected_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const IDs = []
       if (multipleSelection.value.length === 0) {
         ElMessage({
           type: 'warning',
-          message: 'Please select items to delete'
+          message: t('admin.superadmin.params.messages.select_items_to_delete')
         })
         return
       }
@@ -490,7 +493,7 @@
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         if (tableData.value.length === IDs.length && page.value > 1) {
           page.value--
@@ -519,7 +522,7 @@
     if (res.code === 0) {
       ElMessage({
         type: 'success',
-        message: 'Deleted'
+        message: t('admin.common.messages.deleted')
       })
       if (tableData.value.length === 1 && page.value > 1) {
         page.value--
@@ -566,7 +569,7 @@
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Saved'
+          message: t('admin.common.messages.saved')
         })
         closeDialog()
         getTableData()

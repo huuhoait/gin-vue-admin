@@ -9,7 +9,7 @@
       :data="{'classId': props.classId}"
       :headers="{'x-token': token}"
     >
-      <el-button type="primary" :icon="Upload">Compressed upload</el-button>
+      <el-button type="primary" :icon="Upload">{{ t('admin.components.upload.compressed_upload') }}</el-button>
     </el-upload>
   </div>
 </template>
@@ -17,9 +17,12 @@
 <script setup>
   import ImageCompress from '@/utils/image'
   import { ElMessage } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { getBaseUrl } from '@/utils/format'
   import { Upload } from "@element-plus/icons-vue";
   import { useUserStore } from "@/pinia";
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'UploadImage'
@@ -53,7 +56,7 @@
     const isJPG = file.type?.toLowerCase() === 'image/jpeg'
     const isPng = file.type?.toLowerCase() === 'image/png'
     if (!isJPG && !isPng) {
-      ElMessage.error('Avatar image must be JPG or PNG')
+      ElMessage.error(t('admin.common.validation.avatar_type_limit'))
       return false
     }
 

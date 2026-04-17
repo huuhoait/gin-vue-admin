@@ -2,10 +2,10 @@
   <div>
     <div class="gva-table-box">
       <div class="gva-btn-list justify-between flex items-center">
-        <span class="text font-bold">Dictionary details</span>
+        <span class="text font-bold">{{ t('admin.superadmin.dictionary.detail.title') }}</span>
         <div class="flex items-center gap-2">
           <el-input
-            placeholder="Search display label"
+            :placeholder="t('admin.superadmin.dictionary.detail.search_placeholder')"
             v-model="searchName"
             clearable
             class="!w-64"
@@ -18,12 +18,12 @@
               <el-button
                 :type="searchName ? 'primary' : 'info'"
                 @click="applySearch"
-                >Search</el-button
+                >{{ t('admin.common.search') }}</el-button
               >
             </template>
           </el-input>
           <el-button type="primary" icon="plus" @click="openDrawer">
-            Add item
+            {{ t('admin.superadmin.dictionary.detail.add_item') }}
           </el-button>
         </div>
       </div>
@@ -38,17 +38,17 @@
       >
         <el-table-column type="selection" width="55" />
 
-        <el-table-column align="left" label="Label" prop="label" min-width="100"/>
+        <el-table-column align="left" :label="t('admin.superadmin.dictionary.detail.label')" prop="label" min-width="100"/>
 
-        <el-table-column align="left" label="Value" prop="value" />
+        <el-table-column align="left" :label="t('admin.superadmin.dictionary.detail.value')" prop="value" />
 
-        <el-table-column align="left" label="Extend" prop="extend" />
+        <el-table-column align="left" :label="t('admin.superadmin.dictionary.detail.extend')" prop="extend" />
 
-        <el-table-column align="left" label="Level" prop="level" width="80" />
+        <el-table-column align="left" :label="t('admin.superadmin.dictionary.detail.level')" prop="level" width="80" />
 
         <el-table-column
           align="left"
-          label="Status"
+          :label="t('admin.superadmin.dictionary.detail.status')"
           prop="status"
           width="100"
         >
@@ -59,14 +59,14 @@
 
         <el-table-column
           align="left"
-          label="Sort"
+          :label="t('admin.superadmin.dictionary.detail.sort')"
           prop="sort"
           width="100"
         />
 
         <el-table-column
           align="left"
-          :label="$t('admin.common.operation')"
+          :label="t('admin.common.operation')"
           :min-width="appStore.operateMinWith"
           fixed="right"
         >
@@ -77,7 +77,7 @@
               icon="plus"
               @click="addChildNode(scope.row)"
             >
-              Add child
+              {{ t('admin.superadmin.dictionary.detail.add_child') }}
             </el-button>
             <el-button
               type="primary"
@@ -85,7 +85,7 @@
               icon="edit"
               @click="updateSysDictionaryDetailFunc(scope.row)"
             >
-              Edit
+              {{ t('admin.common.edit') }}
             </el-button>
             <el-button
               type="primary"
@@ -93,7 +93,7 @@
               icon="delete"
               @click="deleteSysDictionaryDetailFunc(scope.row)"
             >
-              {{ $t('admin.common.delete') }}
+              {{ t('admin.common.delete') }}
             </el-button>
           </template>
         </el-table-column>
@@ -109,11 +109,11 @@
       <template #header>
         <div class="flex justify-between items-center">
           <span class="text-lg">{{
-            type === 'create' ? 'Add item' : 'Edit item'
+            type === 'create' ? t('admin.superadmin.dictionary.detail.add_item') : t('admin.superadmin.dictionary.detail.edit_item')
           }}</span>
           <div>
-            <el-button @click="closeDrawer">{{ $t('admin.common.cancel') }}</el-button>
-            <el-button type="primary" @click="enterDrawer">{{ $t('admin.common.confirm') }}</el-button>
+            <el-button @click="closeDrawer">{{ t('admin.common.cancel') }}</el-button>
+            <el-button type="primary" @click="enterDrawer">{{ t('admin.common.confirm') }}</el-button>
           </div>
         </div>
       </template>
@@ -123,53 +123,53 @@
         :rules="rules"
         label-width="110px"
       >
-        <el-form-item label="Parent item" prop="parentID">
+        <el-form-item :label="t('admin.superadmin.dictionary.detail.parent_item')" prop="parentID">
           <el-cascader
             v-model="formData.parentID"
             :options="[rootOption,...treeData]"
             :props="cascadeProps"
-            placeholder="Select parent item (optional)"
+            :placeholder="t('admin.superadmin.dictionary.detail.select_parent_item')"
             clearable
             filterable
             :style="{ width: '100%' }"
             @change="handleParentChange"
           />
         </el-form-item>
-        <el-form-item label="Label" prop="label">
+        <el-form-item :label="t('admin.superadmin.dictionary.detail.label')" prop="label">
           <el-input
             v-model="formData.label"
-            placeholder="Enter label"
+            :placeholder="t('admin.superadmin.dictionary.detail.enter_label')"
             clearable
             :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item label="Value" prop="value">
+        <el-form-item :label="t('admin.superadmin.dictionary.detail.value')" prop="value">
           <el-input
             v-model="formData.value"
-            placeholder="Enter value"
+            :placeholder="t('admin.superadmin.dictionary.detail.enter_value')"
             clearable
             :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item label="Extend" prop="extend">
+        <el-form-item :label="t('admin.superadmin.dictionary.detail.extend')" prop="extend">
           <el-input
             v-model="formData.extend"
-            placeholder="Enter extend"
+            :placeholder="t('admin.superadmin.dictionary.detail.enter_extend')"
             clearable
             :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item label="Status" prop="status" required>
+        <el-form-item :label="t('admin.superadmin.dictionary.detail.status')" prop="status" required>
           <el-switch
             v-model="formData.status"
-            :active-text="$t('admin.common.enabled')"
-            :inactive-text="$t('admin.common.disabled')"
+            :active-text="t('admin.common.enabled')"
+            :inactive-text="t('admin.common.disabled')"
           />
         </el-form-item>
-        <el-form-item label="Sort" prop="sort">
+        <el-form-item :label="t('admin.superadmin.dictionary.detail.sort')" prop="sort">
           <el-input-number
             v-model.number="formData.sort"
-            placeholder="Sort"
+            :placeholder="t('admin.superadmin.dictionary.detail.sort')"
           />
         </el-form-item>
       </el-form>
@@ -190,11 +190,13 @@
   import { formatBoolean, formatDate } from '@/utils/format'
   import { useAppStore } from '@/pinia'
   import { Search } from '@element-plus/icons-vue'
+  import { useI18n } from 'vue-i18n'
 
   defineOptions({
     name: 'SysDictionaryDetail'
   })
 
+  const { t } = useI18n()
   const appStore = useAppStore()
   const searchName = ref('')
 
@@ -217,21 +219,21 @@
     label: [
       {
         required: true,
-        message: 'Label is required',
+        message: () => t('admin.superadmin.dictionary.detail.rules.label_required'),
         trigger: 'blur'
       }
     ],
     value: [
       {
         required: true,
-        message: 'Value is required',
+        message: () => t('admin.superadmin.dictionary.detail.rules.value_required'),
         trigger: 'blur'
       }
     ],
     sort: [
       {
         required: true,
-        message: 'Sort is required',
+        message: () => t('admin.superadmin.dictionary.detail.rules.sort_required'),
         trigger: 'blur'
       }
     ]
@@ -291,13 +293,13 @@
       }
     } catch (error) {
       console.error('failed to fetch tree data:', error)
-      ElMessage.error('Failed to load tree data')
+      ElMessage.error(t('admin.superadmin.dictionary.detail.messages.load_failed'))
     }
   }
 
   const rootOption = {
     ID: null,
-    label: 'No parent (root)'
+    label: t('admin.superadmin.dictionary.detail.no_parent')
   }
 
 
@@ -351,16 +353,16 @@
   }
 
   const deleteSysDictionaryDetailFunc = async (row) => {
-    ElMessageBox.confirm('Delete this item?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.superadmin.dictionary.detail.messages.delete_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const res = await deleteSysDictionaryDetail({ ID: row.ID })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         await getTreeData() // reload
       }
@@ -387,7 +389,7 @@
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Saved'
+          message: t('admin.common.messages.saved')
         })
         closeDrawer()
         await getTreeData() // reload

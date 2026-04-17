@@ -45,12 +45,13 @@ func (s *autoCodePlugin) Install(file *multipart.FileHeader) (web, server int, e
 	}
 	defer src.Close()
 
-	// Create target file in temp directory
-	// Using full path concatenation ensures clear file location and avoids path confusion
-	out, err := os.Create(GVAPLUGPINATH + file.Filename)
+	// Never trust the client-supplied filename for filesystem paths.
+	// Use a random temp filename under the controlled temp directory.
+	out, err := os.CreateTemp(GVAPLUGPINATH, "gva-plugin-*.zip")
 	if err != nil {
 		return -1, -1, err
 	}
+	zipPath := out.Name()
 
 	// Copy uploaded file content to temp file
 	// io.Copy efficiently handles large files, auto-manages buffers, and avoids memory overflow
@@ -67,7 +68,7 @@ func (s *autoCodePlugin) Install(file *multipart.FileHeader) (web, server int, e
 		return -1, -1, err
 	}
 
-	paths, err := utils.Unzip(GVAPLUGPINATH+file.Filename, GVAPLUGPINATH)
+	paths, err := utils.Unzip(zipPath, GVAPLUGPINATH)
 	paths = filterFile(paths)
 	var webIndex = -1
 	var serverIndex = -1

@@ -26,8 +26,11 @@
   import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 
   import { ElMessage } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { getUrl } from '@/utils/image'
   import { useUserStore } from '@/pinia/modules/user'
+
+  const { t } = useI18n()
 
   const emits = defineEmits(['change', 'update:modelValue'])
 
@@ -49,7 +52,7 @@
 
   const toolbarConfig = {}
   const editorConfig = {
-    placeholder: 'Enter content...',
+    placeholder: t('admin.components.rich_text.enter_content'),
     MENU_CONF: {}
   }
   editorConfig.MENU_CONF['uploadImage'] = {

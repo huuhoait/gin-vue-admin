@@ -6,13 +6,16 @@
     :multiple="false"
     :headers="{'x-token': token}"
   >
-    <el-button type="primary" icon="upload" class="ml-3"> Import </el-button>
+    <el-button type="primary" icon="upload" class="ml-3"> {{ t('admin.common.import') }} </el-button>
   </el-upload>
 </template>
 
 <script setup>
   import { ElMessage } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { useUserStore } from "@/pinia";
+
+  const { t } = useI18n()
 
   let baseUrl = import.meta.env.VITE_BASE_API
   if (baseUrl === "/"){
@@ -36,7 +39,7 @@
 
   const handleSuccess = (res) => {
     if (res.code === 0) {
-      ElMessage.success('Imported')
+      ElMessage.success(t('admin.common.messages.imported'))
       emit('on-success')
     } else {
       ElMessage.error(res.msg)

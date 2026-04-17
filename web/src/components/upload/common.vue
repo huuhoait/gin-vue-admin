@@ -11,7 +11,7 @@
       multiple
       class="upload-btn"
     >
-      <el-button type="primary" :icon="Upload">Upload</el-button>
+      <el-button type="primary" :icon="Upload">{{ t('admin.common.upload') }}</el-button>
     </el-upload>
   </div>
 </template>
@@ -19,10 +19,13 @@
 <script setup>
   import { ref } from 'vue'
   import { ElMessage } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { isVideoMime, isImageMime } from '@/utils/image'
   import { getBaseUrl } from '@/utils/format'
   import { Upload } from "@element-plus/icons-vue";
   import { useUserStore } from "@/pinia";
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'UploadCommon'
@@ -51,19 +54,17 @@
     const isImage = isImageMime(file.type)
     let pass = true
     if (!isVideo && !isImage) {
-      ElMessage.error(
-        'Images must be jpg/png/svg/webp. Videos must be mp4/webm.'
-      )
+      ElMessage.error(t('admin.common.validation.upload_type_limit'))
       fullscreenLoading.value = false
       pass = false
     }
     if (!isLt5M && isVideo) {
-      ElMessage.error('Video size must be <= 5MB')
+      ElMessage.error(t('admin.common.validation.video_size_limit'))
       fullscreenLoading.value = false
       pass = false
     }
     if (!isLt500K && isImage) {
-      ElMessage.error('Uncompressed image size must be <= 500KB. Please use compressed upload.')
+      ElMessage.error(t('admin.common.validation.image_size_limit'))
       fullscreenLoading.value = false
       pass = false
     }
@@ -83,7 +84,7 @@
   const uploadError = () => {
     ElMessage({
       type: 'error',
-      message: 'Upload failed'
+      message: t('admin.common.messages.upload_failed')
     })
     fullscreenLoading.value = false
   }

@@ -7,6 +7,7 @@ import { ref, computed } from 'vue'
 import { useRouterStore } from './router'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { useStorage } from '@vueuse/core'
+import i18n from '@/i18n'
 
 import { useAppStore } from '@/pinia'
 
@@ -92,7 +93,7 @@ export const useUserStore = defineStore('user', () => {
       }
 
       if (!router.hasRoute(userInfo.value.authority.defaultRouter)) {
-        ElMessage.error('No default home route is available. Please contact an administrator.')
+        ElMessage.error(i18n.global.t('admin.auth.no_default_route'))
       } else {
         await router.replace({ name: userInfo.value.authority.defaultRouter })
       }

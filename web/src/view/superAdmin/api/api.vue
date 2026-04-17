@@ -151,11 +151,11 @@
       :show-close="false"
     >
       <warning-bar
-        title="Sync APIs. If no route group is provided, it will not be auto-synced. Use Ignore for routes that do not require auth."
+        :title="t('admin.superadmin.api.sync.warning')"
       />
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">Sync routes</span>
+          <span class="text-lg">{{ t('admin.superadmin.api.sync.header') }}</span>
           <div>
             <el-button :loading="apiCompletionLoading" @click="closeSyncDialog">
               {{ t('admin.common.cancel') }}
@@ -172,38 +172,38 @@
       </template>
 
       <h4>
-        New routes
+        {{ t('admin.superadmin.api.sync.new_routes') }}
         <span class="text-xs text-gray-500 mx-2 font-normal"
-          >Present in current routes but missing in the API table</span
+          >{{ t('admin.superadmin.api.sync.new_routes_hint') }}</span
         >
         <el-button type="primary" size="small" @click="apiCompletion">
           <el-icon size="18">
             <ai-gva />
           </el-icon>
-          Auto fill
+          {{ t('admin.superadmin.api.sync.auto_fill') }}
         </el-button>
       </h4>
       <el-table
         v-loading="syncing || apiCompletionLoading"
-        element-loading-text="Working..."
+        :element-loading-text="t('admin.superadmin.api.sync.working')"
         :data="syncApiData.newApis"
       >
         <el-table-column
           align="left"
-          label="API path"
+          :label="t('admin.superadmin.api.columns.api_path')"
           min-width="150"
           prop="path"
         />
         <el-table-column
           align="left"
-          label="API group"
+          :label="t('admin.superadmin.api.columns.api_group')"
           min-width="150"
           prop="apiGroup"
         >
           <template #default="{ row }">
             <el-select
               v-model="row.apiGroup"
-              placeholder="Select or create"
+              :placeholder="t('admin.superadmin.api.sync.select_or_create')"
               allow-create
               filterable
               default-first-option
@@ -219,7 +219,7 @@
         </el-table-column>
         <el-table-column
           align="left"
-          label="API description"
+          :label="t('admin.superadmin.api.columns.api_desc')"
           min-width="150"
           prop="description"
         >
@@ -229,7 +229,7 @@
         </el-table-column>
         <el-table-column
           align="left"
-          label="Method"
+          :label="t('admin.superadmin.api.columns.method')"
           min-width="150"
           prop="method"
         >
@@ -242,7 +242,7 @@
         <el-table-column :label="t('admin.common.operation')" min-width="150" fixed="right">
           <template #default="{ row }">
             <el-button icon="plus" type="primary" link @click="addApiFunc(row)">
-              Add one
+              {{ t('admin.superadmin.api.sync.add_one') }}
             </el-button>
             <el-button
               icon="sunrise"
@@ -250,40 +250,40 @@
               link
               @click="ignoreApiFunc(row, true)"
             >
-              Ignore
+              {{ t('admin.superadmin.api.sync.ignore') }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <h4>
-        Removed routes
+        {{ t('admin.superadmin.api.sync.removed_routes') }}
         <span class="text-xs text-gray-500 ml-2 font-normal"
-          >No longer exists in current project routes. Sync will remove it from the API table</span
+          >{{ t('admin.superadmin.api.sync.removed_routes_hint') }}</span
         >
       </h4>
       <el-table :data="syncApiData.deleteApis">
         <el-table-column
           align="left"
-          label="API path"
+          :label="t('admin.superadmin.api.columns.api_path')"
           min-width="150"
           prop="path"
         />
         <el-table-column
           align="left"
-          label="API group"
+          :label="t('admin.superadmin.api.columns.api_group')"
           min-width="150"
           prop="apiGroup"
         />
         <el-table-column
           align="left"
-          label="API description"
+          :label="t('admin.superadmin.api.columns.api_desc')"
           min-width="150"
           prop="description"
         />
         <el-table-column
           align="left"
-          label="Method"
+          :label="t('admin.superadmin.api.columns.method')"
           min-width="150"
           prop="method"
         >
@@ -296,33 +296,33 @@
       </el-table>
 
       <h4>
-        Ignored routes
+        {{ t('admin.superadmin.api.sync.ignored_routes') }}
         <span class="text-xs text-gray-500 ml-2 font-normal"
-          >Ignored routes do not participate in API sync (typically routes that do not require auth)</span
+          >{{ t('admin.superadmin.api.sync.ignored_routes_hint') }}</span
         >
       </h4>
       <el-table :data="syncApiData.ignoreApis">
         <el-table-column
           align="left"
-          label="API path"
+          :label="t('admin.superadmin.api.columns.api_path')"
           min-width="150"
           prop="path"
         />
         <el-table-column
           align="left"
-          label="API group"
+          :label="t('admin.superadmin.api.columns.api_group')"
           min-width="150"
           prop="apiGroup"
         />
         <el-table-column
           align="left"
-          label="API description"
+          :label="t('admin.superadmin.api.columns.api_desc')"
           min-width="150"
           prop="description"
         />
         <el-table-column
           align="left"
-          label="Method"
+          :label="t('admin.superadmin.api.columns.method')"
           min-width="150"
           prop="method"
         >
@@ -340,7 +340,7 @@
               link
               @click="ignoreApiFunc(row, false)"
             >
-              Unignore
+              {{ t('admin.superadmin.api.sync.unignore') }}
             </el-button>
           </template>
         </el-table-column>
@@ -363,7 +363,7 @@
         </div>
       </template>
 
-      <warning-bar title="Adding an API requires assigning permissions in Role management" />
+      <warning-bar :title="t('admin.superadmin.api.dialog.warning_add_api')" />
       <el-form ref="apiForm" :model="form" :rules="rules" label-width="80px">
         <el-form-item :label="t('admin.superadmin.api.fields.path')" prop="path">
           <el-input v-model="form.path" autocomplete="off" />
@@ -385,7 +385,7 @@
         <el-form-item :label="t('admin.superadmin.api.fields.group')" prop="apiGroup">
           <el-select
             v-model="form.apiGroup"
-            placeholder="Select or create"
+            :placeholder="t('admin.superadmin.api.sync.select_or_create')"
             allow-create
             filterable
             default-first-option
@@ -420,7 +420,7 @@
           </div>
         </div>
       </template>
-      <warning-bar title="Note: saving overwrites all role relations for this API and refreshes Casbin cache" />
+      <warning-bar :title="t('admin.superadmin.api.dialog.assign_warning')" />
       <el-tree
         ref="roleTreeRef"
         v-loading="assignRoleLoading"
@@ -507,10 +507,10 @@
 
   const type = ref('')
   const rules = ref({
-    path: [{ required: true, message: 'API path is required', trigger: 'blur' }],
-    apiGroup: [{ required: true, message: 'API group is required', trigger: 'blur' }],
-    method: [{ required: true, message: 'Method is required', trigger: 'blur' }],
-    description: [{ required: true, message: 'Description is required', trigger: 'blur' }]
+    path: [{ required: true, message: () => t('admin.superadmin.api.rules.path_required'), trigger: 'blur' }],
+    apiGroup: [{ required: true, message: () => t('admin.superadmin.api.rules.group_required'), trigger: 'blur' }],
+    method: [{ required: true, message: () => t('admin.superadmin.api.rules.method_required'), trigger: 'blur' }],
+    description: [{ required: true, message: () => t('admin.superadmin.api.rules.description_required'), trigger: 'blur' }]
   })
 
   const page = ref(1)
@@ -558,14 +558,14 @@
     if (!row.apiGroup) {
       ElMessage({
         type: 'error',
-        message: 'Please select an API group first'
+        message: t('admin.superadmin.api.messages.select_group_first')
       })
       return
     }
     if (!row.description) {
       ElMessage({
         type: 'error',
-        message: 'Please fill in API description first'
+        message: t('admin.superadmin.api.messages.fill_description_first')
       })
       return
     }
@@ -573,7 +573,7 @@
     if (res.code === 0) {
       ElMessage({
         type: 'success',
-        message: 'Added. Go to Role management to assign permissions',
+        message: t('admin.superadmin.api.messages.added_assign_hint'),
         showClose: true
       })
       syncApiData.value.newApis = syncApiData.value.newApis.filter(
@@ -598,7 +598,7 @@
     ) {
       ElMessage({
         type: 'error',
-        message: 'Some APIs are missing group or description'
+        message: t('admin.superadmin.api.messages.missing_group_or_desc')
       })
       return
     }
@@ -673,7 +673,7 @@
   }
 
   const onDelete = async () => {
-    ElMessageBox.confirm('Delete selected items?', 'Confirm', {
+    ElMessageBox.confirm(t('admin.superadmin.api.messages.delete_selected_confirm'), t('admin.common.confirms.delete_title'), {
       confirmButtonText: t('admin.common.confirm'),
       cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
@@ -693,7 +693,7 @@
     })
   }
   const onFresh = async () => {
-    ElMessageBox.confirm('Refresh cache?', 'Confirm', {
+    ElMessageBox.confirm(t('admin.superadmin.api.messages.refresh_cache_confirm'), t('admin.common.confirms.delete_title'), {
       confirmButtonText: t('admin.common.confirm'),
       cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
@@ -740,15 +740,15 @@
     }
   }
 
-  const dialogTitle = ref('Add API')
+  const dialogTitle = ref(t('admin.superadmin.api.dialog.add_title'))
   const dialogFormVisible = ref(false)
   const openDialog = (key) => {
     switch (key) {
       case 'addApi':
-        dialogTitle.value = 'Add API'
+        dialogTitle.value = t('admin.superadmin.api.dialog.add_title')
         break
       case 'edit':
-        dialogTitle.value = 'Edit API'
+        dialogTitle.value = t('admin.superadmin.api.dialog.edit_title')
         break
       default:
         break
@@ -777,7 +777,7 @@
               if (res.code === 0) {
                 ElMessage({
                   type: 'success',
-                  message: 'Added',
+                  message: t('admin.common.messages.created'),
                   showClose: true
                 })
               }
@@ -793,7 +793,7 @@
               if (res.code === 0) {
                 ElMessage({
                   type: 'success',
-                  message: 'Updated',
+                  message: t('admin.common.messages.updated'),
                   showClose: true
                 })
               }
@@ -805,7 +805,7 @@
             {
               ElMessage({
                 type: 'error',
-                message: 'Unknown operation',
+                message: t('admin.superadmin.api.messages.unknown_operation'),
                 showClose: true
               })
             }
@@ -816,7 +816,7 @@
   }
 
   const deleteApiFunc = async (row) => {
-    ElMessageBox.confirm('This will remove the API from all roles. Continue?', 'Confirm', {
+    ElMessageBox.confirm(t('admin.superadmin.api.messages.delete_confirm_detail'), t('admin.common.confirms.delete_title'), {
       confirmButtonText: t('admin.common.confirm'),
       cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
@@ -825,7 +825,7 @@
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         if (tableData.value.length === 1 && page.value > 1) {
           page.value--
@@ -860,7 +860,7 @@
       } catch (_) {
         ElMessage({
           type: 'error',
-          message: 'Auto fill failed, please retry'
+          message: t('admin.superadmin.api.messages.auto_fill_failed')
         })
       }
     }
@@ -903,11 +903,11 @@
         authorityIds: checkedKeys
       })
       if (res.code === 0) {
-        ElMessage({ type: 'success', message: 'Assigned' })
+        ElMessage({ type: 'success', message: t('admin.superadmin.api.messages.assigned') })
         assignRoleDrawerVisible.value = false
       }
     } catch {
-      ElMessage({ type: 'error', message: 'Assign failed, please retry' })
+      ElMessage({ type: 'error', message: t('admin.superadmin.api.messages.assign_failed') })
     }
     assignRoleSubmitting.value = false
   }

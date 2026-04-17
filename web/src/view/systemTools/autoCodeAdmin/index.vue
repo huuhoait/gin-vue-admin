@@ -3,49 +3,49 @@
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-button type="primary" icon="plus" @click="goAutoCode(null)">
-          New
+          {{ t('admin.systemtools.autocode_admin.new') }}
         </el-button>
       </div>
       <el-table :data="tableData">
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="id" width="60" prop="ID" />
-        <el-table-column align="left" label="Date" width="180">
+        <el-table-column align="left" :label="t('admin.systemtools.autocode_admin.id')" width="60" prop="ID" />
+        <el-table-column align="left" :label="t('admin.systemtools.autocode_admin.date')" width="180">
           <template #default="scope">
             {{ formatDate(scope.row.CreatedAt) }}
           </template>
         </el-table-column>
         <el-table-column
           align="left"
-          label="Struct name"
+          :label="t('admin.systemtools.autocode_admin.struct_name')"
           min-width="150"
           prop="structName"
         />
         <el-table-column
           align="left"
-          label="Struct description"
+          :label="t('admin.systemtools.autocode_admin.struct_description')"
           min-width="150"
           prop="description"
         />
         <el-table-column
           align="left"
-          label="Table name"
+          :label="t('admin.systemtools.autocode_admin.table_name')"
           min-width="150"
           prop="tableName"
         />
         <el-table-column
           align="left"
-          label="Rollback flag"
+          :label="t('admin.systemtools.autocode_admin.rollback_flag')"
           min-width="150"
           prop="flag"
         >
           <template #default="scope">
             <el-tag v-if="scope.row.flag" type="danger" effect="dark">
-              Rolled back
+              {{ t('admin.systemtools.autocode_admin.rolled_back') }}
             </el-tag>
-            <el-tag v-else type="success" effect="dark"> Not rolled back </el-tag>
+            <el-tag v-else type="success" effect="dark"> {{ t('admin.systemtools.autocode_admin.not_rolled_back') }} </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="Actions" min-width="240">
+        <el-table-column align="left" :label="t('admin.systemtools.autocode_admin.actions')" min-width="240">
           <template #default="scope">
             <div>
               <el-button
@@ -54,10 +54,10 @@
                 :disabled="scope.row.flag === 1"
                 @click="addFuncBtn(scope.row)"
               >
-                Add method
+                {{ t('admin.systemtools.autocode_admin.add_method') }}
               </el-button>
               <el-button type="primary" link @click="goAutoCode(scope.row, 1)">
-                Add field
+                {{ t('admin.systemtools.autocode_admin.add_field') }}
               </el-button>
               <el-button
                 type="primary"
@@ -65,13 +65,13 @@
                 :disabled="scope.row.flag === 1"
                 @click="openDialog(scope.row)"
               >
-                Rollback
+                {{ t('admin.systemtools.autocode_admin.rollback') }}
               </el-button>
               <el-button type="primary" link @click="goAutoCode(scope.row)">
-                Reuse
+                {{ t('admin.systemtools.autocode_admin.reuse') }}
               </el-button>
               <el-button type="primary" link @click="deleteRow(scope.row)">
-                Delete
+                {{ t('admin.systemtools.autocode_admin.delete') }}
               </el-button>
             </div>
           </template>
@@ -96,25 +96,25 @@
       width="600px"
     >
       <el-form :inline="true" :model="formData" label-width="80px">
-        <el-form-item label="Options:">
-          <el-checkbox v-model="formData.deleteApi" label="Delete APIs" />
-          <el-checkbox v-model="formData.deleteMenu" label="Delete menus" />
+        <el-form-item :label="t('admin.systemtools.autocode_admin.options')">
+          <el-checkbox v-model="formData.deleteApi" :label="t('admin.systemtools.autocode_admin.delete_apis')" />
+          <el-checkbox v-model="formData.deleteMenu" :label="t('admin.systemtools.autocode_admin.delete_menus')" />
           <el-checkbox
             v-model="formData.deleteTable"
-            label="Delete table"
+            :label="t('admin.systemtools.autocode_admin.delete_table')"
             @change="deleteTableCheck"
           />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="closeDialog"> Cancel </el-button>
+          <el-button @click="closeDialog"> {{ t('admin.systemtools.autocode_admin.cancel') }} </el-button>
           <el-popconfirm
-            title="This will rollback generated files and selected items. Continue?"
+            :title="t('admin.systemtools.autocode_admin.rollback_confirm')"
             @confirm="enterDialog"
           >
             <template #reference>
-              <el-button type="primary"> Confirm </el-button>
+              <el-button type="primary"> {{ t('admin.common.confirm') }} </el-button>
             </template>
           </el-popconfirm>
         </div>
@@ -129,13 +129,13 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">Actions</span>
+          <span class="text-lg">{{ t('admin.systemtools.autocode_admin.actions') }}</span>
           <div>
             <el-button type="primary" @click="runFunc" :loading="aiLoading">
-              Generate
+              {{ t('admin.systemtools.autocode_admin.generate') }}
             </el-button>
             <el-button type="primary" @click="closeFunc" :loading="aiLoading">
-              Cancel
+              {{ t('admin.systemtools.autocode_admin.cancel') }}
             </el-button>
           </div>
         </div>
@@ -144,34 +144,34 @@
         <el-form
           v-loading="aiLoading"
           label-position="top"
-          element-loading-text="Thinking, please wait..."
+          :element-loading-text="t('admin.systemtools.autocode_admin.thinking_wait')"
           :model="autoFunc"
           label-width="80px"
         >
           <el-row :gutter="12">
             <el-col :span="8">
-              <el-form-item label="Package:">
+              <el-form-item :label="t('admin.systemtools.autocode_admin.package')">
                 <el-input
                     v-model="autoFunc.package"
-                    placeholder="Enter package"
+                    :placeholder="t('admin.systemtools.autocode_admin.enter_package')"
                     disabled
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="Struct name:">
+              <el-form-item :label="t('admin.systemtools.autocode_admin.struct_name_field')">
                 <el-input
                     v-model="autoFunc.structName"
-                    placeholder="Enter struct name"
+                    :placeholder="t('admin.systemtools.autocode_admin.enter_struct_name')"
                     disabled
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="Frontend filename:">
+              <el-form-item :label="t('admin.systemtools.autocode_admin.frontend_filename')">
                 <el-input
                     v-model="autoFunc.packageName"
-                    placeholder="Enter filename"
+                    :placeholder="t('admin.systemtools.autocode_admin.enter_filename')"
                     disabled
                 />
               </el-form-item>
@@ -179,45 +179,45 @@
           </el-row>
           <el-row :gutter="12">
             <el-col :span="8">
-              <el-form-item label="Backend filename:">
+              <el-form-item :label="t('admin.systemtools.autocode_admin.backend_filename')">
                 <el-input
                     v-model="autoFunc.humpPackageName"
-                    placeholder="Enter filename"
+                    :placeholder="t('admin.systemtools.autocode_admin.enter_filename')"
                     disabled
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="Description:">
+              <el-form-item :label="t('admin.systemtools.autocode_admin.description')">
                 <el-input
                     v-model="autoFunc.description"
-                    placeholder="Enter description"
+                    :placeholder="t('admin.systemtools.autocode_admin.enter_description')"
                     disabled
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="Abbreviation:">
+              <el-form-item :label="t('admin.systemtools.autocode_admin.abbreviation')">
                 <el-input
                     v-model="autoFunc.abbreviation"
-                    placeholder="Enter abbreviation"
+                    :placeholder="t('admin.systemtools.autocode_admin.enter_abbreviation')"
                     disabled
                 />
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item label="Use AI:">
+          <el-form-item :label="t('admin.systemtools.autocode_admin.use_ai')">
             <el-switch v-model="autoFunc.isAi" />
             <span class="text-sm text-red-600 p-2"
-              >AI generation may be unstable. Please review and adjust the generated code.</span
+              >{{ t('admin.systemtools.autocode_admin.ai_warning') }}</span
             >
           </el-form-item>
           <template v-if="autoFunc.isAi">
-            <el-form-item label="AI prompt:">
+            <el-form-item :label="t('admin.systemtools.autocode_admin.ai_prompt')">
               <div class="relative w-full">
                 <el-input
                   type="textarea"
-                  placeholder="Enter a prompt to generate code automatically"
+                  :placeholder="t('admin.systemtools.autocode_admin.ai_prompt_placeholder')"
                   v-model="autoFunc.prompt"
                   :rows="5"
                   @input="autoFunc.router = autoFunc.router.replace(/\//g, '')"
@@ -226,11 +226,11 @@
                   @click="aiAddFunc"
                   type="primary"
                   class="absolute right-2 bottom-2"
-                  ><ai-gva />Generate</el-button
+                  ><ai-gva />{{ t('admin.systemtools.autocode_admin.generate') }}</el-button
                 >
               </div>
             </el-form-item>
-            <el-form-item label="API method:">
+            <el-form-item :label="t('admin.systemtools.autocode_admin.api_method')">
               <v-ace-editor
                 v-model:value="autoFunc.apiFunc"
                 lang="golang"
@@ -238,7 +238,7 @@
                 class="h-80 w-full"
               />
             </el-form-item>
-            <el-form-item label="Server method:">
+            <el-form-item :label="t('admin.systemtools.autocode_admin.server_method')">
               <v-ace-editor
                 v-model:value="autoFunc.serverFunc"
                 lang="golang"
@@ -246,7 +246,7 @@
                 class="h-80 w-full"
               />
             </el-form-item>
-            <el-form-item label="Frontend JS API method:">
+            <el-form-item :label="t('admin.systemtools.autocode_admin.frontend_js_api')">
               <v-ace-editor
                 v-model:value="autoFunc.jsFunc"
                 lang="javascript"
@@ -256,27 +256,27 @@
             </el-form-item>
           </template>
 
-          <el-form-item label="Method summary:">
+          <el-form-item :label="t('admin.systemtools.autocode_admin.method_summary')">
             <div class="flex w-full gap-2">
               <el-input
                 class="flex-1"
                 v-model="autoFunc.funcDesc"
-                placeholder="Enter method summary"
+                :placeholder="t('admin.systemtools.autocode_admin.enter_method_summary')"
               />
               <el-button type="primary" @click="autoComplete"
-                ><ai-gva />Auto-fill</el-button
+                ><ai-gva />{{ t('admin.systemtools.autocode_admin.auto_fill') }}</el-button
               >
             </div>
           </el-form-item>
-          <el-form-item label="Method name:">
+          <el-form-item :label="t('admin.systemtools.autocode_admin.method_name')">
             <el-input
               @blur="autoFunc.funcName = toUpperCase(autoFunc.funcName)"
               v-model="autoFunc.funcName"
-              placeholder="Enter method name"
+              :placeholder="t('admin.systemtools.autocode_admin.enter_method_name')"
             />
           </el-form-item>
-          <el-form-item label="HTTP method:">
-            <el-select v-model="autoFunc.method" placeholder="Select method">
+          <el-form-item :label="t('admin.systemtools.autocode_admin.http_method')">
+            <el-select v-model="autoFunc.method" :placeholder="t('admin.systemtools.autocode_admin.select_method')">
               <el-option
                 v-for="item in ['GET', 'POST', 'PUT', 'DELETE']"
                 :key="item"
@@ -285,21 +285,21 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="Require auth:">
+          <el-form-item :label="t('admin.systemtools.autocode_admin.require_auth')">
             <el-switch
               v-model="autoFunc.isAuth"
-              active-text="Yes"
-              inactive-text="No"
+              :active-text="t('admin.systemtools.autocode_admin.yes')"
+              :inactive-text="t('admin.systemtools.autocode_admin.no')"
             />
           </el-form-item>
-          <el-form-item label="Route path:">
+          <el-form-item :label="t('admin.systemtools.autocode_admin.route_path')">
             <el-input
               v-model="autoFunc.router"
-              placeholder="Route path"
+              :placeholder="t('admin.systemtools.autocode_admin.route_placeholder')"
               @input="autoFunc.router = autoFunc.router.replace(/\//g, '')"
             />
             <div>
-              API path: [{{ autoFunc.method }}] /{{ autoFunc.abbreviation }}/{{
+              {{ t('admin.systemtools.autocode_admin.api_path') }}: [{{ autoFunc.method }}] /{{ autoFunc.abbreviation }}/{{
                 autoFunc.router
               }}
             </div>
@@ -323,11 +323,14 @@
   import { ref } from 'vue'
   import { formatDate } from '@/utils/format'
   import { toUpperCase } from '@/utils/stringFun'
+  import { useI18n } from 'vue-i18n'
 
   import { VAceEditor } from 'vue3-ace-editor'
   import 'ace-builds/src-noconflict/mode-javascript'
   import 'ace-builds/src-noconflict/mode-golang'
   import 'ace-builds/src-noconflict/theme-github_dark'
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'AutoCodeAdmin'
@@ -404,19 +407,19 @@
     autoFunc.value.funcName = toUpperCase(autoFunc.value.funcName)
 
     if (!autoFunc.value.funcName) {
-      ElMessage.error('Please enter a method name')
+      ElMessage.error(t('admin.systemtools.autocode_admin.enter_method_name_err'))
       return
     }
     if (!autoFunc.value.method) {
-      ElMessage.error('Please select a method')
+      ElMessage.error(t('admin.systemtools.autocode_admin.select_method_err'))
       return
     }
     if (!autoFunc.value.router) {
-      ElMessage.error('Please enter a route')
+      ElMessage.error(t('admin.systemtools.autocode_admin.enter_route_err'))
       return
     }
     if (!autoFunc.value.funcDesc) {
-      ElMessage.error('Please enter a method summary')
+      ElMessage.error(t('admin.systemtools.autocode_admin.enter_method_summary_err'))
       return
     }
 
@@ -426,14 +429,14 @@
         !autoFunc.value.serverFunc ||
         !autoFunc.value.jsFunc
       ) {
-        ElMessage.error('Please generate base code with AI first. If it fails, try again.')
+        ElMessage.error(t('admin.systemtools.autocode_admin.generate_ai_first'))
         return
       }
     }
 
     const res = await addFunc(autoFunc.value)
     if (res.code === 0) {
-      ElMessage.success('Method added')
+      ElMessage.success(t('admin.systemtools.autocode_admin.method_added'))
       closeFunc()
     }
   }
@@ -466,14 +469,14 @@
   getTableData()
 
   const deleteRow = async (row) => {
-    ElMessageBox.confirm('This will delete this history entry. Continue?', 'Confirm', {
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.systemtools.autocode_admin.delete_history_confirm'), t('admin.common.confirm'), {
+      confirmButtonText: t('admin.systemtools.autocode_admin.delete'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const res = await delSysHistory({ id: Number(row.ID) })
       if (res.code === 0) {
-        ElMessage.success('Deleted')
+        ElMessage.success(t('admin.common.messages.deleted'))
         getTableData()
       }
     })
@@ -481,7 +484,7 @@
 
   // Open dialog
   const openDialog = (row) => {
-    dialogFormTitle.value = 'Rollback: ' + row.structName
+    dialogFormTitle.value = t('admin.systemtools.autocode_admin.rollback_title', { name: row.structName })
     formData.value.id = row.ID
     dialogFormVisible.value = true
   }
@@ -501,25 +504,25 @@
   const deleteTableCheck = (flag) => {
     if (flag) {
       ElMessageBox.confirm(
-        `This will delete auto-generated files and APIs (and DROP the table). Continue?`,
-        'Warning',
+        t('admin.systemtools.autocode_admin.drop_table_warn'),
+        t('admin.common.confirms.warning'),
         {
           closeOnClickModal: false,
           distinguishCancelAndClose: true,
-          confirmButtonText: 'Confirm',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: t('admin.common.confirm'),
+          cancelButtonText: t('admin.common.cancel'),
           type: 'warning'
         }
       )
         .then(() => {
           ElMessageBox.confirm(
-            `This will delete auto-generated files and APIs (and DROP the table). Please confirm again.`,
-            'DROP table',
+            t('admin.systemtools.autocode_admin.drop_table_warn_again'),
+            t('admin.systemtools.autocode_admin.drop_table_title'),
             {
               closeOnClickModal: false,
               distinguishCancelAndClose: true,
-              confirmButtonText: 'Confirm',
-              cancelButtonText: 'Cancel',
+              confirmButtonText: t('admin.common.confirm'),
+              cancelButtonText: t('admin.common.cancel'),
               type: 'warning'
             }
           ).catch(() => {
@@ -535,7 +538,7 @@
   const enterDialog = async () => {
     const res = await rollback(formData.value)
     if (res.code === 0) {
-      ElMessage.success('Rolled back')
+      ElMessage.success(t('admin.common.messages.rolled_back'))
       getTableData()
     }
   }
@@ -563,7 +566,7 @@
     autoFunc.value.jsFunc = ''
 
     if (!autoFunc.value.prompt) {
-      ElMessage.error('Please enter a prompt')
+      ElMessage.error(t('admin.systemtools.autocode_admin.enter_prompt'))
       return
     }
 
@@ -593,7 +596,7 @@
         autoFunc.value.router = routerArr[routerArr.length - 1]
         autoFunc.value.funcDesc = autoFunc.value.prompt
       } catch (_) {
-        ElMessage.error('AI is busy. Please try again.')
+        ElMessage.error(t('admin.systemtools.autocode_admin.ai_busy_retry'))
       }
     }
   }
@@ -613,7 +616,7 @@
         autoFunc.value.router = aiData.router
         autoFunc.value.prompt = autoFunc.value.funcDesc
       } catch (_) {
-        ElMessage.error('AI failed. Please try again.')
+        ElMessage.error(t('admin.systemtools.autocode_admin.ai_failed_retry'))
       }
     }
   }

@@ -10,10 +10,10 @@
       :on-change="handleFileChange"
       :headers="{'x-token': token}"
   >
-    <el-button type="primary" icon="crop"> Crop upload</el-button>
+    <el-button type="primary" icon="crop"> {{ t('admin.components.upload.crop_upload') }}</el-button>
   </el-upload>
 
-  <el-dialog v-model="dialogVisible" title="Image crop" width="1200px" append-to-body @close="dialogVisible = false" :close-on-click-modal="false" draggable>
+  <el-dialog v-model="dialogVisible" :title="t('admin.components.upload.image_crop')" width="1200px" append-to-body @close="dialogVisible = false" :close-on-click-modal="false" draggable>
     <div class="flex gap-[30px] h-[600px]">
       <!-- Left editor -->
       <div class="flex flex-col flex-1">
@@ -40,10 +40,10 @@
         <!-- Toolbar -->
         <div class="mt-[20px] flex items-center p-[10px] bg-white rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.1)]">
           <el-button-group>
-            <el-tooltip content="Rotate left">
+            <el-tooltip :content="t('admin.components.upload.rotate_left')">
               <el-button @click="rotate(-90)" :icon="RefreshLeft" />
             </el-tooltip>
-            <el-tooltip content="Rotate right">
+            <el-tooltip :content="t('admin.components.upload.rotate_right')">
               <el-button @click="rotate(90)" :icon="RefreshRight" />
             </el-tooltip>
             <el-button :icon="Plus" @click="changeScale(1)"></el-button>
@@ -51,7 +51,7 @@
           </el-button-group>
 
 
-          <el-select v-model="currentRatio" placeholder="Select ratio" class="w-32 ml-4" @change="onCurrentRatio">
+          <el-select v-model="currentRatio" :placeholder="t('admin.components.upload.select_ratio')" class="w-32 ml-4" @change="onCurrentRatio">
             <el-option v-for="(item, index) in ratioOptions" :key="index" :label="item.label" :value="index" />
           </el-select>
         </div>
@@ -60,7 +60,7 @@
       <!-- Right preview -->
       <div class="w-[340px]">
         <div class="bg-white p-5 rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.1)]">
-          <div class="mb-[15px] text-gray-600">Preview</div>
+          <div class="mb-[15px] text-gray-600">{{ t('admin.common.preview') }}</div>
           <div class="bg-white p-5 rounded-lg shadow-[0_2px_12px_rgba(0,0,0,0.1)]"
                :style="{'width': previews.w + 'px', 'height': previews.h + 'px'}"
           >
@@ -73,8 +73,8 @@
     </div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleUpload" :loading="uploading"> {{ uploading ? 'Uploading...' : 'Upload' }}
+        <el-button @click="dialogVisible = false">{{ t('admin.common.cancel') }}</el-button>
+        <el-button type="primary" @click="handleUpload" :loading="uploading"> {{ uploading ? t('admin.common.uploading') : t('admin.common.upload') }}
         </el-button>
       </div>
     </template>
@@ -84,11 +84,14 @@
 <script setup>
 import { ref, getCurrentInstance } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { RefreshLeft, RefreshRight, Plus, Minus } from '@element-plus/icons-vue'
 import 'vue-cropper/dist/index.css'
 import { VueCropper } from 'vue-cropper'
 import { getBaseUrl } from '@/utils/format'
 import { useUserStore } from "@/pinia";
+
+const { t } = useI18n()
 
 defineOptions({
   name: 'CropperImage'
@@ -123,7 +126,7 @@ const ratioOptions = ref([
   { label: '16:9', value: [16, 9] },
   { label: '9:16', value: [9, 16] },
   { label: '4:3', value: [4, 3] },
-  { label: 'Free', value: [] }
+  { label: t('admin.components.upload.free_ratio'), value: [] }
 ])
 
 const fixedNumber = ref([1, 1])
@@ -166,12 +169,12 @@ const onCurrentRatio = () => {
 const handleFileChange = (file) => {
   const isImage = file.raw.type.includes('image')
   if (!isImage) {
-    ElMessage.error('Please select an image file')
+    ElMessage.error(t('admin.common.validation.image_file_required'))
     return
   }
 
   if (file.raw.size / 1024 / 1024 > 8) {
-    ElMessage.error('File size must be <= 8MB')
+    ElMessage.error(t('admin.common.validation.file_size_limit', { size: '8MB' }))
     return false
   }
 
@@ -210,7 +213,7 @@ const handleUpload = () => {
 
     } catch (error) {
       uploading.value = false
-      ElMessage.error('Upload failed: ' + error.message)
+      ElMessage.error(t('admin.common.messages.upload_failed') + ': ' + error.message)
     }
   })
 }
@@ -222,7 +225,7 @@ const handleImageSuccess = (res) => {
       uploading.value = false
       dialogVisible.value = false
       previews.value = {}
-      ElMessage.success('Uploaded')
+      ElMessage.success(t('admin.common.messages.uploaded'))
       emit('on-success', data.url)
     }, 1000)
   }

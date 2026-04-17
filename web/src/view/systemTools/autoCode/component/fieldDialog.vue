@@ -1,7 +1,7 @@
 <template>
   <div>
     <warning-bar
-      title="id, created_at, updated_at, deleted_at are auto-generated. Do not create them manually. For search conditions, LIKE only supports strings."
+      :title="t('admin.system_tools.field_dialog.warning')"
     />
     <el-form
       ref="fieldDialogForm"
@@ -11,33 +11,33 @@
       :rules="rules"
       class="grid grid-cols-2"
     >
-      <el-form-item label="Field name" prop="fieldName">
+      <el-form-item :label="t('admin.system_tools.field_dialog.field_name')" prop="fieldName">
         <el-input
           v-model="middleDate.fieldName"
           autocomplete="off"
           style="width: 80%"
         />
         <el-button style="width: 18%; margin-left: 2%" @click="autoFill">
-          <span style="font-size: 12px">Auto fill</span>
+          <span style="font-size: 12px">{{ t('admin.system_tools.field_dialog.auto_fill') }}</span>
         </el-button>
       </el-form-item>
-      <el-form-item label="Field label (CN)" prop="fieldDesc">
+      <el-form-item :label="t('admin.system_tools.field_dialog.field_desc')" prop="fieldDesc">
         <el-input v-model="middleDate.fieldDesc" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="Field JSON" prop="fieldJson">
+      <el-form-item :label="t('admin.system_tools.field_dialog.field_json')" prop="fieldJson">
         <el-input v-model="middleDate.fieldJson" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="DB column name" prop="columnName">
+      <el-form-item :label="t('admin.system_tools.field_dialog.db_column_name')" prop="columnName">
         <el-input v-model="middleDate.columnName" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="DB column comment" prop="comment">
+      <el-form-item :label="t('admin.system_tools.field_dialog.db_column_comment')" prop="comment">
         <el-input v-model="middleDate.comment" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="Field type" prop="fieldType">
+      <el-form-item :label="t('admin.system_tools.field_dialog.field_type')" prop="fieldType">
         <el-select
           v-model="middleDate.fieldType"
           style="width: 100%"
-          placeholder="Select field type"
+          :placeholder="t('admin.system_tools.field_dialog.select_field_type')"
           clearable
           @change="clearOther"
         >
@@ -51,24 +51,24 @@
         </el-select>
       </el-form-item>
       <el-form-item
-        :label="middleDate.fieldType === 'enum' ? 'Enum values' : 'Type length'"
+        :label="middleDate.fieldType === 'enum' ? t('admin.system_tools.field_dialog.enum_values') : t('admin.system_tools.field_dialog.type_length')"
         prop="dataTypeLong"
       >
         <el-input
           v-model="middleDate.dataTypeLong"
           :placeholder="
             middleDate.fieldType === 'enum'
-              ? `e.g. 'beijing','tianjin'`
-              : 'DB type length'
+              ? t('admin.system_tools.field_dialog.enum_placeholder')
+              : t('admin.system_tools.field_dialog.db_type_length')
           "
         />
       </el-form-item>
-      <el-form-item label="Search operator" prop="fieldSearchType">
+      <el-form-item :label="t('admin.system_tools.field_dialog.search_operator')" prop="fieldSearchType">
         <el-select
           v-model="middleDate.fieldSearchType"
           :disabled="middleDate.fieldType === 'json'"
           style="width: 100%"
-          placeholder="Select search operator"
+          :placeholder="t('admin.system_tools.field_dialog.select_search_operator')"
           clearable
         >
           <el-option
@@ -80,12 +80,12 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="Dictionary" prop="dictType">
+      <el-form-item :label="t('admin.system_tools.field_dialog.dictionary')" prop="dictType">
         <el-select
           v-model="middleDate.dictType"
           style="width: 100%"
           :disabled="middleDate.fieldType !== 'string' && middleDate.fieldType !== 'array'"
-          placeholder="Select dictionary"
+          :placeholder="t('admin.system_tools.field_dialog.select_dictionary')"
           clearable
         >
           <el-option
@@ -96,21 +96,21 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="Default value">
+      <el-form-item :label="t('admin.system_tools.field_dialog.default_value')">
         <el-input
           v-model="middleDate.defaultValue"
-          placeholder="Enter default value"
+          :placeholder="t('admin.system_tools.field_dialog.default_value_placeholder')"
         />
       </el-form-item>
-      <el-form-item label="Primary key">
+      <el-form-item :label="t('admin.system_tools.field_dialog.primary_key')">
         <el-checkbox v-model="middleDate.primaryKey" />
       </el-form-item>
-      <el-form-item label="Index type" prop="fieldIndexType">
+      <el-form-item :label="t('admin.system_tools.field_dialog.index_type')" prop="fieldIndexType">
         <el-select
           v-model="middleDate.fieldIndexType"
           :disabled="middleDate.fieldType === 'json'"
           style="width: 100%"
-          placeholder="Select index type"
+          :placeholder="t('admin.system_tools.field_dialog.select_index_type')"
           clearable
         >
           <el-option
@@ -122,47 +122,47 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="FE create / edit">
+      <el-form-item :label="t('admin.system_tools.field_dialog.fe_form')">
         <el-switch v-model="middleDate.form" />
       </el-form-item>
-      <el-form-item label="FE table column">
+      <el-form-item :label="t('admin.system_tools.field_dialog.fe_table')">
         <el-switch v-model="middleDate.table" />
       </el-form-item>
-      <el-form-item label="FE details">
+      <el-form-item :label="t('admin.system_tools.field_dialog.fe_details')">
         <el-switch v-model="middleDate.desc" />
       </el-form-item>
-      <el-form-item label="Import / export">
+      <el-form-item :label="t('admin.system_tools.field_dialog.import_export')">
         <el-switch v-model="middleDate.excel" />
       </el-form-item>
-      <el-form-item label="Sortable">
+      <el-form-item :label="t('admin.system_tools.field_dialog.sortable')">
         <el-switch v-model="middleDate.sort" />
       </el-form-item>
-      <el-form-item label="Required">
+      <el-form-item :label="t('admin.system_tools.field_dialog.required')">
         <el-switch v-model="middleDate.require" />
       </el-form-item>
-      <el-form-item label="Clearable">
+      <el-form-item :label="t('admin.system_tools.field_dialog.clearable')">
         <el-switch v-model="middleDate.clearable" />
       </el-form-item>
-      <el-form-item label="Hide search field">
+      <el-form-item :label="t('admin.system_tools.field_dialog.hide_search')">
         <el-switch
           v-model="middleDate.fieldSearchHide"
           :disabled="!middleDate.fieldSearchType"
         />
       </el-form-item>
-      <el-form-item label="Validation message">
+      <el-form-item :label="t('admin.system_tools.field_dialog.validation_message')">
         <el-input v-model="middleDate.errorText" />
       </el-form-item>
     </el-form>
     <el-collapse v-model="activeNames">
       <el-collapse-item
-        title="Data source (advanced; incorrect configuration may break generated code)"
+        :title="t('admin.system_tools.field_dialog.data_source')"
         name="1"
       >
         <el-row :gutter="8">
           <el-col :span="4">
             <el-select
               v-model="middleDate.dataSource.dbName"
-              placeholder="Database (empty = GVA default)"
+              :placeholder="t('admin.system_tools.field_dialog.database_default')"
               @change="dbNameChange"
               clearable
             >
@@ -185,17 +185,17 @@
           <el-col :span="4">
             <el-select
               v-model="middleDate.dataSource.association"
-              placeholder="Association"
+              :placeholder="t('admin.system_tools.field_dialog.association')"
               @change="associationChange"
             >
-              <el-option label="One-to-one" :value="1" />
-              <el-option label="One-to-many" :value="2" />
+              <el-option :label="t('admin.system_tools.field_dialog.one_to_one')" :value="1" />
+              <el-option :label="t('admin.system_tools.field_dialog.one_to_many')" :value="2" />
             </el-select>
           </el-col>
           <el-col :span="5">
             <el-select
               v-model="middleDate.dataSource.table"
-              placeholder="Select source table"
+              :placeholder="t('admin.system_tools.field_dialog.source_table')"
               filterable
               allow-create
               clearable
@@ -214,10 +214,10 @@
           <el-col :span="5">
             <el-select
               v-model="middleDate.dataSource.value"
-              placeholder="Select value field"
+              :placeholder="t('admin.system_tools.field_dialog.value_field')"
             >
               <template #label="{ value }">
-                <span>Value: </span>
+                <span>{{ t('admin.system_tools.field_dialog.value_label') }}</span>
                 <span style="font-weight: bold">{{ value }}</span>
               </template>
               <el-option
@@ -227,7 +227,7 @@
               >
                 <span style="float: left">
                   <el-tag :type="item.isPrimary ? 'primary' : 'info'">
-                    {{ item.isPrimary ? 'PK' : 'Non-PK' }}
+                    {{ item.isPrimary ? t('admin.system_tools.field_dialog.pk_short') : t('admin.system_tools.field_dialog.non_pk') }}
                   </el-tag>
                   {{ item.columnName }}</span
                 >
@@ -239,9 +239,9 @@
                     font-size: 13px;
                   "
                 >
-                  Type: {{ item.type }}
+                  {{ t('admin.system_tools.field_dialog.type_col') }}{{ item.type }}
                   <block v-if="item.comment != ''"
-                    >, Comment: {{ item.comment }}</block
+                    >, {{ t('admin.system_tools.field_dialog.comment_col') }}{{ item.comment }}</block
                   >
                 </span>
               </el-option>
@@ -250,10 +250,10 @@
           <el-col :span="5">
             <el-select
               v-model="middleDate.dataSource.label"
-              placeholder="Select label field"
+              :placeholder="t('admin.system_tools.field_dialog.label_field')"
             >
               <template #label="{ value }">
-                <span>Label: </span>
+                <span>{{ t('admin.system_tools.field_dialog.label_label') }}</span>
                 <span style="font-weight: bold">{{ value }}</span>
               </template>
               <el-option
@@ -263,7 +263,7 @@
               >
                 <span style="float: left">
                   <el-tag :type="item.isPrimary ? 'primary' : 'info'">
-                    {{ item.isPrimary ? 'PK' : 'Non-PK' }}
+                    {{ item.isPrimary ? t('admin.system_tools.field_dialog.pk_short') : t('admin.system_tools.field_dialog.non_pk') }}
                   </el-tag>
                   {{ item.columnName }}</span
                 >
@@ -275,9 +275,9 @@
                     font-size: 13px;
                   "
                 >
-                  Type: {{ item.type }}
+                  {{ t('admin.system_tools.field_dialog.type_col') }}{{ item.type }}
                   <span v-if="item.comment != ''"
-                    >, Comment: {{ item.comment }}</span
+                    >, {{ t('admin.system_tools.field_dialog.comment_col') }}{{ item.comment }}</span
                   >
                 </span>
               </el-option>
@@ -297,6 +297,9 @@
   import { ref, onMounted } from 'vue'
   import { ElMessageBox } from 'element-plus'
   import { getColumn, getDB, getTable } from '@/api/autoCode'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'FieldDialog'
@@ -346,7 +349,7 @@
   const validateDataTypeLong = (rule, value, callback) => {
     const regex = /^('([^']*)'(?:,'([^']+)'*)*)$/
     if (middleDate.value.fieldType == 'enum' && !regex.test(value)) {
-      callback(new Error('Invalid enum value'))
+      callback(new Error(t('admin.system_tools.field_dialog.invalid_enum')))
     } else {
       callback()
     }
@@ -354,18 +357,18 @@
 
   const rules = ref({
     fieldName: [
-      { required: true, message: 'Field name is required', trigger: 'blur' }
+      { required: true, message: t('admin.system_tools.field_dialog.field_name_required'), trigger: 'blur' }
     ],
     fieldDesc: [
-      { required: true, message: 'Field label (CN) is required', trigger: 'blur' }
+      { required: true, message: t('admin.system_tools.field_dialog.field_desc_required'), trigger: 'blur' }
     ],
     fieldJson: [
-      { required: true, message: 'Field JSON is required', trigger: 'blur' }
+      { required: true, message: t('admin.system_tools.field_dialog.field_json_required'), trigger: 'blur' }
     ],
     columnName: [
-      { required: true, message: 'DB column name is required', trigger: 'blur' }
+      { required: true, message: t('admin.system_tools.field_dialog.db_column_required'), trigger: 'blur' }
     ],
-    fieldType: [{ required: true, message: 'Field type is required', trigger: 'blur' }],
+    fieldType: [{ required: true, message: t('admin.system_tools.field_dialog.field_type_required'), trigger: 'blur' }],
     dataTypeLong: [{ validator: validateDataTypeLong, trigger: 'blur' }]
   })
 
@@ -412,11 +415,11 @@
   const associationChange = (val) => {
     if (val === 2) {
       ElMessageBox.confirm(
-        'In one-to-many association, data type becomes an array (backend stored as JSON). Continue?',
-        'Confirm',
+        t('admin.system_tools.field_dialog.one_to_many_confirm'),
+        t('admin.system_tools.field_dialog.confirm_title'),
         {
-          confirmButtonText: 'Continue',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: t('admin.system_tools.field_dialog.continue'),
+          cancelButtonText: t('admin.common.cancel'),
           type: 'warning'
         }
       )

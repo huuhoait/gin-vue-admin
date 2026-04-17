@@ -1,12 +1,15 @@
 <template>
   <el-button type="primary" icon="download" @click="exportExcelFunc"
-    >Export</el-button
+    >{{ t('admin.common.export') }}</el-button
   >
 </template>
 
 <script setup>
 
 import { exportExcel } from '@/api/exportTemplate'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
   const props = defineProps({
     filterDeleted: {
@@ -39,7 +42,7 @@ import { exportExcel } from '@/api/exportTemplate'
 
   const exportExcelFunc = async () => {
     if (props.templateId === '') {
-      ElMessage.error('Template ID is required')
+      ElMessage.error(t('admin.common.validation.template_id_required'))
       return
     }
     let baseUrl = import.meta.env.VITE_BASE_API
@@ -74,7 +77,7 @@ import { exportExcel } from '@/api/exportTemplate'
     })
 
     if(res.code === 0){
-      ElMessage.success('Export task created. Downloading...')
+      ElMessage.success(t('admin.components.export_excel.export_task_created'))
       const url = `${baseUrl}${res.data}`
       window.open(url, '_blank')
     }

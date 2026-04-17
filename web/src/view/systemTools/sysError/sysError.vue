@@ -8,12 +8,12 @@
         class="demo-form-inline"
         @keyup.enter="onSubmit"
       >
-        <el-form-item label="Created at" prop="createdAtRange">
+        <el-form-item :label="t('admin.systemtools.sys_error.created_at')" prop="createdAtRange">
           <template #label>
             <span>
-              Created at
+              {{ t('admin.systemtools.sys_error.created_at') }}
               <el-tooltip
-                content="Range is start time (inclusive) to end time (exclusive)."
+                :content="t('admin.systemtools.sys_error.range_tip')"
               >
                 <el-icon><QuestionFilled /></el-icon>
               </el-tooltip>
@@ -24,18 +24,18 @@
             v-model="searchInfo.createdAtRange"
             class="!w-380px"
             type="datetimerange"
-            range-separator="to"
-            start-placeholder="Start time"
-            end-placeholder="End time"
+            :range-separator="t('admin.systemtools.sys_error.to')"
+            :start-placeholder="t('admin.systemtools.sys_error.start_time')"
+            :end-placeholder="t('admin.systemtools.sys_error.end_time')"
           />
         </el-form-item>
 
-        <el-form-item label="Source" prop="form">
-          <el-input v-model="searchInfo.form" placeholder="Search" />
+        <el-form-item :label="t('admin.systemtools.sys_error.source')" prop="form">
+          <el-input v-model="searchInfo.form" :placeholder="t('admin.systemtools.sys_error.search_placeholder')" />
         </el-form-item>
 
-        <el-form-item label="Message" prop="info">
-          <el-input v-model="searchInfo.info" placeholder="Search" />
+        <el-form-item :label="t('admin.systemtools.sys_error.message')" prop="info">
+          <el-input v-model="searchInfo.info" :placeholder="t('admin.systemtools.sys_error.search_placeholder')" />
         </el-form-item>
 
         <template v-if="showAllQuery">
@@ -44,16 +44,16 @@
 
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit"
-            >Search</el-button
+            >{{ t('admin.systemtools.sys_error.search') }}</el-button
           >
-          <el-button icon="refresh" @click="onReset">Reset</el-button>
+          <el-button icon="refresh" @click="onReset">{{ t('admin.systemtools.sys_error.reset') }}</el-button>
           <el-button
             link
             type="primary"
             icon="arrow-down"
             @click="showAllQuery = true"
             v-if="!showAllQuery"
-            >Expand</el-button
+            >{{ t('admin.systemtools.sys_error.expand') }}</el-button
           >
           <el-button
             link
@@ -61,7 +61,7 @@
             icon="arrow-up"
             @click="showAllQuery = false"
             v-else
-            >Collapse</el-button
+            >{{ t('admin.systemtools.sys_error.collapse') }}</el-button
           >
         </el-form-item>
       </el-form>
@@ -73,7 +73,7 @@
           style="margin-left: 10px"
           :disabled="!multipleSelection.length"
           @click="onDelete"
-          >Delete</el-button
+          >{{ t('admin.systemtools.sys_error.delete') }}</el-button
         >
       </div>
       <el-table
@@ -89,7 +89,7 @@
         <el-table-column
           sortable
           align="left"
-          label="Date"
+          :label="t('admin.systemtools.sys_error.date')"
           prop="CreatedAt"
           width="180"
         >
@@ -100,14 +100,14 @@
 
         <el-table-column
           align="left"
-          label="Source"
+          :label="t('admin.systemtools.sys_error.source')"
           prop="form"
           width="120"
         />
 
         <el-table-column
           align="left"
-          label="Level"
+          :label="t('admin.systemtools.sys_error.level')"
           prop="level"
           width="120"
         >
@@ -123,7 +123,7 @@
 
         <el-table-column
           align="left"
-          label="Status"
+          :label="t('admin.systemtools.sys_error.status')"
           prop="status"
           width="140"
         >
@@ -139,7 +139,7 @@
 
         <el-table-column
           align="left"
-          label="Message"
+          :label="t('admin.systemtools.sys_error.message')"
           prop="info"
           show-overflow-tooltip
           width="240"
@@ -147,7 +147,7 @@
 
         <el-table-column
           align="left"
-          label="Solution"
+          :label="t('admin.systemtools.sys_error.solution')"
           show-overflow-tooltip
           prop="solution"
           width="120"
@@ -155,7 +155,7 @@
 
         <el-table-column
           align="left"
-          label="Actions"
+          :label="t('admin.systemtools.sys_error.actions')"
           fixed="right"
           :min-width="appStore.operateMinWith"
         >
@@ -167,7 +167,7 @@
               class="table-button"
               @click="getSolution(scope.row.ID)"
             >
-              <el-icon><ai-gva /></el-icon>AI
+              <el-icon><ai-gva /></el-icon>{{ t('admin.systemtools.sys_error.ai') }}
             </el-button>
             <el-button
               type="primary"
@@ -175,14 +175,14 @@
               class="table-button"
               @click="getDetails(scope.row)"
               ><el-icon style="margin-right: 5px"><InfoFilled /></el-icon
-              >View</el-button
+              >{{ t('admin.systemtools.sys_error.view') }}</el-button
             >
             <el-button
               type="primary"
               link
               icon="delete"
               @click="deleteRow(scope.row)"
-              >Delete</el-button
+              >{{ t('admin.systemtools.sys_error.delete') }}</el-button
             >
           </template>
         </el-table-column>
@@ -206,13 +206,13 @@
       v-model="detailShow"
       :show-close="true"
       :before-close="closeDetailShow"
-      title="View"
+      :title="t('admin.systemtools.sys_error.view')"
     >
       <el-descriptions :column="2" border direction="vertical">
-        <el-descriptions-item label="Source">
+        <el-descriptions-item :label="t('admin.systemtools.sys_error.source')">
           {{ detailForm.form }}
         </el-descriptions-item>
-        <el-descriptions-item label="Level">
+        <el-descriptions-item :label="t('admin.systemtools.sys_error.level')">
           <el-tag
             effect="dark"
             :type="levelTagMap[detailForm.level] || 'info'"
@@ -220,7 +220,7 @@
             {{ levelLabelMap[detailForm.level] || defaultLevelLabel }}
           </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="Status">
+        <el-descriptions-item :label="t('admin.systemtools.sys_error.status')">
           <el-tag
             effect="light"
             :type="statusTagMap[detailForm.status] || 'info'"
@@ -228,10 +228,10 @@
             {{ statusLabelMap[detailForm.status] || defaultStatusLabel }}
           </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="Message" :span="2">
+        <el-descriptions-item :label="t('admin.systemtools.sys_error.message')" :span="2">
           <pre class="whitespace-pre-wrap break-words">{{ detailForm.info }}</pre>
         </el-descriptions-item>
-        <el-descriptions-item label="Solution" :span="2">
+        <el-descriptions-item :label="t('admin.systemtools.sys_error.solution')" :span="2">
           <pre class="whitespace-pre-wrap break-words">{{ detailForm.solution }}</pre>
         </el-descriptions-item>
       </el-descriptions>
@@ -250,8 +250,11 @@
 
   import { formatDate } from '@/utils/format'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { useAppStore } from '@/pinia'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'SysError'
@@ -278,18 +281,18 @@
 
   const getSolution = async (id) => {
     const confirmed = await ElMessageBox.confirm(
-      'Logs will be sent via AI-PATH to GVA AI for analysis and temporarily stored on the official GVA platform as context. Continue? (Authorized users only)',
-      'Notice (Beta)',
+      t('admin.systemtools.sys_error.ai_confirm'),
+      t('admin.systemtools.sys_error.notice_beta'),
       {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: t('admin.common.confirm'),
+        cancelButtonText: t('admin.common.cancel'),
         type: 'warning'
       }
     ).catch(() => false)
     if (!confirmed) return
     const res = await getSysErrorSolution({ id })
     if (res.code === 0) {
-      ElMessage({ type: 'success', message: res.msg || 'Submitted. It will complete in ~1 minute.' })
+      ElMessage({ type: 'success', message: res.msg || t('admin.systemtools.sys_error.ai_submitted') })
       getTableData()
     }
   }
@@ -348,9 +351,9 @@
 
   // Delete row
   const deleteRow = (row) => {
-    ElMessageBox.confirm('Delete this item?', 'Confirm', {
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.systemtools.sys_error.delete_item_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.delete'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(() => {
       deleteSysErrorFunc(row)
@@ -359,16 +362,16 @@
 
   // Bulk delete
   const onDelete = async () => {
-    ElMessageBox.confirm('Delete selected items?', 'Confirm', {
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.systemtools.sys_error.delete_selected_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.delete'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const IDs = []
       if (multipleSelection.value.length === 0) {
         ElMessage({
           type: 'warning',
-          message: 'Please select items to delete'
+          message: t('admin.systemtools.sys_error.select_items_to_delete')
         })
         return
       }
@@ -380,7 +383,7 @@
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         if (tableData.value.length === IDs.length && page.value > 1) {
           page.value--
@@ -396,7 +399,7 @@
     if (res.code === 0) {
       ElMessage({
         type: 'success',
-        message: 'Deleted'
+        message: t('admin.common.messages.deleted')
       })
       if (tableData.value.length === 1 && page.value > 1) {
         page.value--
@@ -436,27 +439,27 @@
   const STATUS_DONE = '\u5904\u7406\u5b8c\u6210'
   const STATUS_FAILED = '\u5904\u7406\u5931\u8d25'
 
-  const statusLabelMap = {
-    [STATUS_PENDING]: 'Pending',
-    [STATUS_PROCESSING]: 'Processing',
-    [STATUS_DONE]: 'Done',
-    [STATUS_FAILED]: 'Failed'
-  }
+  const statusLabelMap = computed(() => ({
+    [STATUS_PENDING]: t('admin.systemtools.sys_error.status_pending'),
+    [STATUS_PROCESSING]: t('admin.systemtools.sys_error.status_processing'),
+    [STATUS_DONE]: t('admin.systemtools.sys_error.status_done'),
+    [STATUS_FAILED]: t('admin.systemtools.sys_error.status_failed')
+  }))
   const statusTagMap = {
     [STATUS_PENDING]: 'info',
     [STATUS_PROCESSING]: 'warning',
     [STATUS_DONE]: 'success',
     [STATUS_FAILED]: 'danger'
   }
-  const defaultStatusLabel = 'Pending'
+  const defaultStatusLabel = computed(() => t('admin.systemtools.sys_error.status_pending'))
 
-  const levelLabelMap = {
-    fatal: 'Fatal',
-    error: 'Error'
-  }
+  const levelLabelMap = computed(() => ({
+    fatal: t('admin.systemtools.sys_error.level_fatal'),
+    error: t('admin.systemtools.sys_error.level_error')
+  }))
   const levelTagMap = {
     fatal: 'danger',
     error: 'warning'
   }
-  const defaultLevelLabel = 'Error'
+  const defaultLevelLabel = computed(() => t('admin.systemtools.sys_error.level_error'))
 </script>

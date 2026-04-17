@@ -471,14 +471,26 @@ func extractZipToDir(zipPath, destDir string) error {
 	}
 	defer r.Close()
 
+	cleanDest := filepath.Clean(destDir)
+	absDest, err := filepath.Abs(cleanDest)
+	if err != nil {
+		return err
+	}
+	sep := string(filepath.Separator)
+
 	for _, f := range r.File {
-		name := filepath.FromSlash(f.Name)
-		if strings.Contains(name, "..") {
+		name := filepath.Clean(filepath.FromSlash(f.Name))
+		if name == "." || filepath.IsAbs(name) || filepath.VolumeName(name) != "" || strings.Contains(name, "..") {
 			continue
 		}
+		name = strings.TrimPrefix(name, sep)
 
-		target := filepath.Join(destDir, name)
-		if !strings.HasPrefix(filepath.Clean(target), filepath.Clean(destDir)) {
+		target := filepath.Join(cleanDest, name)
+		absTarget, err := filepath.Abs(target)
+		if err != nil {
+			return err
+		}
+		if !strings.HasPrefix(absTarget+sep, absDest+sep) {
 			continue
 		}
 

@@ -524,6 +524,9 @@
 <script setup>
   import { computed, onMounted, reactive, ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
   import { QuestionFilled, Document, Plus, Search, Check, Edit } from '@element-plus/icons-vue'
   import WarningBar from '@/components/warningBar/warningBar.vue'
   import {
@@ -690,7 +693,7 @@
         }
       }
     } catch (e) {
-      ElMessage.warning('Failed to load tools; using defaults.')
+      ElMessage.warning(t('admin.systemtools.skills.msg_load_tools_failed'))
     }
   }
 
@@ -702,7 +705,7 @@
         skills.value = res.data?.skills || []
       }
     } catch (e) {
-      ElMessage.error('Failed to load skills')
+      ElMessage.error(t('admin.systemtools.skills.msg_load_skills_failed'))
     }
   }
 
@@ -725,13 +728,13 @@
         templates.value = detail?.templates || []
       }
     } catch (e) {
-      ElMessage.error('Failed to load skill detail')
+      ElMessage.error(t('admin.systemtools.skills.msg_load_detail_failed'))
     }
   }
 
   async function openGlobalConstraint() {
     if (!activeTool.value) {
-      ElMessage.warning('Please select a tool first')
+      ElMessage.warning(t('admin.systemtools.skills.msg_select_tool_first'))
       return
     }
     try {
@@ -739,12 +742,12 @@
       if (res.code === 0) {
         globalConstraintExists.value = !!res.data?.exists
         if (!globalConstraintExists.value) {
-          ElMessage.info('README.md not found. It will be created on save.')
+          ElMessage.info(t('admin.systemtools.skills.msg_readme_not_found'))
         }
         openEditor('constraint', 'README.md', res.data?.content || '')
       }
     } catch (e) {
-      ElMessage.error('Failed to read global constraint')
+      ElMessage.error(t('admin.systemtools.skills.msg_read_global_constraint_failed'))
     }
   }
 
@@ -778,11 +781,11 @@
     if (!activeTool.value || !skillName) return
     try {
       await ElMessageBox.confirm(
-        `Delete skill "${skillName}"? This will also delete its scripts/resources/references/templates files.`,
-        'Confirm delete',
+        t('admin.systemtools.skills.delete_skill_confirm_content', { name: skillName }),
+        t('admin.systemtools.skills.delete_skill_confirm_title'),
         {
-          confirmButtonText: 'Delete',
-          cancelButtonText: 'Cancel',
+          confirmButtonText: t('admin.common.delete'),
+          cancelButtonText: t('admin.common.cancel'),
           type: 'warning'
         }
       )
@@ -799,9 +802,9 @@
         resetDetail()
       }
       await loadSkills()
-      ElMessage.success('Deleted')
+      ElMessage.success(t('admin.common.messages.deleted'))
     } catch (e) {
-      ElMessage.error('Delete failed')
+      ElMessage.error(t('admin.common.messages.delete_failed'))
     }
   }
 
@@ -813,7 +816,7 @@
 
   async function createSkill() {
     if (!newSkill.name.trim()) {
-      ElMessage.warning('Please enter a skill name')
+      ElMessage.warning(t('admin.systemtools.skills.msg_enter_skill_name'))
       return
     }
     const payload = {
@@ -831,20 +834,20 @@
     try {
       const res = await saveSkill(payload)
       if (res.code === 0) {
-        ElMessage.success('Created')
+        ElMessage.success(t('admin.common.messages.created'))
         createDialogVisible.value = false
         await loadSkills()
         await loadSkillDetail(payload.skill)
       }
     } catch (e) {
-      ElMessage.error('Create failed')
+      ElMessage.error(t('admin.common.messages.create_failed'))
     }
   }
 
   async function saveCurrentSkill() {
     if (!activeSkill.value) return
     if (!form.name.trim()) {
-      ElMessage.warning('Name is required')
+      ElMessage.warning(t('admin.systemtools.skills.msg_name_required'))
       return
     }
     const payload = {
@@ -862,9 +865,9 @@
 
     let syncTools = []
     try {
-      await ElMessageBox.confirm('Sync to other AI client tools?', 'Sync', {
-        confirmButtonText: 'Sync',
-        cancelButtonText: 'Only current',
+      await ElMessageBox.confirm(t('admin.systemtools.skills.sync_prompt_content'), t('admin.systemtools.skills.sync_prompt_title'), {
+        confirmButtonText: t('admin.systemtools.skills.sync_btn_sync'),
+        cancelButtonText: t('admin.systemtools.skills.sync_btn_only_current'),
         type: 'warning'
       })
       syncTools = tools.value
@@ -881,10 +884,10 @@
     try {
       const res = await saveSkill(payload)
       if (res.code === 0) {
-        ElMessage.success('Saved')
+        ElMessage.success(t('admin.common.messages.saved'))
       }
     } catch (e) {
-      ElMessage.error('Save failed')
+      ElMessage.error(t('admin.common.messages.save_failed'))
     }
   }
 
@@ -904,14 +907,14 @@
 
   async function packageCurrentSkill() {
     if (!activeTool.value || !activeSkill.value) {
-      ElMessage.warning('Please select a skill first')
+      ElMessage.warning(t('admin.systemtools.skills.msg_select_skill_first'))
       return
     }
     try {
       const res = await packageSkill({ tool: activeTool.value, skill: activeSkill.value })
       const blob = res instanceof Blob ? res : (res?.data instanceof Blob ? res.data : null)
       if (!blob) {
-        ElMessage.error('Package failed')
+        ElMessage.error(t('admin.systemtools.skills.msg_package_failed'))
         return
       }
       const contentType = String(res?.headers?.['content-type'] || blob.type || '').toLowerCase()
@@ -945,9 +948,9 @@
       link.click()
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
-      ElMessage.success('Packaged')
+      ElMessage.success(t('admin.common.messages.packaged'))
     } catch (e) {
-      ElMessage.error('Package failed')
+      ElMessage.error(t('admin.systemtools.skills.msg_package_failed'))
     }
   }
 
@@ -976,7 +979,7 @@
     }
     if (!snippet) return
     appendMarkdown(`\n${snippet}\n`)
-    ElMessage.success('Inserted into SKILL.md')
+    ElMessage.success(t('admin.systemtools.skills.msg_inserted_skill_md'))
     activeTab.value = 'config'
   }
 
@@ -990,7 +993,7 @@
 
   function openScriptDialog() {
     if (!activeSkill.value) {
-      ElMessage.warning('Please select a skill first')
+      ElMessage.warning(t('admin.systemtools.skills.msg_select_skill_first'))
       return
     }
     newScript.name = ''
@@ -1000,7 +1003,7 @@
 
   async function createScript() {
     if (!newScript.name.trim()) {
-      ElMessage.warning('Please enter a script filename')
+      ElMessage.warning(t('admin.systemtools.skills.msg_enter_script_filename'))
       return
     }
     try {
@@ -1016,7 +1019,7 @@
         openEditor('script', res.data.fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Create script failed')
+      ElMessage.error(t('admin.systemtools.skills.msg_create_script_failed'))
     }
   }
 
@@ -1032,13 +1035,13 @@
         openEditor('script', fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Failed to read script')
+      ElMessage.error(t('admin.systemtools.skills.msg_read_script_failed'))
     }
   }
 
   function openResourceDialog() {
     if (!activeSkill.value) {
-      ElMessage.warning('Please select a skill first')
+      ElMessage.warning(t('admin.systemtools.skills.msg_select_skill_first'))
       return
     }
     newResource.name = ''
@@ -1047,7 +1050,7 @@
 
   async function createResource() {
     if (!newResource.name.trim()) {
-      ElMessage.warning('Please enter a resource filename')
+      ElMessage.warning(t('admin.systemtools.skills.msg_enter_resource_filename'))
       return
     }
     try {
@@ -1062,7 +1065,7 @@
         openEditor('resource', res.data.fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Create resource failed')
+      ElMessage.error(t('admin.systemtools.skills.msg_create_resource_failed'))
     }
   }
 
@@ -1078,13 +1081,13 @@
         openEditor('resource', fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Failed to read resource')
+      ElMessage.error(t('admin.systemtools.skills.msg_read_resource_failed'))
     }
   }
 
   function openReferenceDialog() {
     if (!activeSkill.value) {
-      ElMessage.warning('Please select a skill first')
+      ElMessage.warning(t('admin.systemtools.skills.msg_select_skill_first'))
       return
     }
     newReference.name = ''
@@ -1093,7 +1096,7 @@
 
   async function createReference() {
     if (!newReference.name.trim()) {
-      ElMessage.warning('Please enter a reference filename')
+      ElMessage.warning(t('admin.systemtools.skills.msg_enter_reference_filename'))
       return
     }
     try {
@@ -1108,7 +1111,7 @@
         openEditor('reference', res.data.fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Create reference failed')
+      ElMessage.error(t('admin.systemtools.skills.msg_create_reference_failed'))
     }
   }
 
@@ -1124,13 +1127,13 @@
         openEditor('reference', fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Failed to read reference')
+      ElMessage.error(t('admin.systemtools.skills.msg_read_reference_failed'))
     }
   }
 
   function openTemplateDialog() {
     if (!activeSkill.value) {
-      ElMessage.warning('Please select a skill first')
+      ElMessage.warning(t('admin.systemtools.skills.msg_select_skill_first'))
       return
     }
     newTemplate.name = ''
@@ -1139,7 +1142,7 @@
 
   async function createTemplate() {
     if (!newTemplate.name.trim()) {
-      ElMessage.warning('Please enter a template filename')
+      ElMessage.warning(t('admin.systemtools.skills.msg_enter_template_filename'))
       return
     }
     try {
@@ -1154,7 +1157,7 @@
         openEditor('template', res.data.fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Create template failed')
+      ElMessage.error(t('admin.systemtools.skills.msg_create_template_failed'))
     }
   }
 
@@ -1170,7 +1173,7 @@
         openEditor('template', fileName, res.data.content)
       }
     } catch (e) {
-      ElMessage.error('Failed to read template')
+      ElMessage.error(t('admin.systemtools.skills.msg_read_template_failed'))
     }
   }
 
@@ -1193,7 +1196,7 @@
           content: editorContent.value
         })
         if (res.code === 0) {
-          ElMessage.success('Saved')
+          ElMessage.success(t('admin.common.messages.saved'))
         }
       } else if (editorType.value === 'resource') {
         const res = await saveSkillResource({
@@ -1203,7 +1206,7 @@
           content: editorContent.value
         })
         if (res.code === 0) {
-          ElMessage.success('Saved')
+          ElMessage.success(t('admin.common.messages.saved'))
         }
       } else if (editorType.value === 'reference') {
         const res = await saveSkillReference({
@@ -1213,7 +1216,7 @@
           content: editorContent.value
         })
         if (res.code === 0) {
-          ElMessage.success('Saved')
+          ElMessage.success(t('admin.common.messages.saved'))
         }
       } else if (editorType.value === 'template') {
         const res = await saveSkillTemplate({
@@ -1223,15 +1226,15 @@
           content: editorContent.value
         })
         if (res.code === 0) {
-          ElMessage.success('Saved')
+          ElMessage.success(t('admin.common.messages.saved'))
         }
       } else if (editorType.value === 'constraint') {
         let syncTools = []
         if (tools.value.length > 1) {
           try {
-            await ElMessageBox.confirm('Sync to other AI client tools?', 'Sync', {
-              confirmButtonText: 'Sync',
-              cancelButtonText: 'Only current',
+            await ElMessageBox.confirm(t('admin.systemtools.skills.sync_prompt_content'), t('admin.systemtools.skills.sync_prompt_title'), {
+              confirmButtonText: t('admin.systemtools.skills.sync_btn_sync'),
+              cancelButtonText: t('admin.systemtools.skills.sync_btn_only_current'),
               type: 'warning'
             })
             syncTools = tools.value
@@ -1248,14 +1251,14 @@
           syncTools
         })
         if (res.code !== 0) {
-          ElMessage.error('Save failed')
+          ElMessage.error(t('admin.common.messages.save_failed'))
           return
         }
         globalConstraintExists.value = true
-        ElMessage.success(syncTools.length ? 'Saved and synced' : 'Saved')
+        ElMessage.success(syncTools.length ? t('admin.systemtools.skills.msg_saved_and_synced') : t('admin.common.messages.saved'))
       }
     } catch (e) {
-      ElMessage.error('Save failed')
+      ElMessage.error(t('admin.common.messages.save_failed'))
     }
   }
 
@@ -1317,9 +1320,9 @@
 
   const promptPluginMarketLogin = async () => {
     try {
-      await ElMessageBox.confirm('Please log in to the plugin market before downloading. Go to login now?', 'Notice', {
-        confirmButtonText: 'Go to plugin market',
-        cancelButtonText: 'Cancel',
+      await ElMessageBox.confirm(t('admin.systemtools.skills.login_required_content'), t('admin.systemtools.skills.login_required_title'), {
+        confirmButtonText: t('admin.systemtools.skills.login_btn_go_market'),
+        cancelButtonText: t('admin.common.cancel'),
         type: 'warning'
       })
       window.open(pluginMarketLoginURL, '_blank')
@@ -1391,14 +1394,14 @@
 
   const confirmDownloadSkill = async () => {
     if (!downloadRow.value) {
-      ElMessage.warning('No pending download found')
+      ElMessage.warning(t('admin.systemtools.skills.msg_no_pending_download'))
       return
     }
     const targetTools = downloadTarget.value === ALL_TOOLS_DOWNLOAD_TARGET
       ? tools.value.map((item) => item.key).filter(Boolean)
       : [downloadTarget.value].filter(Boolean)
     if (!targetTools.length) {
-      ElMessage.warning('Please select a download target')
+      ElMessage.warning(t('admin.systemtools.skills.msg_select_download_target'))
       return
     }
 

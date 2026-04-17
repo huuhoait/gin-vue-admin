@@ -10,9 +10,9 @@
       name="plug"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text">Drag files here or <em>click to upload</em></div>
+      <div class="el-upload__text">{{ t('admin.systemtools.install_plugin.drag_text_1') }} <em>{{ t('admin.systemtools.install_plugin.drag_text_2') }}</em></div>
       <template #tip>
-        <div class="el-upload__tip">Drop the plugin zip here to upload</div>
+        <div class="el-upload__tip">{{ t('admin.systemtools.install_plugin.drop_plugin_tip') }}</div>
       </template>
     </el-upload>
 
@@ -22,37 +22,37 @@
         <el-table-column type="expand">
             <template #default="props">
                 <div style="padding: 20px;">
-                    <h3>API list</h3>
+                    <h3>{{ t('admin.systemtools.install_plugin.api_list') }}</h3>
                     <el-table :data="props.row.apis" border>
-                        <el-table-column prop="path" label="Path" />
-                        <el-table-column prop="method" label="Method" />
-                        <el-table-column prop="description" label="Description" />
-                        <el-table-column prop="apiGroup" label="APIGROUP" />
+                        <el-table-column prop="path" :label="t('admin.systemtools.install_plugin.path')" />
+                        <el-table-column prop="method" :label="t('admin.systemtools.install_plugin.method')" />
+                        <el-table-column prop="description" :label="t('admin.systemtools.install_plugin.description')" />
+                        <el-table-column prop="apiGroup" :label="t('admin.systemtools.install_plugin.api_group')" />
                     </el-table>
-                    <h3>Menu list</h3>
+                    <h3>{{ t('admin.systemtools.install_plugin.menu_list') }}</h3>
                     <el-table :data="props.row.menus" row-key="name" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" border>
-                        <el-table-column prop="meta.title" label="Title" />
-                        <el-table-column prop="name" label="Name" />
-                        <el-table-column prop="path" label="Path" />
+                        <el-table-column prop="meta.title" :label="t('admin.systemtools.install_plugin.title')" />
+                        <el-table-column prop="name" :label="t('admin.systemtools.install_plugin.name')" />
+                        <el-table-column prop="path" :label="t('admin.systemtools.install_plugin.path')" />
                     </el-table>
-                     <h3>Dictionary list</h3>
+                     <h3>{{ t('admin.systemtools.install_plugin.dictionary_list') }}</h3>
                      <el-table :data="props.row.dictionaries" border>
-                         <el-table-column prop="name" label="Name" />
-                         <el-table-column prop="type" label="Type" />
-                         <el-table-column prop="desc" label="Description" />
+                         <el-table-column prop="name" :label="t('admin.systemtools.install_plugin.name')" />
+                         <el-table-column prop="type" :label="t('admin.systemtools.install_plugin.type')" />
+                         <el-table-column prop="desc" :label="t('admin.systemtools.install_plugin.description')" />
                      </el-table>
                 </div>
             </template>
         </el-table-column>
-        <el-table-column prop="pluginName" label="Plugin name" />
-        <el-table-column prop="pluginType" label="Plugin type">
+        <el-table-column prop="pluginName" :label="t('admin.systemtools.install_plugin.plugin_name')" />
+        <el-table-column prop="pluginType" :label="t('admin.systemtools.install_plugin.plugin_type')">
           <template #default="scope">
-              {{ typeMap[scope.row.pluginType] || 'Unknown' }}
+              {{ typeMap[scope.row.pluginType] || t('admin.systemtools.install_plugin.type_unknown') }}
           </template>
         </el-table-column>
-        <el-table-column label="Actions">
+        <el-table-column :label="t('admin.systemtools.install_plugin.actions')">
           <template #default="scope">
-            <el-button type="primary" link icon="delete" @click="deletePlugin(scope.row)">Delete</el-button>
+            <el-button type="primary" link icon="delete" @click="deletePlugin(scope.row)">{{ t('admin.systemtools.install_plugin.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -61,12 +61,15 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, computed } from 'vue'
   import { ElMessage } from 'element-plus'
   import { getBaseUrl } from '@/utils/format'
   import { useUserStore } from "@/pinia";
   import { getPluginList, removePlugin } from '@/api/autoCode'
   import { ElMessageBox } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   const userStore = useUserStore()
   const token = userStore.token
@@ -79,26 +82,26 @@
     }
   }
 
-  const typeMap = {
-    "server": "Backend",
-    "web": "Frontend",
-    "full": "Fullstack"
-  }
+  const typeMap = computed(() => ({
+    "server": t('admin.systemtools.install_plugin.type_backend'),
+    "web": t('admin.systemtools.install_plugin.type_frontend'),
+    "full": t('admin.systemtools.install_plugin.type_full')
+  }))
 
   const deletePlugin = (row) => {
     ElMessageBox.confirm(
-    'This will permanently delete the plugin and its related API/menu/dictionary data. Continue?',
-    'Confirm',
+    t('admin.systemtools.install_plugin.delete_confirm'),
+    t('admin.common.confirms.delete_title'),
     {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning',
     }
   )
     .then(async () => {
       const res = await removePlugin({ pluginName: row.pluginName, pluginType: row.pluginType })
       if (res.code === 0) {
-        ElMessage.success('Deleted')
+        ElMessage.success(t('admin.common.messages.deleted'))
         getTableData()
       }
     })

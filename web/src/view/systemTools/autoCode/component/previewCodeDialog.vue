@@ -22,7 +22,9 @@
   import { ElMessage } from 'element-plus'
   import { onMounted, ref, watchEffect } from 'vue'
   import { useAppStore } from '@/pinia'
+  import { useI18n } from 'vue-i18n'
 
+  const { t } = useI18n()
   const appStore = useAppStore()
 
   const useCode = ref({})
@@ -112,7 +114,7 @@
   const copy = () => {
     selectText()
     document.execCommand('copy')
-    ElMessage.success('Copied')
+    ElMessage.success(t('admin.common.messages.copied'))
   }
 
   defineExpose({ copy, selectText })

@@ -41,10 +41,10 @@
                   <div v-else class="flex items-center">
                     <el-input v-model="nickName" class="w-48 mr-4" />
                     <el-button type="primary" plain @click="enterEdit">
-                      Confirm
+                      {{ t('admin.common.confirm') }}
                     </el-button>
                     <el-button type="danger" plain @click="closeEdit">
-                      Cancel
+                      {{ t('admin.common.cancel') }}
                     </el-button>
                   </div>
                 </div>
@@ -54,24 +54,24 @@
                 >
                   <div class="flex items-center gap-2">
                     <el-icon><location /></el-icon>
-                    <span>Beijing, China</span>
+                    <span>{{ t('admin.person.location') }}</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <el-icon><office-building /></el-icon>
-                    <span>SkyAgent</span>
+                    <span>{{ t('admin.person.organization') }}</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <el-icon><user /></el-icon>
-                    <span>Engineering · Frontend</span>
+                    <span>{{ t('admin.person.department') }}</span>
                   </div>
                 </div>
               </div>
 
               <div class="flex gap-4 mt-4">
                 <el-button type="primary" plain icon="message">
-                  Message
+                  {{ t('admin.person.message') }}
                 </el-button>
-                <el-button icon="share"> Share profile </el-button>
+                <el-button icon="share"> {{ t('admin.person.share_profile') }} </el-button>
               </div>
             </div>
           </div>
@@ -88,52 +88,52 @@
         >
           <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
             <el-icon class="text-blue-500"><info-filled /></el-icon>
-            Basic information
+            {{ t('admin.person.basic_info') }}
           </h2>
           <div class="space-y-4">
             <div
               class="flex items-center gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <el-icon class="text-blue-500"><phone /></el-icon>
-              <span class="font-medium">Phone:</span>
-              <span>{{ userStore.userInfo.phone || 'Not set' }}</span>
+              <span class="font-medium">{{ t('admin.person.phone') }}:</span>
+              <span>{{ userStore.userInfo.phone || t('admin.person.not_set') }}</span>
               <el-button
                 link
                 type="primary"
                 class="ml-auto"
                 @click="changePhoneFlag = true"
               >
-                Edit
+                {{ t('admin.common.edit') }}
               </el-button>
             </div>
             <div
               class="flex items-center gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <el-icon class="text-green-500"><message /></el-icon>
-              <span class="font-medium flex-shrink-0">Email:</span>
-              <span>{{ userStore.userInfo.email || 'Not set' }}</span>
+              <span class="font-medium flex-shrink-0">{{ t('admin.person.email') }}:</span>
+              <span>{{ userStore.userInfo.email || t('admin.person.not_set') }}</span>
               <el-button
                 link
                 type="primary"
                 class="ml-auto"
                 @click="changeEmailFlag = true"
               >
-                Edit
+                {{ t('admin.common.edit') }}
               </el-button>
             </div>
             <div
               class="flex items-center gap-1 lg:gap-3 text-gray-600 dark:text-gray-300"
             >
               <el-icon class="text-purple-500"><lock /></el-icon>
-              <span class="font-medium">Password:</span>
-              <span>Set</span>
+              <span class="font-medium">{{ t('admin.person.password') }}:</span>
+              <span>{{ t('admin.person.password_set') }}</span>
               <el-button
                 link
                 type="primary"
                 class="ml-auto"
                 @click="showPassword = true"
               >
-                Change
+                {{ t('admin.person.change') }}
               </el-button>
             </div>
           </div>
@@ -142,7 +142,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-xl p-6 profile-card">
           <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
             <el-icon class="text-blue-500"><medal /></el-icon>
-            Skills
+            {{ t('admin.person.skills') }}
           </h2>
           <div class="flex flex-wrap gap-2">
             <el-tag effect="plain" type="success">GoLang</el-tag>
@@ -151,7 +151,7 @@
             <el-tag effect="plain" type="info">Gorm</el-tag>
             <el-button link class="text-sm">
               <el-icon><plus /></el-icon>
-              Add skill
+              {{ t('admin.person.add_skill') }}
             </el-button>
           </div>
         </div>
@@ -165,7 +165,7 @@
               <template #label>
                 <div class="flex items-center gap-2">
                   <el-icon><data-line /></el-icon>
-                  Statistics
+                  {{ t('admin.person.statistics') }}
                 </div>
               </template>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 py-6">
@@ -175,7 +175,7 @@
                   >
                     138
                   </div>
-                  <div class="text-gray-500 text-sm">Projects</div>
+                  <div class="text-gray-500 text-sm">{{ t('admin.person.projects') }}</div>
                 </div>
                 <div class="stat-card">
                   <div
@@ -183,7 +183,7 @@
                   >
                     2.3k
                   </div>
-                  <div class="text-gray-500 text-sm">Commits</div>
+                  <div class="text-gray-500 text-sm">{{ t('admin.person.commits') }}</div>
                 </div>
                 <div class="stat-card">
                   <div
@@ -191,7 +191,7 @@
                   >
                     95%
                   </div>
-                  <div class="text-gray-500 text-sm">Completion</div>
+                  <div class="text-gray-500 text-sm">{{ t('admin.person.completion') }}</div>
                 </div>
                 <div class="stat-card">
                   <div
@@ -199,7 +199,7 @@
                   >
                     12
                   </div>
-                  <div class="text-gray-500 text-sm">Badges</div>
+                  <div class="text-gray-500 text-sm">{{ t('admin.person.badges') }}</div>
                 </div>
               </div>
             </el-tab-pane>
@@ -207,7 +207,7 @@
               <template #label>
                 <div class="flex items-center gap-2">
                   <el-icon><calendar /></el-icon>
-                  Recent activity
+                  {{ t('admin.person.recent_activity') }}
                 </div>
               </template>
               <div class="py-6">
@@ -236,7 +236,7 @@
     <!-- Dialogs -->
     <el-dialog
       v-model="showPassword"
-      title="Change password"
+      :title="t('admin.person.change_password')"
       width="400px"
       class="custom-dialog"
       @close="clearPassword"
@@ -248,43 +248,43 @@
         label-width="90px"
         class="py-4"
       >
-        <el-form-item :minlength="6" label="Current password" prop="password">
+        <el-form-item :minlength="6" :label="t('admin.person.current_password')" prop="password">
           <el-input v-model="pwdModify.password" show-password />
         </el-form-item>
-        <el-form-item :minlength="6" label="New password" prop="newPassword">
+        <el-form-item :minlength="6" :label="t('admin.person.new_password')" prop="newPassword">
           <el-input v-model="pwdModify.newPassword" show-password />
         </el-form-item>
-        <el-form-item :minlength="6" label="Confirm password" prop="confirmPassword">
+        <el-form-item :minlength="6" :label="t('admin.person.confirm_password')" prop="confirmPassword">
           <el-input v-model="pwdModify.confirmPassword" show-password />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="showPassword = false">Cancel</el-button>
-          <el-button type="primary" @click="savePassword">Confirm</el-button>
+          <el-button @click="showPassword = false">{{ t('admin.common.cancel') }}</el-button>
+          <el-button type="primary" @click="savePassword">{{ t('admin.common.confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>
 
     <el-dialog
       v-model="changePhoneFlag"
-      title="Change phone"
+      :title="t('admin.person.change_phone')"
       width="400px"
       class="custom-dialog"
     >
       <el-form :model="phoneForm" label-width="80px" class="py-4">
-        <el-form-item label="Phone">
-          <el-input v-model="phoneForm.phone" placeholder="Enter new phone number">
+        <el-form-item :label="t('admin.person.phone')">
+          <el-input v-model="phoneForm.phone" :placeholder="t('admin.person.phone_placeholder')">
             <template #prefix>
               <el-icon><phone /></el-icon>
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="Verification code">
+        <el-form-item :label="t('admin.person.verification_code')">
           <div class="flex gap-4">
             <el-input
               v-model="phoneForm.code"
-              placeholder="Enter code (demo)"
+              :placeholder="t('admin.person.code_placeholder')"
               class="flex-1"
             >
               <template #prefix>
@@ -297,38 +297,38 @@
               class="w-32"
               @click="getCode"
             >
-              {{ time > 0 ? `${time}s` : 'Get code' }}
+              {{ time > 0 ? `${time}s` : t('admin.person.get_code') }}
             </el-button>
           </div>
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="closeChangePhone">Cancel</el-button>
-          <el-button type="primary" @click="changePhone">Confirm</el-button>
+          <el-button @click="closeChangePhone">{{ t('admin.common.cancel') }}</el-button>
+          <el-button type="primary" @click="changePhone">{{ t('admin.common.confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>
 
     <el-dialog
       v-model="changeEmailFlag"
-      title="Change email"
+      :title="t('admin.person.change_email')"
       width="400px"
       class="custom-dialog"
     >
       <el-form :model="emailForm" label-width="80px" class="py-4">
-        <el-form-item label="Email">
-          <el-input v-model="emailForm.email" placeholder="Enter new email address">
+        <el-form-item :label="t('admin.person.email')">
+          <el-input v-model="emailForm.email" :placeholder="t('admin.person.email_placeholder')">
             <template #prefix>
               <el-icon><message /></el-icon>
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="Verification code">
+        <el-form-item :label="t('admin.person.verification_code')">
           <div class="flex gap-4">
             <el-input
               v-model="emailForm.code"
-              placeholder="Enter code (demo)"
+              :placeholder="t('admin.person.code_placeholder')"
               class="flex-1"
             >
               <template #prefix>
@@ -341,15 +341,15 @@
               class="w-32"
               @click="getEmailCode"
             >
-              {{ emailTime > 0 ? `${emailTime}s` : 'Get code' }}
+              {{ emailTime > 0 ? `${emailTime}s` : t('admin.person.get_code') }}
             </el-button>
           </div>
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="closeChangeEmail">Cancel</el-button>
-          <el-button type="primary" @click="changeEmail">Confirm</el-button>
+          <el-button @click="closeChangeEmail">{{ t('admin.common.cancel') }}</el-button>
+          <el-button type="primary" @click="changeEmail">{{ t('admin.common.confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -360,8 +360,11 @@
   import { setSelfInfo, changePassword } from '@/api/user.js'
   import { reactive, ref, watch } from 'vue'
   import { ElMessage } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { useUserStore } from '@/pinia/modules/user'
   import SelectImage from '@/components/selectImage/selectImage.vue'
+
+  const { t } = useI18n()
   defineOptions({
     name: 'Person'
   })
@@ -375,20 +378,20 @@
 
   const rules = reactive({
     password: [
-      { required: true, message: 'Password is required', trigger: 'blur' },
-      { min: 6, message: 'Minimum 6 characters', trigger: 'blur' }
+      { required: true, message: t('admin.person.rule_password_required'), trigger: 'blur' },
+      { min: 6, message: t('admin.person.rule_min_length'), trigger: 'blur' }
     ],
     newPassword: [
-      { required: true, message: 'New password is required', trigger: 'blur' },
-      { min: 6, message: 'Minimum 6 characters', trigger: 'blur' }
+      { required: true, message: t('admin.person.rule_newpassword_required'), trigger: 'blur' },
+      { min: 6, message: t('admin.person.rule_min_length'), trigger: 'blur' }
     ],
     confirmPassword: [
-      { required: true, message: 'Confirm password is required', trigger: 'blur' },
-      { min: 6, message: 'Minimum 6 characters', trigger: 'blur' },
+      { required: true, message: t('admin.person.rule_confirmpassword_required'), trigger: 'blur' },
+      { min: 6, message: t('admin.person.rule_min_length'), trigger: 'blur' },
       {
         validator: (rule, value, callback) => {
           if (value !== pwdModify.value.newPassword) {
-            callback(new Error('Passwords do not match'))
+            callback(new Error(t('admin.person.rule_passwords_no_match')))
           } else {
             callback()
           }
@@ -406,7 +409,7 @@
           newPassword: pwdModify.value.newPassword
         }).then((res) => {
           if (res.code === 0) {
-            ElMessage.success('Password updated')
+            ElMessage.success(t('admin.person.password_updated'))
           }
           showPassword.value = false
         })
@@ -439,7 +442,7 @@
     })
     if (res.code === 0) {
       userStore.ResetUserInfo({ nickName: nickName.value })
-      ElMessage.success('Updated')
+      ElMessage.success(t('admin.person.updated'))
     }
     nickName.value = ''
     editFlag.value = false
@@ -472,7 +475,7 @@
   const changePhone = async () => {
     const res = await setSelfInfo({ phone: phoneForm.phone })
     if (res.code === 0) {
-      ElMessage.success('Updated')
+      ElMessage.success(t('admin.person.updated'))
       userStore.ResetUserInfo({ phone: phoneForm.phone })
       closeChangePhone()
     }
@@ -505,7 +508,7 @@
   const changeEmail = async () => {
     const res = await setSelfInfo({ email: emailForm.email })
     if (res.code === 0) {
-      ElMessage.success('Updated')
+      ElMessage.success(t('admin.person.updated'))
       userStore.ResetUserInfo({ email: emailForm.email })
       closeChangeEmail()
     }
@@ -517,7 +520,7 @@
       userStore.ResetUserInfo({ headerImg: val })
       ElMessage({
         type: 'success',
-        message: 'Saved',
+        message: t('admin.common.messages.saved'),
       })
     }
   })

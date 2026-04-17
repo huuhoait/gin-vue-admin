@@ -1,27 +1,27 @@
 <template>
   <div class="gva-form-box">
     <el-form :model="form" ref="formRef" label-width="100px" :rules="rules">
-      <el-form-item label="Tool name" prop="name">
-        <el-input v-model="form.name" placeholder="e.g. CurrentTime" />
+      <el-form-item :label="t('admin.system_tools.mcp.tool_name')" prop="name">
+        <el-input v-model="form.name" :placeholder="t('admin.system_tools.mcp.tool_name_placeholder')" />
       </el-form-item>
-      <el-form-item label="Description" prop="description">
-        <el-input type="textarea" v-model="form.description" placeholder="Enter tool description" />
+      <el-form-item :label="t('admin.system_tools.mcp.description')" prop="description">
+        <el-input type="textarea" v-model="form.description" :placeholder="t('admin.system_tools.mcp.description_placeholder')" />
       </el-form-item>
-      <el-form-item label="Parameters">
+      <el-form-item :label="t('admin.system_tools.mcp.parameters')">
         <el-table :data="form.params"  style="width: 100%">
-          <el-table-column prop="name" label="Name" width="120">
+          <el-table-column prop="name" :label="t('admin.system_tools.mcp.name')" width="120">
             <template #default="scope">
-              <el-input v-model="scope.row.name" placeholder="Name" />
+              <el-input v-model="scope.row.name" :placeholder="t('admin.system_tools.mcp.name')" />
             </template>
           </el-table-column>
-          <el-table-column prop="description" label="Description" min-width="180">
+          <el-table-column prop="description" :label="t('admin.system_tools.mcp.description')" min-width="180">
             <template #default="scope">
-              <el-input v-model="scope.row.description" placeholder="Description" />
+              <el-input v-model="scope.row.description" :placeholder="t('admin.system_tools.mcp.description')" />
             </template>
           </el-table-column>
-          <el-table-column prop="type" label="Type" width="120">
+          <el-table-column prop="type" :label="t('admin.system_tools.mcp.type')" width="120">
             <template #default="scope">
-              <el-select v-model="scope.row.type" placeholder="Type">
+              <el-select v-model="scope.row.type" :placeholder="t('admin.system_tools.mcp.type')">
                 <el-option label="string" value="string" />
                 <el-option label="number" value="number" />
                 <el-option label="boolean" value="boolean" />
@@ -30,49 +30,49 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="Default" width="300">
+          <el-table-column :label="t('admin.system_tools.mcp.default')" width="300">
             <template #default="scope">
               <el-input :disabled="scope.row.type === 'object'" v-model="scope.row.default" />
             </template>
           </el-table-column>
-          <el-table-column prop="required" label="Required" width="80">
+          <el-table-column prop="required" :label="t('admin.system_tools.mcp.required')" width="80">
             <template #default="scope">
               <el-checkbox v-model="scope.row.required" />
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="80">
+          <el-table-column :label="t('admin.system_tools.mcp.actions')" width="80">
             <template #default="scope">
-              <el-button type="text" @click="removeParam(scope.$index)">Delete</el-button>
+              <el-button type="text" @click="removeParam(scope.$index)">{{ t('admin.system_tools.mcp.delete') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-form-item>
       <div class="flex justify-end">
-        <el-button type="primary" icon="plus" @click="addParam" style="margin-top: 10px;">Add parameter</el-button>
+        <el-button type="primary" icon="plus" @click="addParam" style="margin-top: 10px;">{{ t('admin.system_tools.mcp.add_parameter') }}</el-button>
       </div>
-      <el-form-item label="Responses">
+      <el-form-item :label="t('admin.system_tools.mcp.responses')">
         <el-table :data="form.response" style="width: 100%">
-          <el-table-column prop="type" label="Type" min-width="120">
+          <el-table-column prop="type" :label="t('admin.system_tools.mcp.type')" min-width="120">
             <template #default="scope">
-              <el-select v-model="scope.row.type" placeholder="Type">
+              <el-select v-model="scope.row.type" :placeholder="t('admin.system_tools.mcp.type')">
                 <el-option label="text" value="text" />
                 <el-option label="image" value="image" />
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="80">
+          <el-table-column :label="t('admin.system_tools.mcp.actions')" width="80">
             <template #default="scope">
-              <el-button type="text" @click="removeResponse(scope.$index)">Delete</el-button>
+              <el-button type="text" @click="removeResponse(scope.$index)">{{ t('admin.system_tools.mcp.delete') }}</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-form-item>
       <div class="flex justify-end">
-        <el-button type="primary" icon="plus" @click="addResponse" style="margin-top: 10px;">Add response</el-button>
+        <el-button type="primary" icon="plus" @click="addResponse" style="margin-top: 10px;">{{ t('admin.system_tools.mcp.add_response') }}</el-button>
       </div>
 
       <div class="flex justify-end mt-8">
-        <el-button type="primary" @click="submit">Generate</el-button>
+        <el-button type="primary" @click="submit">{{ t('admin.system_tools.mcp.generate') }}</el-button>
       </div>
     </el-form>
   </div>
@@ -82,6 +82,9 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { mcp } from '@/api/autoCode'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineOptions({
   name: 'MCP'
@@ -97,9 +100,9 @@ const form = reactive({
 })
 
 const rules = {
-  name: [{ required: true, message: 'Tool name is required', trigger: 'blur' }],
-  description: [{ required: true, message: 'Description is required', trigger: 'blur' }],
-  type: [{ required: true, message: 'Type is required', trigger: 'change' }]
+  name: [{ required: true, message: t('admin.system_tools.mcp.tool_name_required'), trigger: 'blur' }],
+  description: [{ required: true, message: t('admin.system_tools.mcp.description_required'), trigger: 'blur' }],
+  type: [{ required: true, message: t('admin.system_tools.mcp.type_required'), trigger: 'change' }]
 }
 
 function addParam() {
@@ -131,14 +134,14 @@ function submit() {
     // Basic param validation
     for (const p of form.params) {
       if (!p.name || !p.description || !p.type) {
-        ElMessage.error('Please complete all parameter fields')
+        ElMessage.error(t('admin.system_tools.mcp.complete_param_fields'))
         return
       }
     }
     // Validate response types
     for (const r of form.response) {
       if (!r.type) {
-        ElMessage.error('Please select response type')
+        ElMessage.error(t('admin.system_tools.mcp.select_response_type'))
         return
       }
     }

@@ -3,11 +3,11 @@
     <div class="gva-search-box">
       <el-form ref="elSearchFormRef" :inline="true" :model="searchInfo" class="demo-form-inline"
         @keyup.enter="onSubmit">
-        <el-form-item label="Created at" prop="createdAtRange">
+        <el-form-item :label="t('admin.systemtools.version.created_at')" prop="createdAtRange">
           <template #label>
             <span>
-              Created at
-              <el-tooltip content="Range is start time (inclusive) to end time (exclusive).">
+              {{ t('admin.systemtools.version.created_at') }}
+              <el-tooltip :content="t('admin.systemtools.version.created_at_tooltip')">
                 <el-icon>
                   <QuestionFilled />
                 </el-icon>
@@ -15,16 +15,16 @@
             </span>
           </template>
 
-          <el-date-picker v-model="searchInfo.createdAtRange" class="w-[380px]" type="datetimerange" range-separator="to"
-            start-placeholder="Start time" end-placeholder="End time" />
+          <el-date-picker v-model="searchInfo.createdAtRange" class="w-[380px]" type="datetimerange" :range-separator="t('admin.systemtools.version.range_to')"
+            :start-placeholder="t('admin.systemtools.version.start_time')" :end-placeholder="t('admin.systemtools.version.end_time')" />
         </el-form-item>
 
-        <el-form-item label="Version name" prop="versionName">
-          <el-input v-model="searchInfo.versionName" placeholder="Search" />
+        <el-form-item :label="t('admin.systemtools.version.version_name')" prop="versionName">
+          <el-input v-model="searchInfo.versionName" :placeholder="t('admin.common.search')" />
         </el-form-item>
 
-        <el-form-item label="Version code" prop="versionCode">
-          <el-input v-model="searchInfo.versionCode" placeholder="Search" />
+        <el-form-item :label="t('admin.systemtools.version.version_code')" prop="versionCode">
+          <el-input v-model="searchInfo.versionCode" :placeholder="t('admin.common.search')" />
         </el-form-item>
 
 
@@ -34,42 +34,42 @@
         </template>
 
         <el-form-item>
-          <el-button type="primary" icon="search" @click="onSubmit">Search</el-button>
-          <el-button icon="refresh" @click="onReset">Reset</el-button>
+          <el-button type="primary" icon="search" @click="onSubmit">{{ t('admin.common.search') }}</el-button>
+          <el-button icon="refresh" @click="onReset">{{ t('admin.common.reset') }}</el-button>
           <el-button link type="primary" icon="arrow-down" @click="showAllQuery = true"
-            v-if="!showAllQuery">Expand</el-button>
-          <el-button link type="primary" icon="arrow-up" @click="showAllQuery = false" v-else>Collapse</el-button>
+            v-if="!showAllQuery">{{ t('admin.systemtools.version.expand') }}</el-button>
+          <el-button link type="primary" icon="arrow-up" @click="showAllQuery = false" v-else>{{ t('admin.systemtools.version.collapse') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="gva-table-box">
       <div class="gva-btn-list">
-        <el-button type="success" icon="download" @click="openExportDialog">Create release</el-button>
-        <el-button type="warning" icon="upload" @click="openImportDialog">Import version</el-button>
+        <el-button type="success" icon="download" @click="openExportDialog">{{ t('admin.systemtools.version.create_release') }}</el-button>
+        <el-button type="warning" icon="upload" @click="openImportDialog">{{ t('admin.systemtools.version.import_version') }}</el-button>
         <el-button icon="delete" style="margin-left: 10px;" :disabled="!multipleSelection.length"
-          @click="onDelete">Delete</el-button>
+          @click="onDelete">{{ t('admin.systemtools.version.delete') }}</el-button>
       </div>
       <el-table ref="multipleTable" style="width: 100%" tooltip-effect="dark" :data="tableData" row-key="ID"
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
 
-        <el-table-column sortable align="left" label="Date" prop="CreatedAt" width="180">
+        <el-table-column sortable align="left" :label="t('admin.systemtools.version.date')" prop="CreatedAt" width="180">
           <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
 
-        <el-table-column align="left" label="Version name" prop="versionName" width="120" />
+        <el-table-column align="left" :label="t('admin.systemtools.version.version_name')" prop="versionName" width="120" />
 
-        <el-table-column align="left" label="Version code" prop="versionCode" width="120" />
+        <el-table-column align="left" :label="t('admin.systemtools.version.version_code')" prop="versionCode" width="120" />
 
-        <el-table-column align="left" label="Actions" fixed="right" min-width="320">
+        <el-table-column align="left" :label="t('admin.systemtools.version.actions')" fixed="right" min-width="320">
           <template #default="scope">
             <el-button type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon
                 style="margin-right: 5px">
                 <InfoFilled />
-              </el-icon>View</el-button>
+              </el-icon>{{ t('admin.systemtools.version.view') }}</el-button>
             <el-button type="success" link icon="download" class="table-button"
-              @click="downloadJson(scope.row)">Download package</el-button>
-            <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">Delete</el-button>
+              @click="downloadJson(scope.row)">{{ t('admin.systemtools.version.download_package') }}</el-button>
+            <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">{{ t('admin.systemtools.version.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -81,51 +81,51 @@
     </div>
 
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="detailShow" :show-close="true"
-      :before-close="closeDetailShow" title="View">
+      :before-close="closeDetailShow" :title="t('admin.systemtools.version.view')">
       <el-descriptions :column="1" border>
-        <el-descriptions-item label="Version name">
+        <el-descriptions-item :label="t('admin.systemtools.version.version_name')">
           {{ detailForm.versionName }}
         </el-descriptions-item>
-        <el-descriptions-item label="Version code">
+        <el-descriptions-item :label="t('admin.systemtools.version.version_code')">
           {{ detailForm.versionCode }}
         </el-descriptions-item>
-        <el-descriptions-item label="Description">
+        <el-descriptions-item :label="t('admin.systemtools.version.description')">
           {{ detailForm.description }}
         </el-descriptions-item>
       </el-descriptions>
     </el-drawer>
 
     <!-- Export version drawer -->
-    <el-drawer v-model="exportDialogVisible" title="Create release" direction="rtl" size="80%" :before-close="closeExportDialog"
+    <el-drawer v-model="exportDialogVisible" :title="t('admin.systemtools.version.create_release')" direction="rtl" size="80%" :before-close="closeExportDialog"
       :show-close="false">
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">Create release</span>
+          <span class="text-lg">{{ t('admin.systemtools.version.create_release') }}</span>
           <div>
-            <el-button @click="closeExportDialog">Cancel</el-button>
-            <el-button type="primary" @click="handleExport" :loading="exportLoading">Create</el-button>
+            <el-button @click="closeExportDialog">{{ t('admin.systemtools.version.cancel') }}</el-button>
+            <el-button type="primary" @click="handleExport" :loading="exportLoading">{{ t('admin.systemtools.version.create') }}</el-button>
           </div>
         </div>
       </template>
       <el-form :model="exportForm" label-width="100px">
-        <el-form-item label="Version name" required>
-          <el-input v-model="exportForm.versionName" placeholder="Enter version name" />
+        <el-form-item :label="t('admin.systemtools.version.version_name')" required>
+          <el-input v-model="exportForm.versionName" :placeholder="t('admin.systemtools.version.enter_version_name')" />
         </el-form-item>
-        <el-form-item label="Version code" required>
-          <el-input v-model="exportForm.versionCode" placeholder="Enter version code" />
+        <el-form-item :label="t('admin.systemtools.version.version_code')" required>
+          <el-input v-model="exportForm.versionCode" :placeholder="t('admin.systemtools.version.enter_version_code')" />
         </el-form-item>
-        <el-form-item label="Description">
-          <el-input v-model="exportForm.description" type="textarea" placeholder="Enter description" />
+        <el-form-item :label="t('admin.systemtools.version.description')">
+          <el-input v-model="exportForm.description" type="textarea" :placeholder="t('admin.systemtools.version.enter_description')" />
         </el-form-item>
-        <el-form-item label="Release content">
+        <el-form-item :label="t('admin.systemtools.version.release_content')">
           <div class="flex gap-3 w-full">
             <!-- Menu selection -->
             <div class="card-col card-vertical">
               <div class="card-header">
-                <span class="card-title">Menus</span>
+                <span class="card-title">{{ t('admin.systemtools.version.menus') }}</span>
               </div>
               <div class="card-filter">
-                <el-input v-model="menuFilterText" placeholder="Filter by keyword" clearable size="small" />
+                <el-input v-model="menuFilterText" :placeholder="t('admin.systemtools.version.filter_by_keyword')" clearable size="small" />
               </div>
               <div class="card-body">
                 <el-tree ref="menuTreeRef" :data="menuTreeData" :default-checked-keys="selectedMenuIds"
@@ -143,12 +143,12 @@
             <!-- API selection -->
             <div class="card-col card-vertical">
               <div class="card-header">
-                <span class="card-title">APIs</span>
+                <span class="card-title">{{ t('admin.systemtools.version.apis') }}</span>
               </div>
               <div class="card-filter">
-                <el-input v-model="apiFilterTextName" placeholder="Filter by name" clearable size="small"
+                <el-input v-model="apiFilterTextName" :placeholder="t('admin.systemtools.version.filter_by_name')" clearable size="small"
                   style="margin-bottom: 8px" />
-                <el-input v-model="apiFilterTextPath" placeholder="Filter by path" clearable size="small" />
+                <el-input v-model="apiFilterTextPath" :placeholder="t('admin.systemtools.version.filter_by_path')" clearable size="small" />
               </div>
               <div class="card-body">
                 <el-tree ref="apiTreeRef" :data="apiTreeData" :default-checked-keys="selectedApiIds"
@@ -172,10 +172,10 @@
             <!-- Dictionary selection -->
             <div class="card-col card-vertical">
               <div class="card-header">
-                <span class="card-title">Dictionaries</span>
+                <span class="card-title">{{ t('admin.systemtools.version.dictionaries') }}</span>
               </div>
               <div class="card-filter">
-                <el-input v-model="dictFilterText" placeholder="Filter by keyword" clearable size="small" />
+                <el-input v-model="dictFilterText" :placeholder="t('admin.systemtools.version.filter_by_keyword')" clearable size="small" />
               </div>
               <div class="card-body">
                 <el-tree ref="dictTreeRef" :data="dictTreeData" :default-checked-keys="selectedDictIds"
@@ -200,44 +200,44 @@
     </el-drawer>
 
     <!-- Import version drawer -->
-    <el-drawer v-model="importDialogVisible" title="Import version" direction="rtl" size="80%" :before-close="closeImportDialog"
+    <el-drawer v-model="importDialogVisible" :title="t('admin.systemtools.version.import_version')" direction="rtl" size="80%" :before-close="closeImportDialog"
       :show-close="false">
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">Import version</span>
+          <span class="text-lg">{{ t('admin.systemtools.version.import_version') }}</span>
           <div>
-            <el-button @click="closeImportDialog">Cancel</el-button>
+            <el-button @click="closeImportDialog">{{ t('admin.systemtools.version.cancel') }}</el-button>
             <el-button type="primary" @click="handleImport" :loading="importLoading"
-              :disabled="!importJsonContent.trim()">Import</el-button>
+              :disabled="!importJsonContent.trim()">{{ t('admin.systemtools.version.import') }}</el-button>
           </div>
         </div>
       </template>
       <el-form label-width="100px">
-        <el-form-item label="Upload file">
+        <el-form-item :label="t('admin.systemtools.version.upload_file')">
           <el-upload ref="uploadRef" :auto-upload="false" :show-file-list="true" :limit="1" accept=".json"
             :on-change="handleFileChange" :on-remove="handleFileRemove" drag>
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">
-              Drag a JSON file here, or <em>click to upload</em>
+              {{ t('admin.systemtools.version.drag_json_prefix') }}<em>{{ t('admin.systemtools.version.click_to_upload') }}</em>
             </div>
             <template #tip>
               <div class="el-upload__tip">
-                JSON files only
+                {{ t('admin.common.messages.json_only') }}
               </div>
             </template>
           </el-upload>
         </el-form-item>
-        <el-form-item label="Version JSON">
-          <el-input v-model="importJsonContent" type="textarea" :rows="20" placeholder="Paste version JSON"
+        <el-form-item :label="t('admin.systemtools.version.version_json')">
+          <el-input v-model="importJsonContent" type="textarea" :rows="20" :placeholder="t('admin.systemtools.version.paste_version_json')"
             @input="handleJsonContentChange" />
         </el-form-item>
-        <el-form-item label="Preview" v-if="importPreviewData">
+        <el-form-item :label="t('admin.systemtools.version.preview')" v-if="importPreviewData">
           <div class="preview-wrap">
             <div class="flex gap-3 w-full">
               <div class="card-col">
                 <div class="card-vertical">
                   <div class="card-header">
-                    <h3 class="card-title">Menus ({{ getTotalMenuCount() }})</h3>
+                    <h3 class="card-title">{{ t('admin.systemtools.version.menus') }} ({{ getTotalMenuCount() }})</h3>
                   </div>
                   <div class="card-body">
                     <el-tree :data="previewMenuTreeData" :props="menuTreeProps" node-key="name"
@@ -256,7 +256,7 @@
               <div class="card-col">
                 <div class="card-vertical">
                   <div class="card-header">
-                    <h3 class="card-title">APIs ({{ importPreviewData.apis?.length || 0 }})</h3>
+                    <h3 class="card-title">{{ t('admin.systemtools.version.apis') }} ({{ importPreviewData.apis?.length || 0 }})</h3>
                   </div>
                   <div class="card-body">
                     <el-tree :data="previewApiTreeData" :props="apiTreeProps" node-key="ID"
@@ -276,7 +276,7 @@
               <div class="card-col">
                 <div class="card-vertical">
                   <div class="card-header">
-                    <h3 class="card-title">Dictionaries ({{ importPreviewData.dictionaries?.length || 0 }})</h3>
+                    <h3 class="card-title">{{ t('admin.systemtools.version.dictionaries') }} ({{ importPreviewData.dictionaries?.length || 0 }})</h3>
                   </div>
                   <div class="card-body">
                     <el-tree :data="previewDictTreeData" :props="dictTreeProps" node-key="ID"
@@ -325,6 +325,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { useAppStore } from "@/pinia"
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 defineOptions({
   name: 'SysVersion'
@@ -388,7 +391,7 @@ const dictTreeProps = ref({
     if (data.label) {
       return data.label
     }
-    return 'Unknown'
+    return t('admin.systemtools.version.unknown')
   }
 })
 
@@ -463,9 +466,9 @@ const handleSelectionChange = (val) => {
 
 // Delete row
 const deleteRow = (row) => {
-  ElMessageBox.confirm('Delete this item?', 'Confirm', {
-    confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(t('admin.systemtools.version.delete_item_confirm'), t('admin.common.confirm'), {
+    confirmButtonText: t('admin.systemtools.version.delete'),
+    cancelButtonText: t('admin.common.cancel'),
     type: 'warning'
   }).then(() => {
     deleteSysVersionFunc(row)
@@ -474,16 +477,16 @@ const deleteRow = (row) => {
 
 // Bulk delete
 const onDelete = async () => {
-  ElMessageBox.confirm('Delete selected items?', 'Confirm', {
-    confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancel',
+  ElMessageBox.confirm(t('admin.systemtools.version.delete_selected_confirm'), t('admin.common.confirm'), {
+    confirmButtonText: t('admin.systemtools.version.delete'),
+    cancelButtonText: t('admin.common.cancel'),
     type: 'warning'
   }).then(async () => {
     const IDs = []
     if (multipleSelection.value.length === 0) {
       ElMessage({
         type: 'warning',
-        message: 'Please select items to delete'
+        message: t('admin.systemtools.version.select_items_to_delete')
       })
       return
     }
@@ -495,7 +498,7 @@ const onDelete = async () => {
     if (res.code === 0) {
       ElMessage({
         type: 'success',
-        message: 'Deleted'
+        message: t('admin.common.messages.deleted')
       })
       if (tableData.value.length === IDs.length && page.value > 1) {
         page.value--
@@ -511,7 +514,7 @@ const deleteSysVersionFunc = async (row) => {
   if (res.code === 0) {
     ElMessage({
       type: 'success',
-      message: 'Deleted'
+      message: t('admin.common.messages.deleted')
     })
     if (tableData.value.length === 1 && page.value > 1) {
       page.value--
@@ -569,7 +572,7 @@ const getMenuAndApiList = async () => {
     }
   } catch (error) {
     console.error('Failed to load data:', error)
-    ElMessage.error('Failed to load menu/API data')
+    ElMessage.error(t('admin.systemtools.version.load_menu_api_failed'))
   }
 }
 
@@ -582,7 +585,7 @@ const getDictList = async () => {
     }
   } catch (error) {
     console.error('Failed to load dictionary data:', error)
-    ElMessage.error('Failed to load dictionary data')
+    ElMessage.error(t('admin.systemtools.version.load_dict_failed'))
   }
 }
 
@@ -711,7 +714,7 @@ const closeExportDialog = () => {
 
 const handleExport = async () => {
   if (!exportForm.value.versionName || !exportForm.value.versionCode) {
-    ElMessage.warning('Please fill version name and version code')
+    ElMessage.warning(t('admin.systemtools.version.fill_version_name_code'))
     return
   }
 
@@ -732,16 +735,16 @@ const handleExport = async () => {
 
     const res = await exportVersion(exportForm.value)
     if (res.code !== 0) {
-      ElMessage.error(res.msg || 'Create release failed')
+      ElMessage.error(res.msg || t('admin.systemtools.version.create_release_failed'))
       return
     }
 
-    ElMessage.success('Release created')
+    ElMessage.success(t('admin.systemtools.version.release_created'))
     closeExportDialog()
     getTableData() // Refresh table
   } catch (error) {
     console.error('Create release failed:', error)
-    ElMessage.error('Create release failed')
+    ElMessage.error(t('admin.systemtools.version.create_release_failed'))
   } finally {
     exportLoading.value = false
   }
@@ -770,7 +773,7 @@ const handleFileChange = (file) => {
 
   // Validate file type
   if (!file.name.toLowerCase().endsWith('.json')) {
-    ElMessage.error('JSON files only')
+    ElMessage.error(t('admin.common.messages.json_only'))
     uploadRef.value.clearFiles()
     return
   }
@@ -784,9 +787,9 @@ const handleFileChange = (file) => {
       JSON.parse(content)
       importJsonContent.value = content
       handleJsonContentChange()
-      ElMessage.success('File uploaded')
+      ElMessage.success(t('admin.systemtools.version.file_uploaded'))
     } catch (error) {
-      ElMessage.error('Invalid JSON file')
+      ElMessage.error(t('admin.common.messages.invalid_json_file'))
       uploadRef.value.clearFiles()
     }
   }
@@ -884,14 +887,14 @@ const handleJsonContentChange = () => {
 
 const handleImport = async () => {
   if (!importJsonContent.value.trim()) {
-    ElMessage.warning('Please provide version JSON')
+    ElMessage.warning(t('admin.systemtools.version.provide_version_json'))
     return
   }
 
   try {
     JSON.parse(importJsonContent.value)
   } catch (error) {
-    ElMessage.error('Invalid JSON format. Please check your input.')
+    ElMessage.error(t('admin.common.messages.invalid_json'))
     return
   }
 
@@ -900,15 +903,15 @@ const handleImport = async () => {
     const data = JSON.parse(importJsonContent.value)
     const res = await importVersion(data)
     if (res.code === 0) {
-      ElMessage.success('Imported')
+      ElMessage.success(t('admin.common.messages.imported'))
       closeImportDialog()
       getTableData() // Refresh table
     } else {
-      ElMessage.error(res.msg || 'Import failed')
+      ElMessage.error(res.msg || t('admin.systemtools.version.import_failed'))
     }
   } catch (error) {
     console.error('Import failed:', error)
-    ElMessage.error('Import failed')
+    ElMessage.error(t('admin.systemtools.version.import_failed'))
   } finally {
     importLoading.value = false
   }
@@ -939,10 +942,10 @@ const downloadJson = async (row) => {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
 
-    ElMessage.success('Downloaded')
+    ElMessage.success(t('admin.common.messages.download_success'))
   } catch (error) {
     console.error('Download failed:', error)
-    ElMessage.error('Download failed')
+    ElMessage.error(t('admin.systemtools.version.download_failed'))
   }
 }
 

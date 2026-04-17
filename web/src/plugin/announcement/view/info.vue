@@ -9,12 +9,12 @@
         :rules="searchRule"
         @keyup.enter="onSubmit"
       >
-        <el-form-item label="Created at" prop="createdAt">
+        <el-form-item :label="t('admin.plugin.announcement.created_at')" prop="createdAt">
           <template #label>
             <span>
-              Created at
+              {{ t('admin.plugin.announcement.created_at') }}
               <el-tooltip
-                content="Search range: start time (inclusive) to end time (exclusive)"
+                :content="t('admin.plugin.announcement.created_at_tooltip')"
               >
                 <el-icon><QuestionFilled /></el-icon>
               </el-tooltip>
@@ -23,7 +23,7 @@
           <el-date-picker
             v-model="searchInfo.startCreatedAt"
             type="datetime"
-            placeholder="Start time"
+            :placeholder="t('admin.plugin.announcement.start_time')"
             :disabled-date="
               (time) =>
                 searchInfo.endCreatedAt
@@ -35,7 +35,7 @@
           <el-date-picker
             v-model="searchInfo.endCreatedAt"
             type="datetime"
-            placeholder="End time"
+            :placeholder="t('admin.plugin.announcement.end_time')"
             :disabled-date="
               (time) =>
                 searchInfo.startCreatedAt
@@ -51,9 +51,9 @@
 
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">
-            Search
+            {{ t('admin.common.search') }}
           </el-button>
-          <el-button icon="refresh" @click="onReset"> Reset </el-button>
+          <el-button icon="refresh" @click="onReset"> {{ t('admin.common.reset') }} </el-button>
           <el-button
             v-if="!showAllQuery"
             link
@@ -61,7 +61,7 @@
             icon="arrow-down"
             @click="showAllQuery = true"
           >
-            Expand
+            {{ t('admin.plugin.announcement.expand') }}
           </el-button>
           <el-button
             v-else
@@ -70,7 +70,7 @@
             icon="arrow-up"
             @click="showAllQuery = false"
           >
-            Collapse
+            {{ t('admin.plugin.announcement.collapse') }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -78,7 +78,7 @@
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-button type="primary" icon="plus" @click="openDialog">
-          Add
+          {{ t('admin.common.add') }}
         </el-button>
         <el-button
           icon="delete"
@@ -86,7 +86,7 @@
           :disabled="!multipleSelection.length"
           @click="onDelete"
         >
-          Delete
+          {{ t('admin.common.delete') }}
         </el-button>
       </div>
       <el-table
@@ -99,21 +99,21 @@
       >
         <el-table-column type="selection" width="55" />
 
-        <el-table-column align="left" label="Created at" prop="CreatedAt" width="180">
+        <el-table-column align="left" :label="t('admin.plugin.announcement.created_at')" prop="CreatedAt" width="180">
           <template #default="scope">
             {{ formatDate(scope.row.CreatedAt) }}
           </template>
         </el-table-column>
 
-        <el-table-column align="left" label="Title" prop="title" width="120" />
-        <el-table-column align="left" label="Author" prop="userID" width="120">
+        <el-table-column align="left" :label="t('admin.plugin.announcement.title')" prop="title" width="120" />
+        <el-table-column align="left" :label="t('admin.plugin.announcement.author')" prop="userID" width="120">
           <template #default="scope">
             <span>{{
               filterDataSource(dataSource.userID, scope.row.userID)
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Attachments" prop="attachments" width="200">
+        <el-table-column :label="t('admin.plugin.announcement.attachments')" prop="attachments" width="200">
           <template #default="scope">
             <div class="file-list">
               <el-tag
@@ -128,7 +128,7 @@
         </el-table-column>
         <el-table-column
           align="left"
-          label="Actions"
+          :label="t('admin.common.actions')"
           fixed="right"
           min-width="240"
         >
@@ -140,7 +140,7 @@
               class="table-button"
               @click="updateInfoFunc(scope.row)"
             >
-              Edit
+              {{ t('admin.common.edit') }}
             </el-button>
             <el-button
               type="primary"
@@ -148,7 +148,7 @@
               icon="delete"
               @click="deleteRow(scope.row)"
             >
-              Delete
+              {{ t('admin.common.delete') }}
             </el-button>
           </template>
         </el-table-column>
@@ -174,10 +174,10 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">{{ type === 'create' ? 'Add' : 'Edit' }}</span>
+          <span class="text-lg">{{ type === 'create' ? t('admin.plugin.announcement.type_create') : t('admin.plugin.announcement.type_edit') }}</span>
           <div>
-            <el-button type="primary" @click="enterDialog"> Confirm </el-button>
-            <el-button @click="closeDialog"> Cancel </el-button>
+            <el-button type="primary" @click="enterDialog"> {{ t('admin.common.confirm') }} </el-button>
+            <el-button @click="closeDialog"> {{ t('admin.common.cancel') }} </el-button>
           </div>
         </div>
       </template>
@@ -189,20 +189,20 @@
         :rules="rule"
         label-width="80px"
       >
-        <el-form-item label="Title:" prop="title">
+        <el-form-item :label="t('admin.plugin.announcement.title') + ':'" prop="title">
           <el-input
             v-model="formData.title"
             :clearable="true"
-            placeholder="Enter title"
+            :placeholder="t('admin.plugin.announcement.title_enter')"
           />
         </el-form-item>
-        <el-form-item label="Content:" prop="content">
+        <el-form-item :label="t('admin.plugin.announcement.content') + ':'" prop="content">
           <RichEdit v-model="formData.content" />
         </el-form-item>
-        <el-form-item label="Author:" prop="userID">
+        <el-form-item :label="t('admin.plugin.announcement.author') + ':'" prop="userID">
           <el-select
             v-model="formData.userID"
-            placeholder="Select author"
+            :placeholder="t('admin.plugin.announcement.author_select')"
             style="width: 100%"
             :clearable="true"
           >
@@ -214,7 +214,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Attachments:" prop="attachments">
+        <el-form-item :label="t('admin.plugin.announcement.attachments') + ':'" prop="attachments">
           <SelectFile v-model="formData.attachments" />
         </el-form-item>
       </el-form>
@@ -241,7 +241,10 @@
   // Optional: import all formatters; keep as needed
   import { formatDate, filterDataSource } from '@/utils/format'
   import { ElMessage, ElMessageBox } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { ref, reactive } from 'vue'
+
+  const { t } = useI18n()
 
   defineOptions({
     name: 'Info'
@@ -277,12 +280,12 @@
             searchInfo.value.startCreatedAt &&
             !searchInfo.value.endCreatedAt
           ) {
-            callback(new Error('End time is required'))
+            callback(new Error(t('admin.plugin.announcement.end_time_required')))
           } else if (
             !searchInfo.value.startCreatedAt &&
             searchInfo.value.endCreatedAt
           ) {
-            callback(new Error('Start time is required'))
+            callback(new Error(t('admin.plugin.announcement.start_time_required')))
           } else if (
             searchInfo.value.startCreatedAt &&
             searchInfo.value.endCreatedAt &&
@@ -291,7 +294,7 @@
               searchInfo.value.startCreatedAt.getTime() >
                 searchInfo.value.endCreatedAt.getTime())
           ) {
-            callback(new Error('Start time must be earlier than end time'))
+            callback(new Error(t('admin.plugin.announcement.start_before_end')))
           } else {
             callback()
           }
@@ -372,9 +375,9 @@
 
   // Delete row
   const deleteRow = (row) => {
-    ElMessageBox.confirm('Delete this item?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.plugin.announcement.delete_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(() => {
       deleteInfoFunc(row)
@@ -383,16 +386,16 @@
 
   // Delete selected
   const onDelete = async () => {
-    ElMessageBox.confirm('Delete selected items?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
+    ElMessageBox.confirm(t('admin.plugin.announcement.delete_selected_confirm'), t('admin.common.confirms.delete_title'), {
+      confirmButtonText: t('admin.common.confirm'),
+      cancelButtonText: t('admin.common.cancel'),
       type: 'warning'
     }).then(async () => {
       const IDs = []
       if (multipleSelection.value.length === 0) {
         ElMessage({
           type: 'warning',
-          message: 'Please select items to delete'
+          message: t('admin.plugin.announcement.please_select_items')
         })
         return
       }
@@ -404,7 +407,7 @@
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Deleted'
+          message: t('admin.common.messages.deleted')
         })
         if (tableData.value.length === IDs.length && page.value > 1) {
           page.value--
@@ -433,7 +436,7 @@
     if (res.code === 0) {
       ElMessage({
         type: 'success',
-        message: 'Deleted'
+        message: t('admin.common.messages.deleted')
       })
       if (tableData.value.length === 1 && page.value > 1) {
         page.value--
@@ -480,7 +483,7 @@
       if (res.code === 0) {
         ElMessage({
           type: 'success',
-          message: 'Saved'
+          message: t('admin.common.messages.saved')
         })
         closeDialog()
         getTableData()
