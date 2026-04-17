@@ -1,73 +1,73 @@
 SHELL = /bin/bash
 
 #SCRIPT_DIR         = $(shell pwd)/etc/script
-#请选择golang版本
+# Select the Go version
 BUILD_IMAGE_SERVER  = golang:1.22
-#请选择node版本
+# Select the Node.js version
 BUILD_IMAGE_WEB     = node:20
-#项目名称
+# Project name
 PROJECT_NAME        = github.com/flipped-aurora/gin-vue-admin/server
-#配置文件目录
+# Config file path
 CONFIG_FILE         = config.yaml
-#镜像仓库命名空间
+# Image registry namespace
 IMAGE_NAME          = gva
-#镜像地址
+# Image registry address
 REPOSITORY          = registry.cn-hangzhou.aliyuncs.com/${IMAGE_NAME}
-#镜像版本
+# Image tag/version
 TAGS_OPT           ?= latest
 PLUGIN             ?= email
 
-#容器环境前后端共同打包
+# Build both web and server inside containers
 build: build-web build-server
 	docker run --name build-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_SERVER} make build-local
 
-#容器环境打包前端
+# Build the web frontend inside a container
 build-web:
 	docker run --name build-web-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_WEB} make build-web-local
 
-#容器环境打包后端
+# Build the server backend inside a container
 build-server:
 	docker run --name build-server-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_SERVER} make build-server-local
 
-#构建web镜像
+# Build the web Docker image
 build-image-web:
 	@cd web/ && docker build -t ${REPOSITORY}/web:${TAGS_OPT} .
 
-#构建server镜像
+# Build the server Docker image
 build-image-server:
 	@cd server/ && docker build -t ${REPOSITORY}/server:${TAGS_OPT} .
 
-#本地环境打包前后端
+# Build both web and server on the local host
 build-local:
 	if [ -d "build" ];then rm -rf build; else echo "OK!"; fi \
 	&& if [ -f "/.dockerenv" ];then echo "OK!"; else  make build-web-local && make build-server-local; fi \
 	&& mkdir build && cp -r web/dist build/ && cp server/server build/ && cp -r server/resource build/resource
 
-#本地环境打包前端
+# Build the web frontend on the local host
 build-web-local:
 	@cd web/ && if [ -d "dist" ];then rm -rf dist; else echo "OK!"; fi \
 	&& yarn config set registry http://mirrors.cloud.tencent.com/npm/ && yarn install && yarn build
 
-#本地环境打包后端
+# Build the server backend on the local host
 build-server-local:
 	@cd server/ && if [ -f "server" ];then rm -rf server; else echo "OK!"; fi \
-	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct \
+	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.io,direct \
 	&& go env -w CGO_ENABLED=0 && go env  && go mod tidy \
-	&& go build -ldflags "-B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
+	&& go build -ldflags "-B 0x$(shell head -c8 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
 
-#打包前后端二合一镜像
+# Build a combined web + server Docker image
 image: build
 	docker build -t ${REPOSITORY}/gin-vue-admin:${TAGS_OPT} -f deploy/docker/Dockerfile .
 
-#尝鲜版
+# Preview build: produce combined plus split web/server images
 images: build build-image-web build-image-server
 	docker build -t ${REPOSITORY}/all:${TAGS_OPT} -f deploy/docker/Dockerfile .
 
-#swagger 文档生成
+# Generate the Swagger API documentation
 doc:
 	@cd server && swag init
 
-#插件快捷打包： make plugin PLUGIN="这里是插件文件夹名称,默认为email"
+# Quick-package a plugin: make plugin PLUGIN="<plugin folder name, defaults to email>"
 plugin:
 	if [ -d ".plugin" ];then rm -rf .plugin ; else echo "OK!"; fi && mkdir -p .plugin/${PLUGIN}/{server/plugin,web/plugin} \
 	&& if [ -d "server/plugin/${PLUGIN}" ];then cp -r server/plugin/${PLUGIN} .plugin/${PLUGIN}/server/plugin/ ; else echo "OK!"; fi \
