@@ -1,7 +1,7 @@
 package proxy
 
 import (
-	v1 "github.com/flipped-aurora/gin-vue-admin/server/api/v1"
+	v1 "github.com/huuhoait/gin-vue-admin/server/api/v1"
 	"github.com/gin-gonic/gin"
 )
 

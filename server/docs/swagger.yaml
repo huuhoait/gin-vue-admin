@@ -510,7 +510,7 @@ definitions:
           $ref: '#/definitions/config.DiskList'
         type: array
       email:
-        $ref: '#/definitions/github_com_flipped-aurora_gin-vue-admin_server_config.Email'
+        $ref: '#/definitions/github_com_huuhoait_gin-vue-admin_server_config.Email'
       excel:
         $ref: '#/definitions/config.Excel'
       hua-wei-obs:
@@ -859,7 +859,7 @@ definitions:
         description: file URL
         type: string
     type: object
-  github_com_flipped-aurora_gin-vue-admin_server_config.Email:
+  github_com_huuhoait_gin-vue-admin_server_config.Email:
     properties:
       from:
         description: sender  the mailbox you send mail from

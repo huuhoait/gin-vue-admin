@@ -1,8 +1,8 @@
 package response
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"github.com/huuhoait/gin-vue-admin/server/model/system"
+	"github.com/huuhoait/gin-vue-admin/server/model/system/request"
 )
 
 // ExportVersionResponse export versionResponseStructureBody

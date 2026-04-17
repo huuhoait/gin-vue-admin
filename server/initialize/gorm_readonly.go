@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	proxyApi "github.com/flipped-aurora/gin-vue-admin/server/api/v1/proxy"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	proxyApi "github.com/huuhoait/gin-vue-admin/server/api/v1/proxy"
+	"github.com/huuhoait/gin-vue-admin/server/global"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

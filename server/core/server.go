@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
-	mcpTool "github.com/flipped-aurora/gin-vue-admin/server/mcp"
-	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
+	"github.com/huuhoait/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/initialize"
+	mcpTool "github.com/huuhoait/gin-vue-admin/server/mcp"
+	"github.com/huuhoait/gin-vue-admin/server/service/system"
 	"go.uber.org/zap"
 )
 
@@ -36,7 +36,7 @@ func RunServer() {
 	fmt.Printf(`
 	WelcomeUse gin-vue-admin
 	CurrentVersion:%s
-	ProjectAddress:https://github.com/flipped-aurora/gin-vue-admin
+	ProjectAddress:https://github.com/huuhoait/gin-vue-admin
 	Plugin Market:https://plugin.gin-vue-admin.com
 	defaultAutomatictransformDocumentationAddress:http://127.0.0.1%s/swagger/index.html
 	MCP standalone servicePleaseManualStart: go run ./cmd/mcp -config ./cmd/mcp/config.yaml

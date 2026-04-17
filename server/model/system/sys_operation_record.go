@@ -4,7 +4,7 @@ package system
 import (
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/global"
 )
 
 // If it contains time.Time please import the time package yourself

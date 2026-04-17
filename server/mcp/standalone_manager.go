@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/global"
 )
 
 const (

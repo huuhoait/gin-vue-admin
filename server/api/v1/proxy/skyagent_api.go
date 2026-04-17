@@ -3,7 +3,7 @@ package proxy
 import (
 	"net/http"
 
-	proxyPkg "github.com/flipped-aurora/gin-vue-admin/server/service/proxy"
+	proxyPkg "github.com/huuhoait/gin-vue-admin/server/service/proxy"
 	"github.com/gin-gonic/gin"
 )
 

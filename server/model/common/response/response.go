@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global/i18n"
+	"github.com/huuhoait/gin-vue-admin/server/global/i18n"
 	"github.com/gin-gonic/gin"
 )
 

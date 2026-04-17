@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/router"
 	"github.com/gin-gonic/gin"
+	"github.com/huuhoait/gin-vue-admin/server/router"
 )
 
 // Placeholdermethod, EnsureFileCanByCorrectLoad, AvoidgoEmptyVariableDetectThrow Error, PleaseDo Notdelete.

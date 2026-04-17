@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/example/request"
-	exampleRes "github.com/flipped-aurora/gin-vue-admin/server/model/example/response"
+	"github.com/huuhoait/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
+	"github.com/huuhoait/gin-vue-admin/server/model/example"
+	"github.com/huuhoait/gin-vue-admin/server/model/example/request"
+	exampleRes "github.com/huuhoait/gin-vue-admin/server/model/example/response"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

@@ -3,7 +3,7 @@
 package initialize
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/huuhoait/gin-vue-admin/server/utils"
 )
 
 // initializeGlobalFunctionNumber

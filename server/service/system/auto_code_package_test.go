@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	model "github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"github.com/huuhoait/gin-vue-admin/server/global"
+	model "github.com/huuhoait/gin-vue-admin/server/model/system"
+	"github.com/huuhoait/gin-vue-admin/server/model/system/request"
 	"os"
 )
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/core"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/global/i18n"
-	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
+	"github.com/huuhoait/gin-vue-admin/server/core"
+	"github.com/huuhoait/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/global/i18n"
+	"github.com/huuhoait/gin-vue-admin/server/initialize"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )

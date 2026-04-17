@@ -12,7 +12,7 @@ import (
 
 // AddRegisterTablesAst AutomaticFor gorm.go RegisterOnePieceAutomaticmigrateMove
 func AddRegisterTablesAst(path, funcName, pk, varName, dbName, model string) {
-	modelPk := fmt.Sprintf("github.com/flipped-aurora/gin-vue-admin/server/model/%s", pk)
+	modelPk := fmt.Sprintf("github.com/huuhoait/gin-vue-admin/server/model/%s", pk)
 	src, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Println(err)

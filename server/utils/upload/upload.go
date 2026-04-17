@@ -3,7 +3,7 @@ package upload
 import (
 	"mime/multipart"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/global"
 )
 
 // OSS Object StorageAPI

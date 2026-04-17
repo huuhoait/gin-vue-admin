@@ -1,9 +1,9 @@
 package proxy
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/service"
-	"github.com/flipped-aurora/gin-vue-admin/server/service/dashboard"
-	proxyPkg "github.com/flipped-aurora/gin-vue-admin/server/service/proxy"
+	"github.com/huuhoait/gin-vue-admin/server/service"
+	"github.com/huuhoait/gin-vue-admin/server/service/dashboard"
+	proxyPkg "github.com/huuhoait/gin-vue-admin/server/service/proxy"
 	"gorm.io/gorm"
 )
 
