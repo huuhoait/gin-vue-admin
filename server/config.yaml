@@ -242,6 +242,8 @@ system:
     use-mongo: false
     use-strict-auth: false
     disable-auto-migrate: false
+    # OpenAPI UI at /swagger/index.html — off when GIN_MODE=release unless true.
+    enable-swagger: false
 tencent-cos:
     bucket: xxxxx-10005608
     region: ap-shanghai

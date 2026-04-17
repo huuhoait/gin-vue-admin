@@ -209,9 +209,11 @@ func (s *autoCodeHistory) GetList(ctx context.Context, info common.PageInfo) (li
 // DropTable drops the specified table from the given database
 // @author: [piexlmax](https://github.com/piexlmax)
 func (s *autoCodeHistory) DropTable(BusinessDb, tableName string) error {
+	if err := utils.ValidatePlainSQLIdentifier(tableName); err != nil {
+		return errors.Wrap(err, "invalid table name")
+	}
 	if BusinessDb != "" {
 		return global.MustGetGlobalDBByDBName(BusinessDb).Exec("DROP TABLE " + tableName).Error
-	} else {
-		return global.GVA_DB.Exec("DROP TABLE " + tableName).Error
 	}
+	return global.GVA_DB.Exec("DROP TABLE " + tableName).Error
 }

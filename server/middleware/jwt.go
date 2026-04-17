@@ -11,6 +11,7 @@ import (
 
 	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func JWTAuth() gin.HandlerFunc {
@@ -38,7 +39,8 @@ func JWTAuth() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			response.NoAuth(err.Error(), c)
+			global.GVA_LOG.Warn("jwt parse failed", zap.Error(err))
+			response.NoAuth("Invalid or expired token, please log in again", c)
 			utils.ClearToken(c)
 			c.Abort()
 			return

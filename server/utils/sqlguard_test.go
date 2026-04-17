@@ -31,3 +31,27 @@ func TestValidateExportSQL(t *testing.T) {
 		})
 	}
 }
+
+func TestValidatePlainSQLIdentifier(t *testing.T) {
+	cases := []struct {
+		name    string
+		id      string
+		wantErr bool
+	}{
+		{"ok snake", "sys_users", false},
+		{"ok single", "t", false},
+		{"empty", "", true},
+		{"semicolon", "u;drop", true},
+		{"space", "a b", true},
+		{"starts digit", "1t", true},
+		{"dash", "a-b", true},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			err := ValidatePlainSQLIdentifier(c.id)
+			if (err != nil) != c.wantErr {
+				t.Fatalf("%q: got err=%v want err=%v", c.id, err, c.wantErr)
+			}
+		})
+	}
+}

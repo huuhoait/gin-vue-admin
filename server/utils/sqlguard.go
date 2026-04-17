@@ -24,6 +24,9 @@ var (
 		"grant", "revoke", "exec", "execute", "call", "replace", "merge",
 		"rename", "load", "copy", "attach", "detach",
 	}
+
+	// Unquoted SQL identifiers used in safe concatenation (e.g. DROP TABLE name).
+	plainSQLIdentifier = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
 )
 
 // ValidateExportSQL accepts a template's raw SQL and returns an error if the
@@ -58,6 +61,24 @@ func ValidateExportSQL(raw string) error {
 
 	if !(strings.HasPrefix(lower, "select") || strings.HasPrefix(lower, "with")) {
 		return errors.New("only SELECT or WITH statements are allowed")
+	}
+	return nil
+}
+
+// ValidatePlainSQLIdentifier ensures s is safe to embed as an unquoted SQL
+// identifier (table/column/schema names from codegen). This blocks injection
+// via ";", spaces, quotes, and multi-byte tricks when concatenating into DDL.
+//
+// Allowed: [a-zA-Z_][a-zA-Z0-9_]* with a conservative length cap.
+func ValidatePlainSQLIdentifier(s string) error {
+	if s == "" {
+		return errors.New("empty identifier")
+	}
+	if len(s) > 128 {
+		return errors.New("identifier too long")
+	}
+	if !plainSQLIdentifier.MatchString(s) {
+		return errors.New("identifier must be alphanumeric or underscore, and not start with a digit")
 	}
 	return nil
 }

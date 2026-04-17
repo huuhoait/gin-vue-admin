@@ -74,9 +74,13 @@ func Routers() *gin.Engine {
 	// Router.Use(middleware.Cors()) // DirectPlaceRowAllCORSRequest
 	// Router.Use(middleware.CorsByRules()) // According toconfigurationofRulePlaceRowCORSRequest
 	// global.GVA_LOG.Info("use middleware cors")
-	docs.SwaggerInfo.BasePath = global.GVA_CONFIG.System.RouterPrefix
-	Router.GET(global.GVA_CONFIG.System.RouterPrefix+"/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	global.GVA_LOG.Info("register swagger handler")
+	if gin.Mode() != gin.ReleaseMode || global.GVA_CONFIG.System.EnableSwagger {
+		docs.SwaggerInfo.BasePath = global.GVA_CONFIG.System.RouterPrefix
+		Router.GET(global.GVA_CONFIG.System.RouterPrefix+"/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		global.GVA_LOG.Info("register swagger handler")
+	} else {
+		global.GVA_LOG.Info("swagger UI disabled in release mode; set system.enable-swagger: true to expose (use only on trusted networks)")
+	}
 	// ConvenientUnifiedAddroute groupPrefix MultipleServerUpperLineUse
 
 	PublicGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix)
