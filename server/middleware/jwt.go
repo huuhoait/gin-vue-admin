@@ -22,7 +22,7 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if isBlacklist(token) {
+		if utils.BlacklistContains(token) {
 			response.NoAuth("Your account has been logged in from another location or the token is invalid", c)
 			utils.ClearToken(c)
 			c.Abort()
@@ -84,13 +84,3 @@ func JWTAuth() gin.HandlerFunc {
 	}
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: IsBlacklist
-//@description: check if JWT is in the blacklist
-//@param: jwt string
-//@return: bool
-
-func isBlacklist(jwt string) bool {
-	_, ok := global.BlackCache.Get(jwt)
-	return ok
-}

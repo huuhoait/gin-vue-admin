@@ -84,7 +84,9 @@ hua-wei-obs:
     access-key: you-access-key
     secret-key: you-secret-key
 jwt:
-    signing-key: 88c21ee8-5769-417e-b3ee-e1a309d15c88
+    # IMPORTANT: never commit a real signing key. Override at deploy time with
+    # env var GVA_JWT_SIGNING_KEY. An empty value forces release mode to panic.
+    signing-key: ""
     expires-time: 7d
     buffer-time: 1d
     issuer: qmPlus

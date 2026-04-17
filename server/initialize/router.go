@@ -43,6 +43,16 @@ func Routers() *gin.Engine {
 	if gin.Mode() == gin.DebugMode {
 		Router.Use(gin.Logger())
 	}
+	// CORS + CSRF must run before auth so preflights and the CSRF cookie are
+	// issued even for unauthenticated requests. Pick the configured CORS
+	// strategy: strict-whitelist is enforced, otherwise allow-all is used
+	// (allow-all refuses to send credentials in release mode — see Cors()).
+	if global.GVA_CONFIG.Cors.Mode == "strict-whitelist" {
+		Router.Use(middleware.CorsByRules())
+	} else {
+		Router.Use(middleware.Cors())
+	}
+	Router.Use(middleware.CSRF())
 
 	systemRouter := router.RouterGroupApp.System
 	// IfThinkRequireNotUsenginxagentFrontendWeb Page, CanByUpdate web/.env.production Downof

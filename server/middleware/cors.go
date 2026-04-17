@@ -12,13 +12,17 @@ import (
 
 var corsWarnOnce sync.Once
 
-// Cors allows all cross-origin requests and passes through all OPTIONS methods.
-// In release mode this reflects a warning — the allow-all mode reflects the
-// request Origin *with* Access-Control-Allow-Credentials:true, which defeats
-// the Same-Origin Policy for credentialed requests and should never be used
-// in production. Configure Cors.Mode = "strict-whitelist" for prod.
+// Cors allows all cross-origin requests — development only.
+//
+// Reflecting the request Origin together with Access-Control-Allow-Credentials
+// means any page the user visits can fire authenticated requests at the API,
+// which is equivalent to disabling the Same-Origin Policy for credentialed
+// traffic. Release mode therefore refuses to return credentials in this mode;
+// operators must configure cors.mode = "strict-whitelist" and list the real
+// frontend origins.
 func Cors() gin.HandlerFunc {
-	if gin.Mode() == gin.ReleaseMode {
+	release := gin.Mode() == gin.ReleaseMode
+	if release {
 		corsWarnOnce.Do(func() {
 			fmt.Println("[WARN] CORS allow-all mode is enabled in release; switch cors.mode to 'strict-whitelist' in production")
 		})
@@ -28,7 +32,12 @@ func Cors() gin.HandlerFunc {
 		origin := c.Request.Header.Get("Origin")
 		if origin != "" {
 			c.Header("Access-Control-Allow-Origin", origin)
-			c.Header("Access-Control-Allow-Credentials", "true")
+			// Only send credentials when we are explicitly *not* in release:
+			// reflecting Origin + credentials = trust any site that loads in
+			// the victim's browser.
+			if !release {
+				c.Header("Access-Control-Allow-Credentials", "true")
+			}
 		}
 		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id")
 		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS,DELETE,PUT")

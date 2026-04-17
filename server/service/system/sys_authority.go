@@ -129,7 +129,7 @@ func (authorityService *AuthorityService) UpdateAuthority(auth system.SysAuthori
 //@return: err error
 
 func (authorityService *AuthorityService) DeleteAuthority(auth *system.SysAuthority) error {
-	if errors.Is(global.GVA_DB.Debug().Preload("Users").First(&auth).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.GVA_DB.Preload("Users").First(&auth).Error, gorm.ErrRecordNotFound) {
 		return errors.New("role does not exist")
 	}
 	if len(auth.Users) != 0 {
@@ -189,25 +189,71 @@ func (authorityService *AuthorityService) GetAuthorityInfoList(authorityID uint)
 	if err != nil {
 		return nil, err
 	}
-	var authorities []system.SysAuthority
-	db := global.GVA_DB.Model(&system.SysAuthority{})
-	if global.GVA_CONFIG.System.UseStrictAuth {
-		// when strict tree structure is enabled
-		if *authority.ParentId == 0 {
-			// only top-level roles can modify their own and subordinate permissions
-			err = db.Preload("DataAuthorityId").Where("authority_id = ?", authorityID).Find(&authorities).Error
-		} else {
-			// non-top-level roles can only modify subordinate permissions
-			err = db.Debug().Preload("DataAuthorityId").Where("parent_id = ?", authorityID).Find(&authorities).Error
-		}
-	} else {
-		err = db.Preload("DataAuthorityId").Where("parent_id = ?", "0").Find(&authorities).Error
+
+	// Fetch every authority row in ONE query, then build the tree in memory.
+	// The previous implementation walked the tree with one DB round-trip per
+	// node (findChildrenAuthority recursion), which became O(N) queries on
+	// every role-page load — a dominant source of latency under load.
+	var all []system.SysAuthority
+	if err = global.GVA_DB.Preload("DataAuthorityId").Find(&all).Error; err != nil {
+		return nil, err
 	}
 
-	for k := range authorities {
-		err = authorityService.findChildrenAuthority(&authorities[k])
+	// Decide the root set according to the same rules as before.
+	var roots []system.SysAuthority
+	if global.GVA_CONFIG.System.UseStrictAuth {
+		if authority.ParentId != nil && *authority.ParentId == 0 {
+			for _, a := range all {
+				if a.AuthorityId == authorityID {
+					roots = append(roots, a)
+				}
+			}
+		} else {
+			for _, a := range all {
+				if a.ParentId != nil && *a.ParentId == authorityID {
+					roots = append(roots, a)
+				}
+			}
+		}
+	} else {
+		for _, a := range all {
+			if a.ParentId != nil && *a.ParentId == 0 {
+				roots = append(roots, a)
+			}
+		}
 	}
-	return authorities, err
+
+	childrenByParent := groupAuthoritiesByParent(all)
+	for i := range roots {
+		attachAuthorityChildren(&roots[i], childrenByParent)
+	}
+	return roots, nil
+}
+
+// groupAuthoritiesByParent buckets authorities by their ParentId so that
+// attachAuthorityChildren can assemble the tree without more DB calls.
+func groupAuthoritiesByParent(all []system.SysAuthority) map[uint][]system.SysAuthority {
+	out := make(map[uint][]system.SysAuthority, len(all))
+	for _, a := range all {
+		if a.ParentId == nil {
+			continue
+		}
+		out[*a.ParentId] = append(out[*a.ParentId], a)
+	}
+	return out
+}
+
+func attachAuthorityChildren(node *system.SysAuthority, children map[uint][]system.SysAuthority) {
+	kids := children[node.AuthorityId]
+	if len(kids) == 0 {
+		node.Children = nil
+		return
+	}
+	node.Children = make([]system.SysAuthority, len(kids))
+	for i := range kids {
+		node.Children[i] = kids[i]
+		attachAuthorityChildren(&node.Children[i], children)
+	}
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -218,22 +264,30 @@ func (authorityService *AuthorityService) GetAuthorityInfoList(authorityID uint)
 
 func (authorityService *AuthorityService) GetStructAuthorityList(authorityID uint) (list []uint, err error) {
 	var auth system.SysAuthority
-	_ = global.GVA_DB.First(&auth, "authority_id = ?", authorityID).Error
-	var authorities []system.SysAuthority
-	err = global.GVA_DB.Preload("DataAuthorityId").Where("parent_id = ?", authorityID).Find(&authorities).Error
-	if len(authorities) > 0 {
-		for k := range authorities {
-			list = append(list, authorities[k].AuthorityId)
-			childrenList, err := authorityService.GetStructAuthorityList(authorities[k].AuthorityId)
-			if err == nil {
-				list = append(list, childrenList...)
-			}
+	if err = global.GVA_DB.First(&auth, "authority_id = ?", authorityID).Error; err != nil {
+		return nil, err
+	}
+	// One query for every authority, then breadth-first walk in memory rather
+	// than recursing with one DB round-trip per level.
+	var all []system.SysAuthority
+	if err = global.GVA_DB.Find(&all).Error; err != nil {
+		return nil, err
+	}
+	childrenByParent := groupAuthoritiesByParent(all)
+
+	queue := []uint{authorityID}
+	for len(queue) > 0 {
+		parent := queue[0]
+		queue = queue[1:]
+		for _, child := range childrenByParent[parent] {
+			list = append(list, child.AuthorityId)
+			queue = append(queue, child.AuthorityId)
 		}
 	}
-	if *auth.ParentId == 0 {
+	if auth.ParentId != nil && *auth.ParentId == 0 {
 		list = append(list, authorityID)
 	}
-	return list, err
+	return list, nil
 }
 
 func (authorityService *AuthorityService) CheckAuthorityIDAuth(authorityID, targetID uint) (err error) {
@@ -304,22 +358,6 @@ func (authorityService *AuthorityService) SetMenuAuthority(auth *system.SysAutho
 	var s system.SysAuthority
 	global.GVA_DB.Preload("SysBaseMenus").First(&s, "authority_id = ?", auth.AuthorityId)
 	err := global.GVA_DB.Model(&s).Association("SysBaseMenus").Replace(&auth.SysBaseMenus)
-	return err
-}
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: findChildrenAuthority
-//@description: Find child roles
-//@param: authority *model.SysAuthority
-//@return: err error
-
-func (authorityService *AuthorityService) findChildrenAuthority(authority *system.SysAuthority) (err error) {
-	err = global.GVA_DB.Preload("DataAuthorityId").Where("parent_id = ?", authority.AuthorityId).Find(&authority.Children).Error
-	if len(authority.Children) > 0 {
-		for k := range authority.Children {
-			err = authorityService.findChildrenAuthority(&authority.Children[k])
-		}
-	}
 	return err
 }
 
