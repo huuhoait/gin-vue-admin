@@ -23,17 +23,17 @@ type {{.StructName}}Api struct {}
 
 {{if not .OnlyTemplate}}
 
-// Create{{.StructName}} 创建{{.Description}}
+// Create{{.StructName}} Create {{.Description}}
 // @Tags {{.StructName}}
-// @Summary 创建{{.Description}}
+// @Summary Create {{.Description}}
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
-// @Param data body {{.Package}}.{{.StructName}} true "创建{{.Description}}"
-// @Success 200 {object} response.Response{msg=string} "创建成功"
+// @Param data body {{.Package}}.{{.StructName}} true "Create {{.Description}}"
+// @Success 200 {object} response.Response{msg=string} "Created successfully"
 // @Router /{{.Abbreviation}}/create{{.StructName}} [post]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Create{{.StructName}}(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
 	var {{.Abbreviation}} {{.Package}}.{{.StructName}}
@@ -47,24 +47,24 @@ func ({{.Abbreviation}}Api *{{.StructName}}Api) Create{{.StructName}}(c *gin.Con
 	{{- end }}
 	err = {{.Abbreviation}}Service.Create{{.StructName}}(ctx,&{{.Abbreviation}})
 	if err != nil {
-        global.GVA_LOG.Error("创建失败!", zap.Error(err))
-		response.FailWithMessage("创建失败:" + err.Error(), c)
+        global.GVA_LOG.Error("Creation failed!", zap.Error(err))
+		response.FailWithMessage("Creation failed:" + err.Error(), c)
 		return
 	}
-    response.OkWithMessage("创建成功", c)
+    response.OkWithMessage("Created successfully", c)
 }
 
-// Delete{{.StructName}} 删除{{.Description}}
+// Delete{{.StructName}} Delete {{.Description}}
 // @Tags {{.StructName}}
-// @Summary 删除{{.Description}}
+// @Summary Delete {{.Description}}
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
-// @Param data body {{.Package}}.{{.StructName}} true "删除{{.Description}}"
-// @Success 200 {object} response.Response{msg=string} "删除成功"
+// @Param data body {{.Package}}.{{.StructName}} true "Delete {{.Description}}"
+// @Success 200 {object} response.Response{msg=string} "Deleted successfully"
 // @Router /{{.Abbreviation}}/delete{{.StructName}} [delete]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Delete{{.StructName}}(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
 	{{.PrimaryField.FieldJson}} := c.Query("{{.PrimaryField.FieldJson}}")
@@ -73,23 +73,23 @@ func ({{.Abbreviation}}Api *{{.StructName}}Api) Delete{{.StructName}}(c *gin.Con
         {{- end }}
 	err := {{.Abbreviation}}Service.Delete{{.StructName}}(ctx,{{.PrimaryField.FieldJson}} {{- if .AutoCreateResource -}},userID{{- end -}})
 	if err != nil {
-        global.GVA_LOG.Error("删除失败!", zap.Error(err))
-		response.FailWithMessage("删除失败:" + err.Error(), c)
+        global.GVA_LOG.Error("Deletion failed!", zap.Error(err))
+		response.FailWithMessage("Deletion failed:" + err.Error(), c)
 		return
 	}
-	response.OkWithMessage("删除成功", c)
+	response.OkWithMessage("Deleted successfully", c)
 }
 
-// Delete{{.StructName}}ByIds 批量删除{{.Description}}
+// Delete{{.StructName}}ByIds Batch delete {{.Description}}
 // @Tags {{.StructName}}
-// @Summary 批量删除{{.Description}}
+// @Summary Batch delete {{.Description}}
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
-// @Success 200 {object} response.Response{msg=string} "批量删除成功"
+// @Success 200 {object} response.Response{msg=string} "Batch deletion succeeded"
 // @Router /{{.Abbreviation}}/delete{{.StructName}}ByIds [delete]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Delete{{.StructName}}ByIds(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
 	{{.PrimaryField.FieldJson}}s := c.QueryArray("{{.PrimaryField.FieldJson}}s[]")
@@ -98,24 +98,24 @@ func ({{.Abbreviation}}Api *{{.StructName}}Api) Delete{{.StructName}}ByIds(c *gi
         {{- end }}
 	err := {{.Abbreviation}}Service.Delete{{.StructName}}ByIds(ctx,{{.PrimaryField.FieldJson}}s{{- if .AutoCreateResource }},userID{{- end }})
 	if err != nil {
-        global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
-		response.FailWithMessage("批量删除失败:" + err.Error(), c)
+        global.GVA_LOG.Error("Batch deletion failed!", zap.Error(err))
+		response.FailWithMessage("Batch deletion failed:" + err.Error(), c)
 		return
 	}
-	response.OkWithMessage("批量删除成功", c)
+	response.OkWithMessage("Batch deletion succeeded", c)
 }
 
-// Update{{.StructName}} 更新{{.Description}}
+// Update{{.StructName}} Update {{.Description}}
 // @Tags {{.StructName}}
-// @Summary 更新{{.Description}}
+// @Summary Update {{.Description}}
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
-// @Param data body {{.Package}}.{{.StructName}} true "更新{{.Description}}"
-// @Success 200 {object} response.Response{msg=string} "更新成功"
+// @Param data body {{.Package}}.{{.StructName}} true "Update {{.Description}}"
+// @Success 200 {object} response.Response{msg=string} "Updated successfully"
 // @Router /{{.Abbreviation}}/update{{.StructName}} [put]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Update{{.StructName}}(c *gin.Context) {
-    // 从ctx获取标准context进行业务行为
+    // Retrieve the standard context from ctx for the business operation
     ctx := c.Request.Context()
 
 	var {{.Abbreviation}} {{.Package}}.{{.StructName}}
@@ -129,69 +129,69 @@ func ({{.Abbreviation}}Api *{{.StructName}}Api) Update{{.StructName}}(c *gin.Con
         {{- end }}
 	err = {{.Abbreviation}}Service.Update{{.StructName}}(ctx,{{.Abbreviation}})
 	if err != nil {
-        global.GVA_LOG.Error("更新失败!", zap.Error(err))
-		response.FailWithMessage("更新失败:" + err.Error(), c)
+        global.GVA_LOG.Error("Update failed!", zap.Error(err))
+		response.FailWithMessage("Update failed:" + err.Error(), c)
 		return
 	}
-	response.OkWithMessage("更新成功", c)
+	response.OkWithMessage("Updated successfully", c)
 }
 
-// Find{{.StructName}} 用id查询{{.Description}}
+// Find{{.StructName}} Query {{.Description}} by id
 // @Tags {{.StructName}}
-// @Summary 用id查询{{.Description}}
+// @Summary Query {{.Description}} by id
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
-// @Param {{.PrimaryField.FieldJson}} query {{.PrimaryField.FieldType}} true "用id查询{{.Description}}"
-// @Success 200 {object} response.Response{data={{.Package}}.{{.StructName}},msg=string} "查询成功"
+// @Param {{.PrimaryField.FieldJson}} query {{.PrimaryField.FieldType}} true "Query {{.Description}} by id"
+// @Success 200 {object} response.Response{data={{.Package}}.{{.StructName}},msg=string} "Query succeeded"
 // @Router /{{.Abbreviation}}/find{{.StructName}} [get]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Find{{.StructName}}(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
 	{{.PrimaryField.FieldJson}} := c.Query("{{.PrimaryField.FieldJson}}")
 	re{{.Abbreviation}}, err := {{.Abbreviation}}Service.Get{{.StructName}}(ctx,{{.PrimaryField.FieldJson}})
 	if err != nil {
-        global.GVA_LOG.Error("查询失败!", zap.Error(err))
-		response.FailWithMessage("查询失败:" + err.Error(), c)
+        global.GVA_LOG.Error("Query failed!", zap.Error(err))
+		response.FailWithMessage("Query failed:" + err.Error(), c)
 		return
 	}
 	response.OkWithData(re{{.Abbreviation}}, c)
 }
 
 {{- if .IsTree }}
-// Get{{.StructName}}List 分页获取{{.Description}}列表,Tree模式下不接受参数
+// Get{{.StructName}}List Paginated {{.Description}} list. Tree mode does not accept parameters
 // @Tags {{.StructName}}
-// @Summary 分页获取{{.Description}}列表
+// @Summary Paginated {{.Description}} list
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
-// @Success 200 {object} response.Response{data=response.PageResult,msg=string} "获取成功"
+// @Success 200 {object} response.Response{data=response.PageResult,msg=string} "Retrieved successfully"
 // @Router /{{.Abbreviation}}/get{{.StructName}}List [get]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Get{{.StructName}}List(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
 	list, err := {{.Abbreviation}}Service.Get{{.StructName}}InfoList(ctx)
 	if err != nil {
-	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
-        response.FailWithMessage("获取失败:" + err.Error(), c)
+	    global.GVA_LOG.Error("Retrieval failed!", zap.Error(err))
+        response.FailWithMessage("Retrieval failed:" + err.Error(), c)
         return
     }
-    response.OkWithDetailed(list, "获取成功", c)
+    response.OkWithDetailed(list, "Retrieved successfully", c)
 }
 {{- else }}
-// Get{{.StructName}}List 分页获取{{.Description}}列表
+// Get{{.StructName}}List Paginated {{.Description}} list
 // @Tags {{.StructName}}
-// @Summary 分页获取{{.Description}}列表
+// @Summary Paginated {{.Description}} list
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
-// @Param data query {{.Package}}Req.{{.StructName}}Search true "分页获取{{.Description}}列表"
-// @Success 200 {object} response.Response{data=response.PageResult,msg=string} "获取成功"
+// @Param data query {{.Package}}Req.{{.StructName}}Search true "Paginated {{.Description}} list"
+// @Success 200 {object} response.Response{data=response.PageResult,msg=string} "Retrieved successfully"
 // @Router /{{.Abbreviation}}/get{{.StructName}}List [get]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Get{{.StructName}}List(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
 	var pageInfo {{.Package}}Req.{{.StructName}}Search
@@ -202,8 +202,8 @@ func ({{.Abbreviation}}Api *{{.StructName}}Api) Get{{.StructName}}List(c *gin.Co
 	}
 	list, total, err := {{.Abbreviation}}Service.Get{{.StructName}}InfoList(ctx,pageInfo)
 	if err != nil {
-	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
-        response.FailWithMessage("获取失败:" + err.Error(), c)
+	    global.GVA_LOG.Error("Retrieval failed!", zap.Error(err))
+        response.FailWithMessage("Retrieval failed:" + err.Error(), c)
         return
     }
     response.OkWithDetailed(response.PageResult{
@@ -211,27 +211,27 @@ func ({{.Abbreviation}}Api *{{.StructName}}Api) Get{{.StructName}}List(c *gin.Co
         Total:    total,
         Page:     pageInfo.Page,
         PageSize: pageInfo.PageSize,
-    }, "获取成功", c)
+    }, "Retrieved successfully", c)
 }
 {{- end }}
 
 {{- if .HasDataSource }}
-// Get{{.StructName}}DataSource 获取{{.StructName}}的数据源
+// Get{{.StructName}}DataSource Get the data source for {{.StructName}}
 // @Tags {{.StructName}}
-// @Summary 获取{{.StructName}}的数据源
+// @Summary Get the data source for {{.StructName}}
 // @Accept application/json
 // @Produce application/json
-// @Success 200 {object} response.Response{data=object,msg=string} "查询成功"
+// @Success 200 {object} response.Response{data=object,msg=string} "Query succeeded"
 // @Router /{{.Abbreviation}}/get{{.StructName}}DataSource [get]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Get{{.StructName}}DataSource(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
-    // 此接口为获取数据源定义的数据
+    // This endpoint returns the data defined for the data source
     dataSource, err := {{.Abbreviation}}Service.Get{{.StructName}}DataSource(ctx)
     if err != nil {
-        global.GVA_LOG.Error("查询失败!", zap.Error(err))
-   		response.FailWithMessage("查询失败:" + err.Error(), c)
+        global.GVA_LOG.Error("Query failed!", zap.Error(err))
+   		response.FailWithMessage("Query failed:" + err.Error(), c)
    		return
     }
    response.OkWithData(dataSource, c)
@@ -240,21 +240,21 @@ func ({{.Abbreviation}}Api *{{.StructName}}Api) Get{{.StructName}}DataSource(c *
 
 {{- end }}
 
-// Get{{.StructName}}Public 不需要鉴权的{{.Description}}接口
+// Get{{.StructName}}Public Public {{.Description}} endpoint (no auth required)
 // @Tags {{.StructName}}
-// @Summary 不需要鉴权的{{.Description}}接口
+// @Summary Public {{.Description}} endpoint (no auth required)
 // @Accept application/json
 // @Produce application/json
-// @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
+// @Success 200 {object} response.Response{data=object,msg=string} "Retrieved successfully"
 // @Router /{{.Abbreviation}}/get{{.StructName}}Public [get]
 func ({{.Abbreviation}}Api *{{.StructName}}Api) Get{{.StructName}}Public(c *gin.Context) {
-    // 创建业务用Context
+    // Create a business context
     ctx := c.Request.Context()
 
-    // 此接口不需要鉴权
-    // 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
+    // This endpoint does not require authentication
+    // The example returns a fixed message. Typically this is used for public (C-side) services, and you should implement your own business logic
     {{.Abbreviation}}Service.Get{{.StructName}}Public(ctx)
     response.OkWithDetailed(gin.H{
-       "info": "不需要鉴权的{{.Description}}接口信息",
-    }, "获取成功", c)
+       "info": "Public {{.Description}} endpoint info (no auth required)",
+    }, "Retrieved successfully", c)
 }

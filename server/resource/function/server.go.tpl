@@ -18,7 +18,7 @@ func (s *{{.Abbreviation}}) {{.FuncName}}(ctx context.Context) (err error) {
 // {{.FuncName}} {{.FuncDesc}}
 // Author [yourname](https://github.com/yourname)
 func ({{.Abbreviation}}Service *{{.StructName}}Service){{.FuncName}}(ctx context.Context) (err error) {
-	// 请在这里实现自己的业务逻辑
+	// Implement your business logic here
 	db := {{$db}}.Model(&{{.Package}}.{{.StructName}}{})
     return db.Error
 }

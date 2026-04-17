@@ -18,13 +18,13 @@ func init() {
 }
 
 
-// 如果需要配置文件，请到config.Config中填充配置结构，且到下方发放中填入其在config.yaml中的key并添加如下方法
+// If a config file is needed, populate the config struct in config.Config and wire up the key from config.yaml in the method below, adding:
 // initialize.Viper()
-// 安装插件时候自动注册的api数据请到下方法.Api方法中实现并添加如下方法
+// To auto-register API data when installing the plugin, implement it in the .Api method and add:
 // initialize.Api(ctx)
-// 安装插件时候自动注册的api数据请到下方法.Menu方法中实现并添加如下方法
+// To auto-register menus when installing the plugin, implement it in the .Menu method and add:
 // initialize.Menu(ctx)
-// 安装插件时候自动注册的api数据请到下方法.Dictionary方法中实现并添加如下方法
+// To auto-register dictionaries when installing the plugin, implement it in the .Dictionary method and add:
 // initialize.Dictionary(ctx)
 func (p *plugin) Register(group *gin.Engine) {
 	ctx := context.Background() 

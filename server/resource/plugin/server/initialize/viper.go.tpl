@@ -11,7 +11,7 @@ import (
 func Viper() {
 	err := global.GVA_VP.UnmarshalKey("{{ .Package }}", &plugin.Config)
 	if err != nil {
-		err = errors.Wrap(err, "初始化配置文件失败!")
+		err = errors.Wrap(err, "Failed to initialize config file!")
 		zap.L().Error(fmt.Sprintf("%+v", err))
 	}
 }

@@ -1,5 +1,5 @@
 {{- if .IsAdd}}
-// 在结构体中新增如下字段
+// Add the following fields to the struct
 {{- range .Fields}}
     {{- if ne .FieldSearchType ""}}
          {{ GenerateSearchField . }}

@@ -1,11 +1,11 @@
-## GVA 邮件发送功能插件
-#### 开发者：GIN-VUE-ADMIN 官方
+## GVA Email Sending Plugin
+#### Developer: GIN-VUE-ADMIN Official
 
-### 使用步骤
+### Usage
 
-#### 1. 前往GVA主程序下的initialize/router.go 在Routers 方法最末尾按照你需要的及安全模式添加本插件
-    例：
-    本插件可以采用gva的配置文件 也可以直接写死内容作为配置 建议为gva添加配置文件结构 然后将配置传入
+#### 1. Register the plugin at the end of the Routers method in initialize/router.go using the security mode you need
+    Example:
+    The plugin can read values from the GVA config file or accept hardcoded values. Adding a dedicated config structure and passing its values in is recommended.
 	PluginInit(PrivateGroup, email.CreateEmailPlug(
 		global.GVA_CONFIG.Email.To,
 		global.GVA_CONFIG.Email.From,
@@ -17,62 +17,62 @@
 		global.GVA_CONFIG.Email.IsLoginAuth,
 		))
 
-    同样也可以再传入时写死
+    You can also pass literal values directly:
 
     PluginInit(PrivateGroup, email.CreateEmailPlug(
     "a@qq.com",
     "b@qq.com",
     "smtp.qq.com",
     "global.GVA_CONFIG.Email.Secret",
-    "登录密钥",
+    "login-secret",
     465,
     true,
     true,
     ))
 
-### 2. 配置说明
+### 2. Configuration
 
-#### 2-1 全局配置结构体说明
-    //其中 Form 和 Secret 通常来说就是用户名和密码
+#### 2-1 Global config struct
+    // Form and Secret are usually the username and password
 
     type Email struct {
-	    To          string  // 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用 此处配置主要用于发送错误监控邮件
-	    From        string  // 发件人  你自己要发邮件的邮箱
-	    Host        string  // 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
-	    Secret      string  // 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
-	    Nickname    string  // 昵称    发件人昵称 自定义即可 可以不填
-	    Port        int     // 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
-	    IsSSL       bool    // 是否SSL   是否开启SSL
-	    IsLoginAuth bool    // 是否LoginAuth   是否使用LoginAuth认证方式（适用于IBM、微软邮箱服务器等）
+	    To          string  // Recipient: multiple addresses separated by commas, e.g. a@qq.com,b@qq.com. In production pass this as a parameter. This value is mainly used for error-monitoring emails
+	    From        string  // Sender: the mailbox you send from
+	    Host        string  // Server address, e.g. smtp.qq.com. Check your mailbox's SMTP docs
+	    Secret      string  // Secret used to log in. Prefer an SMTP application key over the mailbox password
+	    Nickname    string  // Sender nickname, optional
+	    Port        int     // Port. Check your mailbox's SMTP docs; typically 465
+	    IsSSL       bool    // Whether to enable SSL
+	    IsLoginAuth bool    // Whether to use LOGIN auth (required by IBM, Microsoft mail servers, etc.)
     }
-#### 2-2 入参结构说明
-    //其中 Form 和 Secret 通常来说就是用户名和密码
+#### 2-2 Request struct
+    // Form and Secret are usually the username and password
 
     type Email struct {
-        To      string `json:"to"`      // 邮件发送给谁
-        Subject string `json:"subject"` // 邮件标题
-        Body    string `json:"body"`    // 邮件内容
+        To      string `json:"to"`      // Recipient
+        Subject string `json:"subject"` // Email subject
+        Body    string `json:"body"`    // Email body
     }
 
 
-### 3. 方法API
+### 3. API helpers
 
-    utils.EmailTest(邮件标题，邮件主体) 发送测试邮件
-    例:utils.EmailTest("测试邮件"，"测试邮件")
-    utils.ErrorToEmail(邮件标题,邮件主体) 错误监控
-    例:utils.ErrorToEmail("测试邮件"，"测试邮件")
-    utils.Email(目标邮箱多个的话用逗号分隔，邮件标题，邮件主体) 发送测试邮件
-    例:utils.Email(”a.qq.com,b.qq.com“,"测试邮件"，"测试邮件")
+    utils.EmailTest(subject, body) - Send a test email
+    Example: utils.EmailTest("Test subject", "Test body")
+    utils.ErrorToEmail(subject, body) - Error monitoring
+    Example: utils.ErrorToEmail("Test subject", "Test body")
+    utils.Email(recipients, subject, body) - Send to one or more recipients (comma-separated)
+    Example: utils.Email("a.qq.com,b.qq.com", "Test subject", "Test body")
 
-### 4. 可直接调用的接口
+### 4. Directly callable endpoints
 
-    测试接口： /email/emailTest [post] 已配置swagger
+    Test endpoint: /email/emailTest [post] (swagger-enabled)
 
-    发送邮件接口接口： /email/emailSend [post] 已配置swagger
-    入参：
+    Send endpoint: /email/emailSend [post] (swagger-enabled)
+    Request:
     type Email struct {
-        To      string `json:"to"`      // 邮件发送给谁
-        Subject string `json:"subject"` // 邮件标题
-        Body    string `json:"body"`    // 邮件内容
+        To      string `json:"to"`      // Recipient
+        Subject string `json:"subject"` // Email subject
+        Body    string `json:"body"`    // Email body
     }
    
