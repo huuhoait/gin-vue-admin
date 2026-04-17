@@ -12,6 +12,7 @@ import (
 	systemReq "github.com/huuhoait/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/huuhoait/gin-vue-admin/server/model/system/response"
 	"github.com/huuhoait/gin-vue-admin/server/utils"
+	sysService "github.com/huuhoait/gin-vue-admin/server/service/system"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -217,7 +218,8 @@ func (b *BaseApi) ChangePassword(c *gin.Context) {
 	}
 	uid := utils.GetUserID(c)
 	u := &system.SysUser{GVA_MODEL: global.GVA_MODEL{ID: uid}, Password: req.Password}
-	err = userService.ChangePassword(u, req.NewPassword)
+	ctx := sysService.WithRequestContext(c.Request.Context(), c)
+	err = userService.ChangePassword(ctx, u, req.NewPassword)
 	if err != nil {
 		global.GVA_LOG.Error("Failed to change password!", zap.Error(err))
 		response.FailWithMessage("Modification failed, original password does not match current account", c)
@@ -282,7 +284,7 @@ func (b *BaseApi) SetUserAuthority(c *gin.Context) {
 		return
 	}
 	userID := utils.GetUserID(c)
-	err = userService.SetUserAuthority(userID, sua.AuthorityId)
+	err = userService.SetUserAuthority(sysService.WithRequestContext(c.Request.Context(), c), userID, sua.AuthorityId)
 	if err != nil {
 		global.GVA_LOG.Error("Failed to modify!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
@@ -319,7 +321,7 @@ func (b *BaseApi) SetUserAuthorities(c *gin.Context) {
 		return
 	}
 	authorityID := utils.GetUserAuthorityId(c)
-	err = userService.SetUserAuthorities(authorityID, sua.ID, sua.AuthorityIds)
+	err = userService.SetUserAuthorities(sysService.WithRequestContext(c.Request.Context(), c), authorityID, sua.ID, sua.AuthorityIds)
 	if err != nil {
 		global.GVA_LOG.Error("Failed to modify!", zap.Error(err))
 		response.FailWithMessage("Modification failed", c)
@@ -354,7 +356,7 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 		response.FailWithMessage("Deletion failed, cannot delete yourself.", c)
 		return
 	}
-	err = userService.DeleteUser(reqId.ID)
+	err = userService.DeleteUser(sysService.WithRequestContext(c.Request.Context(), c), reqId.ID)
 	if err != nil {
 		global.GVA_LOG.Error("Failed to delete!", zap.Error(err))
 		response.FailWithMessage("Deletion failed", c)
@@ -384,16 +386,17 @@ func (b *BaseApi) SetUserInfo(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	auditCtx := sysService.WithRequestContext(c.Request.Context(), c)
 	if len(user.AuthorityIds) != 0 {
 		authorityID := utils.GetUserAuthorityId(c)
-		err = userService.SetUserAuthorities(authorityID, user.ID, user.AuthorityIds)
+		err = userService.SetUserAuthorities(auditCtx, authorityID, user.ID, user.AuthorityIds)
 		if err != nil {
 			global.GVA_LOG.Error("Failed to set!", zap.Error(err))
 			response.FailWithMessage("Failed to set", c)
 			return
 		}
 	}
-	err = userService.SetUserInfo(system.SysUser{
+	err = userService.SetUserInfo(auditCtx, system.SysUser{
 		GVA_MODEL: global.GVA_MODEL{
 			ID: user.ID,
 		},
@@ -428,7 +431,7 @@ func (b *BaseApi) SetSelfInfo(c *gin.Context) {
 		return
 	}
 	user.ID = utils.GetUserID(c)
-	err = userService.SetSelfInfo(system.SysUser{
+	err = userService.SetSelfInfo(sysService.WithRequestContext(c.Request.Context(), c), system.SysUser{
 		GVA_MODEL: global.GVA_MODEL{
 			ID: user.ID,
 		},
@@ -463,7 +466,7 @@ func (b *BaseApi) SetSelfSetting(c *gin.Context) {
 		return
 	}
 
-	err = userService.SetSelfSetting(req, utils.GetUserID(c))
+	err = userService.SetSelfSetting(sysService.WithRequestContext(c.Request.Context(), c), req, utils.GetUserID(c))
 	if err != nil {
 		global.GVA_LOG.Error("Failed to set!", zap.Error(err))
 		response.FailWithMessage("Failed to set", c)
@@ -506,7 +509,7 @@ func (b *BaseApi) ResetPassword(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = userService.ResetPassword(rps.ID, rps.Password)
+	err = userService.ResetPassword(sysService.WithRequestContext(c.Request.Context(), c), rps.ID, rps.Password)
 	if err != nil {
 		global.GVA_LOG.Error("Failed to reset!", zap.Error(err))
 		response.FailWithMessage("Reset failed"+err.Error(), c)

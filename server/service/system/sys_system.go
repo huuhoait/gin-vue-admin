@@ -1,17 +1,14 @@
 package system
 
 import (
+	"context"
+
 	"github.com/huuhoait/gin-vue-admin/server/config"
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/model/system"
 	"github.com/huuhoait/gin-vue-admin/server/utils"
 	"go.uber.org/zap"
 )
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetSystemConfig
-//@description: read configuration file
-//@return: conf config.Server, err error
 
 type SystemConfigService struct{}
 
@@ -21,26 +18,19 @@ func (systemConfigService *SystemConfigService) GetSystemConfig() (conf config.S
 	return global.GVA_CONFIG, nil
 }
 
-// @description   set system config,
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetSystemConfig
-//@description: set configuration file
-//@param: system model.System
-//@return: err error
+func (systemConfigService *SystemConfigService) SetSystemConfig(ctx context.Context, sys system.System) (err error) {
+	before := global.GVA_CONFIG // snapshot current config before overwrite
 
-func (systemConfigService *SystemConfigService) SetSystemConfig(system system.System) (err error) {
-	cs := utils.StructToMap(system.Config)
+	cs := utils.StructToMap(sys.Config)
 	for k, v := range cs {
 		global.GVA_VP.Set(k, v)
 	}
 	err = global.GVA_VP.WriteConfig()
+	if err == nil {
+		RecordDataChange(ctx, "SystemConfig", "global", "update", before, sys.Config)
+	}
 	return err
 }
-
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: GetServerInfo
-//@description: get server information
-//@return: server *utils.Server, err error
 
 func (systemConfigService *SystemConfigService) GetServerInfo() (server *utils.Server, err error) {
 	var s utils.Server
@@ -57,6 +47,5 @@ func (systemConfigService *SystemConfigService) GetServerInfo() (server *utils.S
 		global.GVA_LOG.Error("func utils.InitDisk() Failed", zap.String("err", err.Error()))
 		return &s, err
 	}
-
 	return &s, nil
 }

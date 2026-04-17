@@ -28,6 +28,11 @@ var SysExportTemplateServiceApp = new(SysExportTemplateService)
 // CreateSysExportTemplate creates an export template record
 // Author [piexlmax](https://github.com/piexlmax)
 func (sysExportTemplateService *SysExportTemplateService) CreateSysExportTemplate(sysExportTemplate *system.SysExportTemplate) (err error) {
+	if sysExportTemplate.SQL != "" {
+		if vErr := utils.ValidateExportSQL(sysExportTemplate.SQL); vErr != nil {
+			return fmt.Errorf("invalid export template sql: %w", vErr)
+		}
+	}
 	err = global.GVA_DB.Create(sysExportTemplate).Error
 	return err
 }
@@ -49,6 +54,11 @@ func (sysExportTemplateService *SysExportTemplateService) DeleteSysExportTemplat
 // UpdateSysExportTemplate updates an export template record
 // Author [piexlmax](https://github.com/piexlmax)
 func (sysExportTemplateService *SysExportTemplateService) UpdateSysExportTemplate(sysExportTemplate system.SysExportTemplate) (err error) {
+	if sysExportTemplate.SQL != "" {
+		if vErr := utils.ValidateExportSQL(sysExportTemplate.SQL); vErr != nil {
+			return fmt.Errorf("invalid export template sql: %w", vErr)
+		}
+	}
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		conditions := sysExportTemplate.Conditions
 		e := tx.Delete(&[]system.Condition{}, "template_id = ?", sysExportTemplate.TemplateID).Error
@@ -175,6 +185,13 @@ func (sysExportTemplateService *SysExportTemplateService) ExportExcel(templateID
 
 	// if there is custom SQL, use it first
 	if template.SQL != "" {
+		// Template SQL is persisted and executed verbatim via Raw(); even
+		// though only admins can edit templates, a compromised admin account
+		// (or stolen API token) would otherwise yield full DB shell access.
+		// ValidateExportSQL enforces read-only, single-statement shape.
+		if vErr := utils.ValidateExportSQL(template.SQL); vErr != nil {
+			return nil, "", fmt.Errorf("invalid export template sql: %w", vErr)
+		}
 		// convert url.Values to map[string]interface{} to support GORM named parameters
 		sqlParams := make(map[string]interface{})
 		for k, v := range paramsValues {

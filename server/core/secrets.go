@@ -46,4 +46,46 @@ func applySecretOverrides() {
 		}
 		fmt.Println("[WARN] " + msg)
 	}
+
+	enforceDBTLS(release)
+}
+
+// enforceDBTLS ensures the database connection is encrypted in transit. In
+// release mode we refuse to start if the config looks plaintext; in debug we
+// only warn so local setups keep working.
+//
+// The checks are heuristic: we look at the driver-specific Config/DSN hint
+// that GORM appends to the connection string.
+//   - Postgres: must contain `sslmode=verify-full`, `verify-ca`, or `require`
+//   - MySQL:    must contain `tls=true` or `tls=preferred` (or a named TLS
+//     config registered by the operator)
+func enforceDBTLS(release bool) {
+	pgCfg := strings.ToLower(global.GVA_CONFIG.Pgsql.Config)
+	if global.GVA_CONFIG.Pgsql.Path != "" {
+		ok := strings.Contains(pgCfg, "sslmode=require") ||
+			strings.Contains(pgCfg, "sslmode=verify-ca") ||
+			strings.Contains(pgCfg, "sslmode=verify-full")
+		if !ok {
+			msg := "postgres connection is not TLS-protected (config missing sslmode=require|verify-ca|verify-full)"
+			if release {
+				panic("refusing to start: " + msg)
+			}
+			fmt.Println("[WARN] " + msg)
+		}
+	}
+	myCfg := strings.ToLower(global.GVA_CONFIG.Mysql.Config)
+	if global.GVA_CONFIG.Mysql.Path != "" {
+		// tls=false or tls=skip-verify is explicitly rejected; anything
+		// else (tls=true, tls=preferred, tls=<custom>) is accepted.
+		disabled := strings.Contains(myCfg, "tls=false") ||
+			strings.Contains(myCfg, "tls=skip-verify") ||
+			!strings.Contains(myCfg, "tls=")
+		if disabled {
+			msg := "mysql connection is not TLS-protected (config missing tls=true or tls=<named>)"
+			if release {
+				panic("refusing to start: " + msg)
+			}
+			fmt.Println("[WARN] " + msg)
+		}
+	}
 }

@@ -4,16 +4,20 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"io/fs"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/model/system"
@@ -422,7 +426,8 @@ func (s *SkillsService) DownloadOnlineSkill(_ context.Context, req request.Downl
 
 	var meta struct {
 		Data struct {
-			URL string `json:"url"`
+			URL    string `json:"url"`
+			SHA256 string `json:"sha256"`
 		} `json:"data"`
 	}
 	if err = json.Unmarshal(metaBody, &meta); err != nil {
@@ -433,8 +438,21 @@ func (s *SkillsService) DownloadOnlineSkill(_ context.Context, req request.Downl
 	if realDownloadURL == "" {
 		return errors.New("download result is missing url")
 	}
+	// Plugins execute on our server the moment they are unpacked. Require
+	// HTTPS so the payload is integrity-protected against tampering on the
+	// wire, and require a SHA-256 that the registry signs into the metadata
+	// so a compromised CDN cannot swap the archive for a trojan.
+	parsedURL, urlErr := url.Parse(realDownloadURL)
+	if urlErr != nil || !strings.EqualFold(parsedURL.Scheme, "https") {
+		return fmt.Errorf("plugin download url must use https")
+	}
+	expectedSum := strings.ToLower(strings.TrimSpace(meta.Data.SHA256))
+	if expectedSum == "" {
+		return errors.New("plugin metadata is missing sha256 checksum; refusing to install untrusted archive")
+	}
 
-	zipResp, err := http.Get(realDownloadURL)
+	client := &http.Client{Timeout: 60 * time.Second}
+	zipResp, err := client.Get(realDownloadURL)
 	if err != nil {
 		return fmt.Errorf("failed to download archive: %w", err)
 	}
@@ -451,11 +469,17 @@ func (s *SkillsService) DownloadOnlineSkill(_ context.Context, req request.Downl
 	tmpPath := tmpFile.Name()
 	defer os.Remove(tmpPath)
 
-	if _, err = io.Copy(tmpFile, zipResp.Body); err != nil {
+	hasher := sha256.New()
+	if _, err = io.Copy(io.MultiWriter(tmpFile, hasher), zipResp.Body); err != nil {
 		tmpFile.Close()
 		return fmt.Errorf("failed to save skill package: %w", err)
 	}
 	tmpFile.Close()
+
+	actualSum := hex.EncodeToString(hasher.Sum(nil))
+	if actualSum != expectedSum {
+		return fmt.Errorf("plugin checksum mismatch: expected %s, got %s", expectedSum, actualSum)
+	}
 
 	if err = extractZipToDir(tmpPath, skillsDir); err != nil {
 		return fmt.Errorf("failed to extract skill package: %w", err)

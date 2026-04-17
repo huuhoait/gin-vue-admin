@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
@@ -15,40 +16,30 @@ import (
 	"gorm.io/gorm"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Register
-//@description: User registration
-//@param: u model.SysUser
-//@return: userInter system.SysUser, err error
-
 type UserService struct{}
 
 var UserServiceApp = new(UserService)
 
 func (userService *UserService) Register(u system.SysUser) (userInter system.SysUser, err error) {
 	var user system.SysUser
-	if !errors.Is(global.GVA_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) { // check if username is already registered
+	if !errors.Is(global.GVA_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) {
 		return userInter, errors.New("username already registered")
 	}
-	// otherwise append uuid, hash password, and register
 	u.Password = utils.BcryptHash(u.Password)
 	u.UUID = uuid.New()
 	err = global.GVA_DB.Create(&u).Error
+	if err == nil {
+		after := u
+		after.Password = ""
+		RecordDataChange(context.Background(), "SysUser", fmtID(u.ID), "create", nil, after)
+	}
 	return u, err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: Login
-//@description: User login
-//@param: u *model.SysUser
-//@return: err error, userInter *model.SysUser
 
 func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysUser, err error) {
 	if nil == global.GVA_DB {
 		return nil, fmt.Errorf("db not init")
 	}
-
 	var user system.SysUser
 	err = global.GVA_DB.Where("username = ?", u.Username).Preload("Authorities").Preload("Authority").First(&user).Error
 	if err == nil {
@@ -60,13 +51,7 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 	return &user, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: ChangePassword
-//@description: Change user password
-//@param: u *model.SysUser, newPassword string
-//@return: err error
-
-func (userService *UserService) ChangePassword(u *system.SysUser, newPassword string) (err error) {
+func (userService *UserService) ChangePassword(ctx context.Context, u *system.SysUser, newPassword string) (err error) {
 	var user system.SysUser
 	err = global.GVA_DB.Select("id, password").Where("id = ?", u.ID).First(&user).Error
 	if err != nil {
@@ -77,14 +62,11 @@ func (userService *UserService) ChangePassword(u *system.SysUser, newPassword st
 	}
 	pwd := utils.BcryptHash(newPassword)
 	err = global.GVA_DB.Model(&user).Update("password", pwd).Error
+	if err == nil {
+		RecordDataChange(ctx, "SysUser", fmtID(u.ID), "change_password", nil, nil)
+	}
 	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetUserInfoList
-//@description: Get data with pagination
-//@param: info request.PageInfo
-//@return: err error, list interface{}, total int64
 
 func (userService *UserService) GetUserInfoList(info systemReq.GetUserList) (list interface{}, total int64, err error) {
 	limit := info.PageSize
@@ -131,14 +113,7 @@ func (userService *UserService) GetUserInfoList(info systemReq.GetUserList) (lis
 	return userList, total, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetUserAuthority
-//@description: Set a user's authority
-//@param: uuid uuid.UUID, authorityId string
-//@return: err error
-
-func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err error) {
-
+func (userService *UserService) SetUserAuthority(ctx context.Context, id uint, authorityId uint) (err error) {
 	assignErr := global.GVA_DB.Where("sys_user_id = ? AND sys_authority_authority_id = ?", id, authorityId).First(&system.SysUserAuthority{}).Error
 	if errors.Is(assignErr, gorm.ErrRecordNotFound) {
 		return errors.New("user does not have this role")
@@ -176,18 +151,26 @@ func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err
 		return errors.New("default route not found, cannot switch to this role")
 	}
 
+	// Capture old authority before update
+	var oldUser system.SysUser
+	_ = global.GVA_DB.Select("id, authority_id").Where("id = ?", id).First(&oldUser).Error
+
 	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", id).Update("authority_id", authorityId).Error
+	if err == nil {
+		RecordDataChange(ctx, "SysUser", fmtID(id), "set_authority",
+			map[string]any{"authority_id": oldUser.AuthorityId},
+			map[string]any{"authority_id": authorityId},
+		)
+	}
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetUserAuthorities
-//@description: Set a user's authorities
-//@param: id uint, authorityIds []string
-//@return: err error
+func (userService *UserService) SetUserAuthorities(ctx context.Context, adminAuthorityID, id uint, authorityIds []uint) (err error) {
+	// Capture old authorities for the audit log
+	var oldAuthorities []system.SysUserAuthority
+	_ = global.GVA_DB.Where("sys_user_id = ?", id).Find(&oldAuthorities).Error
 
-func (userService *UserService) SetUserAuthorities(adminAuthorityID, id uint, authorityIds []uint) (err error) {
-	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		var user system.SysUser
 		TxErr := tx.Where("id = ?", id).First(&user).Error
 		if TxErr != nil {
@@ -216,19 +199,27 @@ func (userService *UserService) SetUserAuthorities(adminAuthorityID, id uint, au
 		if TxErr != nil {
 			return TxErr
 		}
-		// return nil to commit the transaction
 		return nil
 	})
+	if err == nil {
+		var oldIDs []uint
+		for _, a := range oldAuthorities {
+			oldIDs = append(oldIDs, a.SysAuthorityAuthorityId)
+		}
+		RecordDataChange(ctx, "SysUser", fmtID(id), "set_authorities",
+			map[string]any{"authority_ids": oldIDs},
+			map[string]any{"authority_ids": authorityIds},
+		)
+	}
+	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteUser
-//@description: Delete user
-//@param: id float64
-//@return: err error
+func (userService *UserService) DeleteUser(ctx context.Context, id int) (err error) {
+	// Snapshot the user before deletion
+	var before system.SysUser
+	_ = global.GVA_DB.Select("id, username, nick_name, email, phone, enable").Where("id = ?", id).First(&before).Error
 
-func (userService *UserService) DeleteUser(id int) (err error) {
-	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("id = ?", id).Delete(&system.SysUser{}).Error; err != nil {
 			return err
 		}
@@ -237,16 +228,18 @@ func (userService *UserService) DeleteUser(id int) (err error) {
 		}
 		return nil
 	})
+	if err == nil {
+		RecordDataChange(ctx, "SysUser", fmtID(id), "delete", before, nil)
+	}
+	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetUserInfo
-//@description: Set user info
-//@param: reqUser model.SysUser
-//@return: err error, user model.SysUser
+func (userService *UserService) SetUserInfo(ctx context.Context, req system.SysUser) error {
+	// Snapshot before
+	var before system.SysUser
+	_ = global.GVA_DB.Select("id, nick_name, header_img, phone, email, enable").Where("id = ?", req.ID).First(&before).Error
 
-func (userService *UserService) SetUserInfo(req system.SysUser) error {
-	return global.GVA_DB.Model(&system.SysUser{}).
+	err := global.GVA_DB.Model(&system.SysUser{}).
 		Select("updated_at", "nick_name", "header_img", "phone", "email", "enable").
 		Where("id=?", req.ID).
 		Updates(map[string]interface{}{
@@ -257,36 +250,39 @@ func (userService *UserService) SetUserInfo(req system.SysUser) error {
 			"email":      req.Email,
 			"enable":     req.Enable,
 		}).Error
+	if err == nil {
+		after := map[string]any{
+			"nick_name":  req.NickName,
+			"header_img": req.HeaderImg,
+			"phone":      req.Phone,
+			"email":      req.Email,
+			"enable":     req.Enable,
+		}
+		RecordDataChange(ctx, "SysUser", fmtID(req.ID), "update", before, after)
+	}
+	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetSelfInfo
-//@description: Set user self info
-//@param: reqUser model.SysUser
-//@return: err error, user model.SysUser
+func (userService *UserService) SetSelfInfo(ctx context.Context, req system.SysUser) error {
+	var before system.SysUser
+	_ = global.GVA_DB.Select("id, nick_name, header_img, phone, email").Where("id = ?", req.ID).First(&before).Error
 
-func (userService *UserService) SetSelfInfo(req system.SysUser) error {
-	return global.GVA_DB.Model(&system.SysUser{}).
-		Where("id=?", req.ID).
-		Updates(req).Error
+	err := global.GVA_DB.Model(&system.SysUser{}).Where("id=?", req.ID).Updates(req).Error
+	if err == nil {
+		after := req
+		after.Password = "" // never log password field
+		RecordDataChange(ctx, "SysUser", fmtID(req.ID), "self_update", before, after)
+	}
+	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetSelfSetting
-//@description: Set user settings
-//@param: req datatypes.JSON, uid uint
-//@return: err error
-
-func (userService *UserService) SetSelfSetting(req common.JSONMap, uid uint) error {
-	return global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", uid).Update("origin_setting", req).Error
+func (userService *UserService) SetSelfSetting(ctx context.Context, req common.JSONMap, uid uint) error {
+	err := global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", uid).Update("origin_setting", req).Error
+	if err == nil {
+		RecordDataChange(ctx, "SysUser", fmtID(uid), "update_setting", nil, req)
+	}
+	return err
 }
-
-//@author: [piexlmax](https://github.com/piexlmax)
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: GetUserInfo
-//@description: Get user info
-//@param: uuid uuid.UUID
-//@return: err error, user system.SysUser
 
 func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.SysUser, err error) {
 	var reqUser system.SysUser
@@ -298,23 +294,11 @@ func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.SysUser
 	return reqUser, err
 }
 
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: FindUserById
-//@description: Find user by id
-//@param: id int
-//@return: err error, user *model.SysUser
-
 func (userService *UserService) FindUserById(id int) (user *system.SysUser, err error) {
 	var u system.SysUser
 	err = global.GVA_DB.Where("id = ?", id).First(&u).Error
 	return &u, err
 }
-
-//@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: FindUserByUuid
-//@description: Find user by uuid
-//@param: uuid string
-//@return: err error, user *model.SysUser
 
 func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUser, err error) {
 	var u system.SysUser
@@ -324,13 +308,10 @@ func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUse
 	return &u, nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: ResetPassword
-//@description: Reset user password
-//@param: ID uint
-//@return: err error
-
-func (userService *UserService) ResetPassword(ID uint, password string) (err error) {
+func (userService *UserService) ResetPassword(ctx context.Context, ID uint, password string) (err error) {
 	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", ID).Update("password", utils.BcryptHash(password)).Error
+	if err == nil {
+		RecordDataChange(ctx, "SysUser", fmtID(ID), "reset_password", nil, nil)
+	}
 	return err
 }

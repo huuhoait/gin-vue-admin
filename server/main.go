@@ -5,6 +5,7 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/global/i18n"
 	"github.com/huuhoait/gin-vue-admin/server/initialize"
+	"github.com/huuhoait/gin-vue-admin/server/middleware"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
@@ -31,6 +32,9 @@ import (
 func main() {
 	// Initialize system
 	initializeSystem()
+	// Start distributed tracing — shutdown is deferred to process exit.
+	shutdownTracer := core.InitTracer()
+	defer func() { _ = shutdownTracer(nil) }()
 	// Run HTTP server
 	core.RunServer()
 }
@@ -56,4 +60,7 @@ func initializeSystem() {
 	if global.GVA_DB != nil {
 		initialize.RegisterTables() // migrate / register tables
 	}
+	// Audit-log writer must start after GVA_DB is wired; otherwise enqueued
+	// records have nothing to flush into.
+	middleware.StartOperationRecorder()
 }

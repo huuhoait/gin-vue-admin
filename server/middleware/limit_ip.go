@@ -61,6 +61,21 @@ func DefaultLimit() gin.HandlerFunc {
 	}.LimitWithTime()
 }
 
+// LoginLimit returns a stricter limiter for credential-checking endpoints.
+// Five attempts per minute per IP is aggressive but matches the usual
+// enterprise baseline; legitimate users rarely need to retype more than
+// that, and automated bruteforce is expected to burst much higher.
+func LoginLimit() gin.HandlerFunc {
+	return LimitConfig{
+		GenerationKey: func(c *gin.Context) string {
+			return "GVA_LoginLimit:" + c.FullPath() + ":" + c.ClientIP()
+		},
+		CheckOrMark: DefaultCheckOrMark,
+		Expire:      60,
+		Limit:       5,
+	}.LimitWithTime()
+}
+
 // SetLimitWithTime sets access count limit
 func SetLimitWithTime(key string, limit int, expiration time.Duration) error {
 	count, err := global.GVA_REDIS.Exists(context.Background(), key).Result()

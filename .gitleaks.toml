@@ -1,0 +1,20 @@
+title = "gin-vue-admin gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known-safe placeholders that reference-public infrastructure secrets"
+paths = [
+  # Seed data and example config files are allowed to contain placeholders
+  # as long as they never hold real tenant secrets.
+  '''server/config.docker.yaml''',
+  '''docs/''',
+  '''README.*\.md''',
+  '''SECURITY\.md''',
+]
+regexes = [
+  # Placeholder values used throughout config.yaml (e.g. "yourEndpoint").
+  '''your[-_]?(endpoint|bucket|access[-_]?key[-_]?id|access[-_]?key[-_]?secret|base[-_]?path)''',
+  '''xxx[_\-]?(bucket|account[-_]?id|key[-_]?id|secret)''',
+]

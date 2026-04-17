@@ -1,0 +1,39 @@
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - gosec
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - misspell
+    - bodyclose
+    - gofmt
+    - goimports
+    - revive
+
+issues:
+  exclude-dirs:
+    - docs
+    - source
+    - resource
+  exclude-rules:
+    # Tests are noisy; keep them focused on correctness, not style.
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+
+linters-settings:
+  gosec:
+    excludes:
+      - G104 # "Errors unhandled" — revisit after adding errcheck passes
+      - G304 # File path from variable (false positives on path/filepath.Clean usage)
+  govet:
+    enable:
+      - shadow

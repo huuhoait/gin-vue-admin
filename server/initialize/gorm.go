@@ -3,6 +3,8 @@ package initialize
 import (
 	"os"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/model/example"
 	"github.com/huuhoait/gin-vue-admin/server/model/system"
@@ -39,6 +41,14 @@ func RegisterTables() {
 		global.GVA_LOG.Info("auto-migrate is disabled, skipping table registration")
 		return
 	}
+	// Running AutoMigrate concurrently from multiple instances can hold long
+	// locks on shared tables and occasionally corrupts metadata on some
+	// MySQL versions. In release mode force operators to explicitly flip the
+	// switch (or, preferably, run versioned migrations out of band) so the
+	// boot path of every replica does not race the schema changes.
+	if gin.Mode() == gin.ReleaseMode {
+		global.GVA_LOG.Warn("AutoMigrate is enabled in release mode; use versioned migrations instead (golang-migrate, sql-migrate). Set system.disable-auto-migrate=true to silence this.")
+	}
 
 	db := global.GVA_DB
 	err := db.AutoMigrate(
@@ -65,6 +75,8 @@ func RegisterTables() {
 		system.SysError{},
 		system.SysApiToken{},
 		system.SysLoginLog{},
+		system.SysPolicyChangeLog{},
+		system.SysDataChangeLog{},
 
 		example.ExaFile{},
 		example.ExaCustomer{},

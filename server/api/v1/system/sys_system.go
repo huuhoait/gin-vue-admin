@@ -6,6 +6,7 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/model/system"
 	systemRes "github.com/huuhoait/gin-vue-admin/server/model/system/response"
 	"github.com/huuhoait/gin-vue-admin/server/utils"
+	sysService "github.com/huuhoait/gin-vue-admin/server/service/system"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -44,7 +45,7 @@ func (s *SystemApi) SetSystemConfig(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = systemConfigService.SetSystemConfig(sys)
+	err = systemConfigService.SetSystemConfig(sysService.WithRequestContext(c.Request.Context(), c), sys)
 	if err != nil {
 		global.GVA_LOG.Error("Failed to set!", zap.Error(err))
 		response.FailWithMessage("Failed to set", c)

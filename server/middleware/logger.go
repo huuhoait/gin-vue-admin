@@ -15,6 +15,7 @@ import (
 type LogLayout struct {
 	Time      time.Time
 	Metadata  map[string]interface{} // stores custom metadata
+	RequestID string                 // correlation id (X-Request-ID)
 	Path      string                 // access path
 	Query     string                 // query parameters
 	Body      string                 // request body data
@@ -53,6 +54,7 @@ func (l Logger) SetLoggerMiddleware() gin.HandlerFunc {
 		cost := time.Since(start)
 		layout := LogLayout{
 			Time:      time.Now(),
+			RequestID: GetRequestID(c),
 			Path:      path,
 			Query:     query,
 			IP:        c.ClientIP(),

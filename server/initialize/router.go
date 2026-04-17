@@ -9,6 +9,7 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/middleware"
 	"github.com/huuhoait/gin-vue-admin/server/router"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -35,6 +36,10 @@ func (fs justFilesFilesystem) Open(name string) (http.File, error) {
 
 func Routers() *gin.Engine {
 	Router := gin.New()
+	// Correlation id must be the very first middleware so every log line,
+	// audit row, and outbound call in this request can reference it.
+	Router.Use(otelgin.Middleware("gin-vue-admin"))
+	Router.Use(middleware.RequestID())
 	// Story 8.3: resolve caller locale from Accept-Language for the i18n
 	// response helpers. Must run before any handler that calls Ok/Fail.
 	Router.Use(middleware.I18nLocale())
@@ -79,8 +84,11 @@ func Routers() *gin.Engine {
 
 	PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 
+	// Detailed liveness + readiness health probes
+	RegisterHealthRoutes(Router, global.GVA_CONFIG.System.RouterPrefix)
+
 	{
-		// HealthMonitorTest
+		// HealthMonitorTest — backward-compat alias kept
 		PublicGroup.GET("/health", func(c *gin.Context) {
 			c.JSON(http.StatusOK, "ok")
 		})
@@ -111,6 +119,7 @@ func Routers() *gin.Engine {
 		systemRouter.InitLoginLogRouter(PrivateGroup)                         // Login Log
 		systemRouter.InitApiTokenRouter(PrivateGroup)                         // apiTokenSignsend
 		systemRouter.InitSkillsRouter(PrivateGroup, PublicGroup)              // Skills DefineDevice
+		systemRouter.InitAuditRouter(PrivateGroup)                            // Audit chain verification
 	}
 
 	// SkyAgent domain placeholder endpoints (Epic 8)

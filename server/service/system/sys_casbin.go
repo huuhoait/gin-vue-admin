@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strconv"
 
@@ -24,6 +25,8 @@ type CasbinService struct{}
 var CasbinServiceApp = new(CasbinService)
 
 func (casbinService *CasbinService) UpdateCasbin(adminAuthorityID, AuthorityID uint, casbinInfos []request.CasbinInfo) error {
+	authorityIDStr := strconv.Itoa(int(AuthorityID))
+	before := casbinService.GetPolicyPathByAuthorityId(AuthorityID)
 
 	err := AuthorityServiceApp.CheckAuthorityIDAuth(adminAuthorityID, AuthorityID)
 	if err != nil {
@@ -50,7 +53,7 @@ func (casbinService *CasbinService) UpdateCasbin(adminAuthorityID, AuthorityID u
 		}
 	}
 
-	authorityId := strconv.Itoa(int(AuthorityID))
+	authorityId := authorityIDStr
 	casbinService.ClearCasbin(0, authorityId)
 	rules := [][]string{}
 	// deduplicate permissions
@@ -63,6 +66,7 @@ func (casbinService *CasbinService) UpdateCasbin(adminAuthorityID, AuthorityID u
 		}
 	}
 	if len(rules) == 0 {
+		RecordPolicyChange(context.Background(), "update", authorityId, before, casbinInfos, "cleared all policies")
 		return nil
 	} // no need to call AddPolicies when setting empty permissions
 	e := utils.GetCasbin()
@@ -70,6 +74,7 @@ func (casbinService *CasbinService) UpdateCasbin(adminAuthorityID, AuthorityID u
 	if !success {
 		return errors.New("duplicate API exists, failed to add, please contact administrator")
 	}
+	RecordPolicyChange(context.Background(), "update", authorityId, before, casbinInfos, "")
 	return nil
 }
 
@@ -87,7 +92,11 @@ func (casbinService *CasbinService) UpdateCasbinApi(oldPath string, newPath stri
 	if err != nil {
 		return err
 	}
-
+	RecordPolicyChange(context.Background(), "update_api", "",
+		map[string]string{"path": oldPath, "method": oldMethod},
+		map[string]string{"path": newPath, "method": newMethod},
+		"casbin api rename",
+	)
 	e := utils.GetCasbin()
 	return e.LoadPolicy()
 }
@@ -190,7 +199,8 @@ func (casbinService *CasbinService) GetAuthoritiesByApi(path, method string) (au
 
 // SetApiAuthorities fully replaces the role list associated with an API
 func (casbinService *CasbinService) SetApiAuthorities(path, method string, authorityIds []uint) error {
-	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+	before, _ := casbinService.GetAuthoritiesByApi(path, method)
+	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		// 1. delete all existing role associations for this API
 		if err := tx.Where("ptype = 'p' AND v1 = ? AND v2 = ?", path, method).Delete(&gormadapter.CasbinRule{}).Error; err != nil {
 			return err
@@ -212,4 +222,12 @@ func (casbinService *CasbinService) SetApiAuthorities(path, method string, autho
 		}
 		return nil
 	})
+	if err == nil {
+		RecordPolicyChange(context.Background(), "set_api_authorities", "",
+			map[string]any{"path": path, "method": method, "authorities": before},
+			map[string]any{"path": path, "method": method, "authorities": authorityIds},
+			"",
+		)
+	}
+	return err
 }

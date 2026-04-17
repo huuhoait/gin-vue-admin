@@ -25,7 +25,10 @@ captcha:
     key-long: 6
     img-width: 240
     img-height: 80
-    open-captcha: 0
+    # Require captcha after 3 failed login attempts from the same IP. Set to
+    # 0 to disable entirely (not recommended — login is the primary
+    # brute-force target).
+    open-captcha: 3
     open-captcha-timeout: 3600
 cloudflare-r2:
     bucket: xxxx0bucket
@@ -86,7 +89,7 @@ hua-wei-obs:
 jwt:
     # IMPORTANT: never commit a real signing key. Override at deploy time with
     # env var GVA_JWT_SIGNING_KEY. An empty value forces release mode to panic.
-    signing-key: ""
+    signing-key: "GVA_JWT_SIGNING_KEY"
     expires-time: 7d
     buffer-time: 1d
     issuer: qmPlus

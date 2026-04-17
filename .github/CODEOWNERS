@@ -1,0 +1,24 @@
+# Review ownership. PRs touching these paths require approval from the listed
+# owners before they can merge. Update when team structure changes.
+#
+# Syntax: <path> <owners separated by space>
+
+# Default: all changes need a platform review
+*                                         @platform-team
+
+# Backend subsystems
+/server/core/                             @platform-team @security-team
+/server/middleware/                       @platform-team @security-team
+/server/config/                           @platform-team @security-team
+/server/service/system/sys_casbin*        @security-team
+/server/service/system/sys_export_*       @security-team
+/server/utils/jwt.go                      @security-team
+/server/utils/blacklist.go                @security-team
+/server/utils/sqlguard.go                 @security-team
+/server/initialize/gorm*                  @platform-team
+/server/source/                           @platform-team @data-team
+
+# CI and governance
+/.github/                                 @platform-team
+/.github/workflows/                       @platform-team @security-team
+/.github/CODEOWNERS                       @platform-team

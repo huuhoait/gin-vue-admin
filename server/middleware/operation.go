@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -22,10 +23,67 @@ import (
 var respPool sync.Pool
 var bufferSize = 1024
 
+// operationQueue decouples request handling from the audit-log write. The
+// previous implementation called db.Create() inline, so every request paid a
+// DB round-trip (and was blocked when the DB was slow). A buffered channel
+// + dedicated writer goroutine keeps the hot path free while preserving
+// at-least-once persistence under normal load.
+var (
+	operationQueue     chan system.SysOperationRecord
+	operationQueueOnce sync.Once
+)
+
+// Sensitive values must not land in audit tables. Admin read-out of
+// operation records is a privilege escalation vector if plaintext passwords
+// or tokens are stored there.
+var sensitiveBodyField = regexp.MustCompile(`("(password|passwd|pwd|token|secret|authorization|x[-_]?token|signingKey|refreshToken|accessToken|apiKey)"\s*:\s*")[^"]*(")`)
+
 func init() {
 	respPool.New = func() interface{} {
 		return make([]byte, bufferSize)
 	}
+}
+
+// StartOperationRecorder spins up the audit-log writer. Call from server
+// bootstrap. Safe to invoke multiple times.
+func StartOperationRecorder() {
+	operationQueueOnce.Do(func() {
+		operationQueue = make(chan system.SysOperationRecord, 1024)
+		go func() {
+			for record := range operationQueue {
+				if err := global.GVA_DB.Create(&record).Error; err != nil {
+					global.GVA_LOG.Error("create operation record error:", zap.Error(err))
+				}
+			}
+		}()
+	})
+}
+
+func enqueueOperation(record system.SysOperationRecord) {
+	if operationQueue == nil {
+		// Bootstrap-time fallback: still better to persist than lose the
+		// audit event. Any call path that forgets to Start the recorder
+		// will surface in tests via missing goroutine.
+		StartOperationRecorder()
+	}
+	select {
+	case operationQueue <- record:
+	default:
+		// Queue full means the DB cannot keep up. Drop the record rather
+		// than stalling the request path, but log it so the operator can
+		// see the back-pressure signal.
+		global.GVA_LOG.Warn("operation record queue full, dropping entry",
+			zap.String("path", record.Path),
+			zap.String("method", record.Method),
+		)
+	}
+}
+
+func scrubSensitive(s string) string {
+	if s == "" {
+		return s
+	}
+	return sensitiveBodyField.ReplaceAllString(s, `$1[REDACTED]$3`)
 }
 
 func OperationRecord() gin.HandlerFunc {
@@ -64,12 +122,13 @@ func OperationRecord() gin.HandlerFunc {
 			userId = id
 		}
 		record := system.SysOperationRecord{
-			Ip:     c.ClientIP(),
-			Method: c.Request.Method,
-			Path:   c.Request.URL.Path,
-			Agent:  c.Request.UserAgent(),
-			Body:   "",
-			UserID: userId,
+			Ip:        c.ClientIP(),
+			Method:    c.Request.Method,
+			Path:      c.Request.URL.Path,
+			Agent:     c.Request.UserAgent(),
+			Body:      "",
+			UserID:    userId,
+			RequestID: GetRequestID(c),
 		}
 
 		// when uploading files, the middleware log truncates the body
@@ -79,7 +138,7 @@ func OperationRecord() gin.HandlerFunc {
 			if len(body) > bufferSize {
 				record.Body = "[exceeds record length]"
 			} else {
-				record.Body = string(body)
+				record.Body = scrubSensitive(string(body))
 			}
 		}
 
@@ -96,26 +155,60 @@ func OperationRecord() gin.HandlerFunc {
 		record.ErrorMessage = c.Errors.ByType(gin.ErrorTypePrivate).String()
 		record.Status = c.Writer.Status()
 		record.Latency = latency
-		record.Resp = writer.body.String()
 
-		if strings.Contains(c.Writer.Header().Get("Pragma"), "public") ||
-			strings.Contains(c.Writer.Header().Get("Expires"), "0") ||
-			strings.Contains(c.Writer.Header().Get("Cache-Control"), "must-revalidate, post-check=0, pre-check=0") ||
-			strings.Contains(c.Writer.Header().Get("Content-Type"), "application/force-download") ||
-			strings.Contains(c.Writer.Header().Get("Content-Type"), "application/octet-stream") ||
-			strings.Contains(c.Writer.Header().Get("Content-Type"), "application/vnd.ms-excel") ||
-			strings.Contains(c.Writer.Header().Get("Content-Type"), "application/download") ||
-			strings.Contains(c.Writer.Header().Get("Content-Disposition"), "attachment") ||
-			strings.Contains(c.Writer.Header().Get("Content-Transfer-Encoding"), "binary") {
-			if len(record.Resp) > bufferSize {
-				// truncate
-				record.Body = "exceeds record length"
-			}
+		// Response capture policy:
+		//   - Drop binary / file downloads entirely (not useful, bloats DB).
+		//   - Drop listing responses (GET) — they routinely carry PII such
+		//     as user emails, phone numbers, and whole user tables, which
+		//     would otherwise leak via the audit log to anyone with
+		//     operation-record read access.
+		//   - For mutating endpoints keep only the status envelope (status
+		//     code + top-level msg/code), stripping any data payload. That
+		//     preserves the audit signal without mirroring sensitive state.
+		resp := writer.body.String()
+		if isBinaryResponse(c) || c.Request.Method == http.MethodGet {
+			record.Resp = ""
+		} else {
+			record.Resp = scrubSensitive(summarizeResponse(resp))
 		}
-		if err := global.GVA_DB.Create(&record).Error; err != nil {
-			global.GVA_LOG.Error("create operation record error:", zap.Error(err))
-		}
+
+		enqueueOperation(record)
 	}
+}
+
+func isBinaryResponse(c *gin.Context) bool {
+	h := c.Writer.Header()
+	return strings.Contains(h.Get("Pragma"), "public") ||
+		strings.Contains(h.Get("Expires"), "0") ||
+		strings.Contains(h.Get("Cache-Control"), "must-revalidate, post-check=0, pre-check=0") ||
+		strings.Contains(h.Get("Content-Type"), "application/force-download") ||
+		strings.Contains(h.Get("Content-Type"), "application/octet-stream") ||
+		strings.Contains(h.Get("Content-Type"), "application/vnd.ms-excel") ||
+		strings.Contains(h.Get("Content-Type"), "application/download") ||
+		strings.Contains(h.Get("Content-Disposition"), "attachment") ||
+		strings.Contains(h.Get("Content-Transfer-Encoding"), "binary")
+}
+
+// summarizeResponse keeps only the status envelope from a standard response
+// (`{"code": 0, "msg": "...", "data": ...}`) so the audit record captures
+// outcome without the payload body.
+func summarizeResponse(resp string) string {
+	if resp == "" {
+		return ""
+	}
+	var envelope struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
+	if err := json.Unmarshal([]byte(resp), &envelope); err != nil {
+		// Non-JSON response; keep a short prefix so we still see it fail.
+		if len(resp) > 256 {
+			return resp[:256] + "...[truncated]"
+		}
+		return resp
+	}
+	out, _ := json.Marshal(envelope)
+	return string(out)
 }
 
 type responseBodyWriter struct {

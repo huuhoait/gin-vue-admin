@@ -11,8 +11,10 @@ func (s *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	userRouter := Router.Group("user").Use(middleware.OperationRecord())
 	userRouterWithoutRecord := Router.Group("user")
 	{
-		userRouter.POST("admin_register", baseApi.Register)               // managementMemberRegisterAccount
-		userRouter.POST("changePassword", baseApi.ChangePassword)         // user modifiedpassword
+		// Credential-sensitive endpoints: tight per-IP rate limit in
+		// addition to the standard auth/operation middleware stack.
+		userRouter.POST("admin_register", middleware.LoginLimit(), baseApi.Register)    // managementMemberRegisterAccount
+		userRouter.POST("changePassword", middleware.LoginLimit(), baseApi.ChangePassword) // user modifiedpassword
 		userRouter.POST("setUserAuthority", baseApi.SetUserAuthority)     // set user authority
 		userRouter.DELETE("deleteUser", baseApi.DeleteUser)               // delete user
 		userRouter.PUT("setUserInfo", baseApi.SetUserInfo)                // set user info
