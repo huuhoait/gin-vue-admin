@@ -28,4 +28,6 @@ type ServiceGroup struct {
 	LoginLogService
 	ApiTokenService
 	AuditService
+	GDPRService
+	OIDCService
 }

@@ -15,6 +15,10 @@ func (s *BaseRouter) InitBaseRouter(Router *gin.RouterGroup) (R gin.IRoutes) {
 		// apply a tighter per-IP limiter than the global one.
 		baseRouter.POST("login", middleware.LoginLimit(), baseApi.Login)
 		baseRouter.POST("captcha", baseApi.Captcha)
+
+		// OIDC / SSO routes — no operation-record middleware needed
+		baseRouter.GET("oidc/login", oidcApi.OIDCLogin)       // redirect to provider
+		baseRouter.GET("oidc/callback", oidcApi.OIDCCallback)  // handle provider callback
 	}
 	return baseRouter
 }

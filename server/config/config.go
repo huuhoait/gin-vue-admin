@@ -38,6 +38,9 @@ type Server struct {
 	// MCPconfiguration
 	MCP MCP `mapstructure:"mcp" json:"mcp" yaml:"mcp"`
 
+	// OIDC / SSO configuration
+	OIDC OIDC `mapstructure:"oidc" json:"oidc" yaml:"oidc"`
+
 	// SkyAgent proxy configuration
 	Proxy Proxy `mapstructure:"proxy" json:"proxy" yaml:"proxy"`
 }

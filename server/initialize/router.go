@@ -120,6 +120,7 @@ func Routers() *gin.Engine {
 		systemRouter.InitApiTokenRouter(PrivateGroup)                         // apiTokenSignsend
 		systemRouter.InitSkillsRouter(PrivateGroup, PublicGroup)              // Skills DefineDevice
 		systemRouter.InitAuditRouter(PrivateGroup)                            // Audit chain verification
+		systemRouter.InitGDPRRouter(PrivateGroup)                             // GDPR data subject rights
 	}
 
 	// SkyAgent domain placeholder endpoints (Epic 8)

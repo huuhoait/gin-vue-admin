@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/huuhoait/gin-vue-admin/server/core"
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/global/i18n"
@@ -54,6 +56,11 @@ func initializeSystem() {
 	global.GVA_LOG = core.Zap() // init zap logger
 	zap.ReplaceGlobals(global.GVA_LOG)
 	global.GVA_DB = initialize.Gorm() // connect database via GORM
+	if global.GVA_DB != nil {
+		if err := global.GVA_DB.Use(&middleware.DBQueryTimeout{Timeout: 5 * time.Second}); err != nil {
+			global.GVA_LOG.Warn("failed to register DB query timeout plugin", zap.Error(err))
+		}
+	}
 	initialize.Timer()
 	initialize.DBList()
 	initialize.SetupHandlers() // register global handlers

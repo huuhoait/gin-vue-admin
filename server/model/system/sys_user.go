@@ -31,6 +31,8 @@ type SysUser struct {
 	Email         string         `json:"email"  gorm:"comment:user email"`                                                                         // user email
 	Enable        int            `json:"enable" gorm:"default:1;comment:UserYesNofrozen 1Normal 2Freeze"`                                                    //UserYesNofrozen 1Normal 2Freeze
 	OriginSetting common.JSONMap `json:"originSetting" form:"originSetting" gorm:"type:text;default:null;column:origin_setting;comment:configuration;"` //configuration
+	OAuthProvider string         `json:"oauth_provider,omitempty" gorm:"size:32;comment:oidc provider name e.g. okta"`
+	OAuthSub      string         `json:"oauth_sub,omitempty"      gorm:"size:256;uniqueIndex:idx_oauth;comment:oidc subject identifier"`
 }
 
 func (SysUser) TableName() string {

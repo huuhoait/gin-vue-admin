@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -48,7 +49,7 @@ func init() {
 // bootstrap. Safe to invoke multiple times.
 func StartOperationRecorder() {
 	operationQueueOnce.Do(func() {
-		operationQueue = make(chan system.SysOperationRecord, 1024)
+		operationQueue = make(chan system.SysOperationRecord, 4096)
 		go func() {
 			for record := range operationQueue {
 				if err := global.GVA_DB.Create(&record).Error; err != nil {
@@ -66,16 +67,32 @@ func enqueueOperation(record system.SysOperationRecord) {
 		// will surface in tests via missing goroutine.
 		StartOperationRecorder()
 	}
+	// Warn when queue utilization exceeds 75% (3072/4096) so ops can detect
+	// backpressure before overflow occurs.
+	if len(operationQueue) > 3072 {
+		global.GVA_LOG.Warn("operation record queue above 75% capacity",
+			zap.Int("queue_len", len(operationQueue)),
+			zap.Int("queue_cap", cap(operationQueue)),
+		)
+	}
+
 	select {
 	case operationQueue <- record:
 	default:
-		// Queue full means the DB cannot keep up. Drop the record rather
-		// than stalling the request path, but log it so the operator can
-		// see the back-pressure signal.
-		global.GVA_LOG.Warn("operation record queue full, dropping entry",
-			zap.String("path", record.Path),
-			zap.String("method", record.Method),
-		)
+		// Channel full — fall back to a synchronous DB write in a new goroutine
+		// so the request path is not blocked. This ensures audit completeness
+		// (SOC2 CC7.2) instead of silently dropping records under burst load.
+		go func(r system.SysOperationRecord) {
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			if err := global.GVA_DB.WithContext(ctx).Create(&r).Error; err != nil {
+				global.GVA_LOG.Error("audit fallback write failed",
+					zap.String("path", r.Path),
+					zap.String("method", r.Method),
+					zap.Error(err),
+				)
+			}
+		}(record)
 	}
 }
 

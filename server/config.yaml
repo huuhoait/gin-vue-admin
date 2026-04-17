@@ -267,3 +267,16 @@ zap:
     show-line: true
     log-in-console: true
     retention-day: -1
+
+# OIDC / SSO configuration
+oidc:
+    enabled: false
+    provider-url: ""
+    client-id: ""
+    client-secret: ""
+    redirect-url: "http://localhost:8888/api/v1/base/oidc/callback"
+    scopes:
+        - openid
+        - profile
+        - email
+    claim-username: "email"

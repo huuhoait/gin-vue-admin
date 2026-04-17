@@ -25,6 +25,7 @@ type RouterGroup struct {
 	ApiTokenRouter
 	SkillsRouter
 	AuditRouter
+	GDPRRouter
 }
 
 var (
@@ -52,4 +53,6 @@ var (
 	skillsApi            = api.ApiGroupApp.SystemApiGroup.SkillsApi
 	aiWorkflowSessionApi = api.ApiGroupApp.SystemApiGroup.AIWorkflowSessionApi
 	auditApiVar          = api.ApiGroupApp.SystemApiGroup.AuditApi
+	gdprApiVar           = api.ApiGroupApp.SystemApiGroup.GDPRApi
+	oidcApi              = api.ApiGroupApp.SystemApiGroup.OIDCApi
 )
