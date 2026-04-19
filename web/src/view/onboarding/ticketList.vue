@@ -25,6 +25,12 @@
       <el-table :data="tableData" row-key="id" v-loading="loading">
         <el-table-column :label="t('admin.onboarding.ticket_id')" prop="ticket_id" min-width="160" />
         <el-table-column :label="t('admin.onboarding.agent_name')" prop="agent_name" min-width="150" />
+        <el-table-column :label="t('admin.agent.full_name')" prop="full_name" min-width="160">
+          <template #default="{ row }">{{ row.full_name || '-' }}</template>
+        </el-table-column>
+        <el-table-column :label="t('admin.agent.phone')" prop="phone" min-width="130">
+          <template #default="{ row }">{{ row.phone || '-' }}</template>
+        </el-table-column>
         <el-table-column :label="t('admin.onboarding.status')" min-width="130">
           <template #default="{ row }">
             <el-tag :type="statusTagType[row.status] || 'info'" size="small">{{ t(`admin.onboarding.status_${row.status}`) }}</el-tag>
@@ -32,19 +38,29 @@
         </el-table-column>
         <el-table-column :label="t('admin.onboarding.current_step')" prop="current_step" min-width="140" />
         <el-table-column :label="t('admin.common.updated_at')" prop="updated_at" min-width="160" />
-        <el-table-column :label="t('admin.common.operation')" min-width="280" fixed="right">
+        <el-table-column :label="t('admin.common.operation')" min-width="360" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="openDetail(row)">{{ t('admin.onboarding.detail') }}</el-button>
             <el-button v-if="row.status === 'draft' || row.status === 'pending_upload'" type="warning" link @click="openUpload(row)">{{ t('admin.onboarding.upload') }}</el-button>
             <el-button v-if="row.status === 'pending_upload'" type="success" link @click="handleSubmit(row)">{{ t('admin.onboarding.submit') }}</el-button>
-            <template v-if="row.status === 'pending_review'">
-              <el-popconfirm :title="t('admin.onboarding.approve_confirm')" @confirm="handleReview(row, 'approve')">
-                <template #reference>
-                  <el-button type="success" link>{{ t('admin.agent.approve') }}</el-button>
-                </template>
-              </el-popconfirm>
-              <el-button type="danger" link @click="openReject(row)">{{ t('admin.agent.reject') }}</el-button>
-            </template>
+            <el-tooltip :disabled="row.status === 'pending_review'" :content="t('admin.onboarding.review_only_pending_review')" placement="top">
+              <span>
+                <el-popconfirm
+                  :title="t('admin.onboarding.approve_confirm')"
+                  :disabled="row.status !== 'pending_review'"
+                  @confirm="handleReview(row, 'approve')"
+                >
+                  <template #reference>
+                    <el-button type="success" link :disabled="row.status !== 'pending_review'">{{ t('admin.agent.approve') }}</el-button>
+                  </template>
+                </el-popconfirm>
+              </span>
+            </el-tooltip>
+            <el-tooltip :disabled="row.status === 'pending_review'" :content="t('admin.onboarding.review_only_pending_review')" placement="top">
+              <span>
+                <el-button type="danger" link :disabled="row.status !== 'pending_review'" @click="openReject(row)">{{ t('admin.agent.reject') }}</el-button>
+              </span>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>

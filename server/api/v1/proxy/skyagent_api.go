@@ -1,7 +1,9 @@
 package proxy
 
 import (
+	"encoding/json"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
@@ -221,6 +223,39 @@ func (s *SkyAgentApi) OnboardingAgent(c *gin.Context) {
 // Shared proxy helper
 // ---------------------------------------------------------------------------
 
+// injectMakerChecker ensures maker_id/checker_id are set on the forwarded
+// body. A nil body becomes {maker_id, checker_id} so promote/review
+// endpoints that require checker_id succeed even when the FE sent no body
+// (PUT /.../submit, PUT /.../promote). If the FE already provided either
+// field, its value is preserved.
+func injectMakerChecker(body any, userUUID string) any {
+	if userUUID == "" {
+		return body
+	}
+	if body == nil {
+		return map[string]any{"maker_id": userUUID, "checker_id": userUUID}
+	}
+	m, ok := body.(map[string]any)
+	if !ok {
+		return body
+	}
+	if _, exists := m["maker_id"]; !exists {
+		m["maker_id"] = userUUID
+	}
+	if _, exists := m["checker_id"]; !exists {
+		m["checker_id"] = userUUID
+	}
+	return m
+}
+
+// maxLoggedBodyBytes caps request/response body logging to avoid runaway log
+// volume on large payloads (attachment manifests, bulk lists).
+const maxLoggedBodyBytes = 8 * 1024
+
+// WARNING: these logs contain full upstream payloads including PII
+// (CCCD, phone, bank account, email). They should only be enabled in
+// trusted environments. Route admins/ops to the audit chain for
+// sanitized, retention-controlled traces instead.
 func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body any) {
 	headers := proxyPkg.AuthHeaders(c)
 
@@ -230,17 +265,32 @@ func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body 
 		opts.Query = c.Request.URL.Query()
 	}
 
+	// Core validates maker_id / checker_id as uuid in most mutation bodies
+	// (CreateAgent, ReviewTicket, promote, ...). BFF is contractually the
+	// injection point (see external-frontend-integration.md §14.6 rule 4),
+	// so fill them in from JWT when the FE didn't supply a value.
+	if method != http.MethodGet {
+		body = injectMakerChecker(body, headers["X-Maker-ID"])
+	}
+
 	reqID := middleware.GetRequestID(c)
 	makerID := headers["X-Maker-ID"]
 	start := time.Now()
 
-	global.GVA_LOG.Info("skyagent proxy call start",
+	startFields := []zap.Field{
 		zap.String("request_id", reqID),
 		zap.String("maker_id", makerID),
 		zap.String("method", method),
 		zap.String("inbound_path", c.FullPath()),
 		zap.String("downstream_path", path),
-	)
+	}
+	if method == http.MethodGet && opts.Query != nil {
+		startFields = append(startFields, zap.String("query", redactQuery(opts.Query)))
+	}
+	if body != nil {
+		startFields = append(startFields, zap.String("request_body", truncatedJSON(body)))
+	}
+	global.GVA_LOG.Info("skyagent proxy call start", startFields...)
 
 	envelope, httpStatus, err := client.Do(c.Request.Context(), method, path, body, opts)
 	durMs := time.Since(start).Milliseconds()
@@ -270,6 +320,7 @@ func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body 
 		logFields = append(logFields,
 			zap.Int("envelope_code", envelope.Code),
 			zap.String("envelope_msg", envelope.Msg),
+			zap.String("response_data", truncateBytes(envelope.Data)),
 		)
 	}
 	if httpStatus >= http.StatusBadRequest || (envelope != nil && envelope.Code != 0) {
@@ -279,4 +330,50 @@ func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body 
 	}
 
 	proxyPkg.Respond(c, envelope, httpStatus)
+}
+
+// truncatedJSON marshals v and trims to maxLoggedBodyBytes for safe logging.
+// Any marshal failure falls back to a fixed sentinel so a logging path never
+// panics or aborts the proxy request.
+func truncatedJSON(v any) string {
+	raw, err := json.Marshal(v)
+	if err != nil {
+		return "<marshal-error>"
+	}
+	return truncateBytes(raw)
+}
+
+func truncateBytes(raw []byte) string {
+	if len(raw) == 0 {
+		return ""
+	}
+	if len(raw) <= maxLoggedBodyBytes {
+		return string(raw)
+	}
+	return string(raw[:maxLoggedBodyBytes]) + "...<truncated>"
+}
+
+// redactQuery renders a query string with obvious secret-bearing params
+// (token, key, secret, password) replaced by "***".
+func redactQuery(q url.Values) string {
+	if len(q) == 0 {
+		return ""
+	}
+	safe := url.Values{}
+	for k, vs := range q {
+		if isSensitiveParam(k) {
+			safe[k] = []string{"***"}
+			continue
+		}
+		safe[k] = vs
+	}
+	return safe.Encode()
+}
+
+func isSensitiveParam(name string) bool {
+	switch name {
+	case "token", "access_token", "refresh_token", "password", "secret", "api_key", "apikey":
+		return true
+	}
+	return false
 }

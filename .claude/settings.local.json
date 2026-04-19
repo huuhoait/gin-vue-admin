@@ -22,7 +22,8 @@
       "Bash(curl -s -o /tmp/h1.out -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:8888/health)",
       "Read(//tmp/**)",
       "Bash(curl -s -o /tmp/h2.out -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:8082/api/health)",
-      "Bash(go build *)"
+      "Bash(go build *)",
+      "Bash(go test *)"
     ]
   }
 }

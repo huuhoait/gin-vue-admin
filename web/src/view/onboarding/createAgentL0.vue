@@ -16,6 +16,9 @@
 
       <!-- Step 1: Basic Info -->
       <el-form v-show="activeStep === 0" ref="step1Ref" :model="form" :rules="step1Rules" label-width="140px">
+        <el-form-item :label="t('admin.onboarding.agent_name')" prop="agent_name">
+          <el-input v-model="form.agent_name" :placeholder="t('admin.onboarding.agent_name_placeholder')" />
+        </el-form-item>
         <el-form-item :label="t('admin.agent.full_name')" prop="full_name">
           <el-input v-model="form.full_name" />
         </el-form-item>
@@ -30,9 +33,6 @@
         </el-form-item>
         <el-form-item :label="t('admin.agent.district')">
           <el-input v-model="form.district" />
-        </el-form-item>
-        <el-form-item :label="t('admin.agent.parent_id')" prop="parent_id">
-          <el-input v-model="form.parent_id" :placeholder="t('admin.onboarding.parent_id_placeholder')" />
         </el-form-item>
         <el-form-item :label="t('admin.agent.referral_code')">
           <el-input v-model="form.referral_code" />
@@ -99,6 +99,7 @@
       <!-- Step 5: Confirm -->
       <div v-show="activeStep === 4">
         <el-descriptions :title="t('admin.onboarding.step_confirm')" :column="2" border>
+          <el-descriptions-item :label="t('admin.onboarding.agent_name')">{{ form.agent_name || '-' }}</el-descriptions-item>
           <el-descriptions-item :label="t('admin.agent.full_name')">{{ form.full_name }}</el-descriptions-item>
           <el-descriptions-item :label="t('admin.agent.phone')">{{ form.phone }}</el-descriptions-item>
           <el-descriptions-item :label="t('admin.agent.email')">{{ form.email }}</el-descriptions-item>
@@ -140,7 +141,11 @@
           <el-button v-if="activeStep < 4" type="primary" @click="nextStep">{{ t('admin.onboarding.next') }}</el-button>
           <template v-if="activeStep === 4">
             <el-button @click="handleSubmit('draft')" :loading="submitting">{{ t('admin.onboarding.save_draft') }}</el-button>
-            <el-button type="primary" @click="handleSubmit('submit')" :loading="submitting">{{ t('admin.onboarding.submit_review') }}</el-button>
+            <el-tooltip :disabled="allRequiredDocs" :content="t('admin.onboarding.missing_docs_warning')" placement="top">
+              <span>
+                <el-button type="primary" :disabled="!allRequiredDocs" :loading="submitting" @click="handleSubmit('submit')">{{ t('admin.onboarding.submit_review') }}</el-button>
+              </span>
+            </el-tooltip>
           </template>
         </div>
       </div>
@@ -151,6 +156,13 @@
           <p>Ticket ID: <el-tag effect="plain">{{ result.ticket_id }}</el-tag></p>
           <p>Agent ID: <el-tag effect="plain">{{ result.agent_id }}</el-tag></p>
           <p>{{ t('admin.onboarding.status') }}: <el-tag :type="result.status === 'pending_review' ? 'success' : 'info'">{{ t(`admin.onboarding.status_${result.status}`) }}</el-tag></p>
+          <el-alert
+            v-if="lastMode === 'submit' && result.status === 'draft'"
+            type="warning"
+            :closable="false"
+            class="mt-2"
+            :title="t('admin.onboarding.submit_fell_back_to_draft')"
+          />
         </template>
         <template #extra>
           <el-button type="primary" @click="$router.push('/onboarding/tickets')">{{ t('admin.onboarding.go_tickets') }}</el-button>
@@ -173,11 +185,13 @@ const { t } = useI18n()
 const activeStep = ref(0)
 const submitting = ref(false)
 const result = ref(null)
+const lastMode = ref(null)
 const step1Ref = ref(null)
 
 const form = reactive({
+  agent_name: '',
   full_name: '', phone: '', email: '', province: '', district: '',
-  parent_id: '', referral_code: '', referral_name: '',
+  referral_code: '', referral_name: '',
   business_name: '', business_type: '', tax_code: '',
   representative_name: '', representative_cccd: '',
   bank_name: '', bank_account: '',
@@ -219,6 +233,7 @@ const nextStep = async () => {
 
 const handleSubmit = async (mode) => {
   submitting.value = true
+  lastMode.value = mode
   try {
     const res = await onboardingAgent({ ...form, mode })
     if (res.code === 0) {
