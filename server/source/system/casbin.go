@@ -357,6 +357,43 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "9528", V1: "/autoCode/deleteAIWorkflowSession", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/autoCode/dumpAIWorkflowMarkdown", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/user/getUserInfo", V2: "GET"},
+
+		// SkyAgent BFF proxy routes — admin (888) can use all proxy endpoints.
+		// Casbin matcher uses keyMatch2 so `:id` / `:ticket_id` path params match.
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/agents", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/agents", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/agents/:id", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/agents/:id", V2: "PUT"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/agents/:id/status", V2: "PUT"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/agents/:id/full", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/orders", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/orders/:id", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/products", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/suppliers", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/onboarding/tickets", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/onboarding/tickets", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/onboarding/tickets/:ticket_id", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/onboarding/tickets/:ticket_id/attachments", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/onboarding/tickets/:ticket_id/submit", V2: "PUT"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/onboarding/tickets/:ticket_id/review", V2: "PUT"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/onboarding/agents", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/admin-api/v1/dashboard/overview", V2: "GET"},
+
+		// KYC reviewer (9100) — ticket triage + review; read agents/orders for context.
+		{Ptype: "p", V0: "9100", V1: "/admin-api/v1/onboarding/tickets", V2: "GET"},
+		{Ptype: "p", V0: "9100", V1: "/admin-api/v1/onboarding/tickets/:ticket_id", V2: "GET"},
+		{Ptype: "p", V0: "9100", V1: "/admin-api/v1/onboarding/tickets/:ticket_id/review", V2: "PUT"},
+		{Ptype: "p", V0: "9100", V1: "/admin-api/v1/agents", V2: "GET"},
+		{Ptype: "p", V0: "9100", V1: "/admin-api/v1/agents/:id", V2: "GET"},
+		{Ptype: "p", V0: "9100", V1: "/admin-api/v1/agents/:id/full", V2: "GET"},
+		{Ptype: "p", V0: "9100", V1: "/admin-api/v1/dashboard/overview", V2: "GET"},
+
+		// Accountant (9200) — read-only on orders/agents, dashboard.
+		{Ptype: "p", V0: "9200", V1: "/admin-api/v1/orders", V2: "GET"},
+		{Ptype: "p", V0: "9200", V1: "/admin-api/v1/orders/:id", V2: "GET"},
+		{Ptype: "p", V0: "9200", V1: "/admin-api/v1/agents", V2: "GET"},
+		{Ptype: "p", V0: "9200", V1: "/admin-api/v1/agents/:id", V2: "GET"},
+		{Ptype: "p", V0: "9200", V1: "/admin-api/v1/dashboard/overview", V2: "GET"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, "Casbin Table ("+i.InitializerName()+") Datainitializefailed!")

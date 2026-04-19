@@ -2,9 +2,13 @@ package proxy
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/huuhoait/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/middleware"
 	proxyPkg "github.com/huuhoait/gin-vue-admin/server/service/proxy"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 // SkyAgentApi provides HTTP handlers that proxy requests to Core/Order services.
@@ -226,10 +230,53 @@ func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body 
 		opts.Query = c.Request.URL.Query()
 	}
 
+	reqID := middleware.GetRequestID(c)
+	makerID := headers["X-Maker-ID"]
+	start := time.Now()
+
+	global.GVA_LOG.Info("skyagent proxy call start",
+		zap.String("request_id", reqID),
+		zap.String("maker_id", makerID),
+		zap.String("method", method),
+		zap.String("inbound_path", c.FullPath()),
+		zap.String("downstream_path", path),
+	)
+
 	envelope, httpStatus, err := client.Do(c.Request.Context(), method, path, body, opts)
+	durMs := time.Since(start).Milliseconds()
+
 	if err != nil {
+		global.GVA_LOG.Error("skyagent proxy call failed",
+			zap.String("request_id", reqID),
+			zap.String("maker_id", makerID),
+			zap.String("method", method),
+			zap.String("downstream_path", path),
+			zap.Int64("duration_ms", durMs),
+			zap.Error(err),
+		)
 		proxyPkg.RespondError(c, err)
 		return
 	}
+
+	logFields := []zap.Field{
+		zap.String("request_id", reqID),
+		zap.String("maker_id", makerID),
+		zap.String("method", method),
+		zap.String("downstream_path", path),
+		zap.Int("http_status", httpStatus),
+		zap.Int64("duration_ms", durMs),
+	}
+	if envelope != nil {
+		logFields = append(logFields,
+			zap.Int("envelope_code", envelope.Code),
+			zap.String("envelope_msg", envelope.Msg),
+		)
+	}
+	if httpStatus >= http.StatusBadRequest || (envelope != nil && envelope.Code != 0) {
+		global.GVA_LOG.Warn("skyagent proxy call non-ok", logFields...)
+	} else {
+		global.GVA_LOG.Info("skyagent proxy call done", logFields...)
+	}
+
 	proxyPkg.Respond(c, envelope, httpStatus)
 }
