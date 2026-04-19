@@ -15,6 +15,10 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	privateGroup := routers[0]
 	publicGroup := routers[1]
 
-	holder(publicGroup, privateGroup)
+	exampleRouter := router.RouterGroupApp.Example
+	exampleRouter.InitCustomerRouter(privateGroup)
+	exampleRouter.InitFileUploadAndDownloadRouter(privateGroup)
+	exampleRouter.InitAttachmentCategoryRouterRouter(privateGroup)
 
+	holder(publicGroup, privateGroup)
 }

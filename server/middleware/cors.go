@@ -59,7 +59,8 @@ func CorsByRules() gin.HandlerFunc {
 		return Cors()
 	}
 	return func(c *gin.Context) {
-		whitelist := checkCors(c.GetHeader("origin"))
+		origin := c.GetHeader("Origin")
+		whitelist := checkCors(origin)
 
 		// passed check, add request headers
 		if whitelist != nil {
@@ -72,14 +73,19 @@ func CorsByRules() gin.HandlerFunc {
 			}
 		}
 
-		// strict whitelist mode and check failed, reject request directly
-		if whitelist == nil && global.GVA_CONFIG.Cors.Mode == "strict-whitelist" && !(c.Request.Method == "GET" && c.Request.URL.Path == "/health") {
+		// Strict-whitelist rejection only applies to actual cross-origin
+		// requests (i.e. ones carrying an Origin header). Requests with no
+		// Origin (same-origin browser GETs via a Vite dev proxy, curl,
+		// server-to-server, health probes) are not governed by CORS and
+		// should fall through to authentication/authorization instead.
+		if whitelist == nil && origin != "" && global.GVA_CONFIG.Cors.Mode == "strict-whitelist" && !(c.Request.Method == "GET" && c.Request.URL.Path == "/health") {
 			c.AbortWithStatus(http.StatusForbidden)
-		} else {
-			// non-strict whitelist mode, allow all OPTIONS methods regardless of check result
-			if c.Request.Method == http.MethodOptions {
-				c.AbortWithStatus(http.StatusNoContent)
-			}
+			return
+		}
+		// Preflight short-circuit for any OPTIONS request that made it this far.
+		if c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
 		}
 
 		// process request

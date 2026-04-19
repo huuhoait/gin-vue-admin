@@ -50,6 +50,7 @@
   "/src/view/layout/setting/modules/layout/index.vue": "LayoutSettings",
   "/src/view/layout/tabs/index.vue": "HistoryComponent",
   "/src/view/login/index.vue": "Login",
+  "/src/view/onboarding/components/attachmentUpload.vue": "AttachmentUpload",
   "/src/view/onboarding/components/ticketDetailDrawer.vue": "TicketDetailDrawer",
   "/src/view/onboarding/createAgentL0.vue": "CreateAgentL0",
   "/src/view/onboarding/createTicket.vue": "CreateTicket",

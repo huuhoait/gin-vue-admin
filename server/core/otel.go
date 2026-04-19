@@ -22,6 +22,15 @@ import (
 //
 // Returns a shutdown function that must be deferred in main().
 func InitTracer() func(context.Context) error {
+	// Tracing is opt-in: require OTEL_TRACES_ENABLED=true to avoid exporter
+	// retry spam when no collector is running locally.
+	if os.Getenv("OTEL_TRACES_ENABLED") != "true" {
+		if global.GVA_LOG != nil {
+			global.GVA_LOG.Info("otel tracing disabled (set OTEL_TRACES_ENABLED=true to enable)")
+		}
+		return func(context.Context) error { return nil }
+	}
+
 	endpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
 	if endpoint == "" {
 		endpoint = "localhost:4317"

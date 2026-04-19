@@ -32,7 +32,7 @@
           <el-input v-model="form.district" />
         </el-form-item>
         <el-form-item :label="t('admin.agent.parent_id')" prop="parent_id">
-          <el-input v-model="form.parent_id" placeholder="UUID" />
+          <el-input v-model="form.parent_id" :placeholder="t('admin.onboarding.parent_id_placeholder')" />
         </el-form-item>
         <el-form-item :label="t('admin.agent.referral_code')">
           <el-input v-model="form.referral_code" />
@@ -80,18 +80,19 @@
       <!-- Step 4: Documents -->
       <el-form v-show="activeStep === 3" ref="step4Ref" :model="form" label-width="160px">
         <el-form-item :label="t('admin.onboarding.att_business_license')">
-          <el-input v-model="form.business_license_url" placeholder="https://..." />
-          <el-tag v-if="form.business_license_url" type="success" size="small" class="ml-2">{{ t('admin.onboarding.uploaded') }}</el-tag>
-          <el-tag v-else type="danger" size="small" class="ml-2">{{ t('admin.onboarding.required') }}</el-tag>
+          <AttachmentUpload v-model="form.business_license_url" accept="image/*,application/pdf" />
         </el-form-item>
         <el-form-item :label="t('admin.onboarding.att_agency_contract')">
-          <el-input v-model="form.agency_contract_url" placeholder="https://..." />
-          <el-tag v-if="form.agency_contract_url" type="success" size="small" class="ml-2">{{ t('admin.onboarding.uploaded') }}</el-tag>
-          <el-tag v-else type="danger" size="small" class="ml-2">{{ t('admin.onboarding.required') }}</el-tag>
+          <AttachmentUpload v-model="form.agency_contract_url" accept="image/*,application/pdf" />
         </el-form-item>
-        <el-form-item :label="t('admin.onboarding.att_ekyc_photos')">
-          <el-input v-model="form.ekyc_photos_url" placeholder="https://..." />
-          <el-tag v-if="form.ekyc_photos_url" type="success" size="small" class="ml-2">{{ t('admin.onboarding.uploaded') }}</el-tag>
+        <el-form-item :label="t('admin.onboarding.att_ekyc_cccd_front')">
+          <AttachmentUpload v-model="form.ekyc_cccd_front_url" accept="image/jpeg,image/png,image/heic" />
+        </el-form-item>
+        <el-form-item :label="t('admin.onboarding.att_ekyc_cccd_back')">
+          <AttachmentUpload v-model="form.ekyc_cccd_back_url" accept="image/jpeg,image/png,image/heic" />
+        </el-form-item>
+        <el-form-item :label="t('admin.onboarding.att_ekyc_selfie')">
+          <AttachmentUpload v-model="form.ekyc_selfie_url" accept="image/jpeg,image/png,image/heic" />
         </el-form-item>
       </el-form>
 
@@ -115,8 +116,14 @@
           <el-descriptions-item :label="t('admin.onboarding.att_agency_contract')">
             <el-tag :type="form.agency_contract_url ? 'success' : 'danger'" size="small">{{ form.agency_contract_url ? t('admin.onboarding.uploaded') : t('admin.onboarding.missing') }}</el-tag>
           </el-descriptions-item>
-          <el-descriptions-item :label="t('admin.onboarding.att_ekyc_photos')">
-            <el-tag :type="form.ekyc_photos_url ? 'success' : 'info'" size="small">{{ form.ekyc_photos_url ? t('admin.onboarding.uploaded') : t('admin.onboarding.optional') }}</el-tag>
+          <el-descriptions-item :label="t('admin.onboarding.att_ekyc_cccd_front')">
+            <el-tag :type="form.ekyc_cccd_front_url ? 'success' : 'info'" size="small">{{ form.ekyc_cccd_front_url ? t('admin.onboarding.uploaded') : t('admin.onboarding.optional') }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('admin.onboarding.att_ekyc_cccd_back')">
+            <el-tag :type="form.ekyc_cccd_back_url ? 'success' : 'info'" size="small">{{ form.ekyc_cccd_back_url ? t('admin.onboarding.uploaded') : t('admin.onboarding.optional') }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('admin.onboarding.att_ekyc_selfie')">
+            <el-tag :type="form.ekyc_selfie_url ? 'success' : 'info'" size="small">{{ form.ekyc_selfie_url ? t('admin.onboarding.uploaded') : t('admin.onboarding.optional') }}</el-tag>
           </el-descriptions-item>
         </el-descriptions>
 
@@ -158,6 +165,8 @@ import { ref, reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { onboardingAgent } from '@/api/skyagent/onboarding'
+import { translateError } from '@/utils/skyagentError'
+import AttachmentUpload from './components/attachmentUpload.vue'
 
 const { t } = useI18n()
 
@@ -173,15 +182,28 @@ const form = reactive({
   representative_name: '', representative_cccd: '',
   bank_name: '', bank_account: '',
   permanent_address: '', contact_address: '',
-  business_license_url: '', agency_contract_url: '', ekyc_photos_url: '',
+  business_license_url: '', agency_contract_url: '',
+  ekyc_cccd_front_url: '', ekyc_cccd_back_url: '', ekyc_selfie_url: '',
 })
 
+// OnboardingAgentRequest accepts 9–15 digit phone (not strict vn_phone) per
+// external-frontend-integration.md §14.2. Allow an optional leading +.
+const phoneRe = /^\+?\d{9,15}$/
+
 const step1Rules = {
-  full_name: [{ required: true, message: t('admin.agent.full_name'), trigger: 'blur' }],
-  phone: [{ required: true, message: t('admin.agent.phone'), trigger: 'blur' }],
-  email: [{ required: true, message: t('admin.agent.email'), trigger: 'blur' }],
+  full_name: [
+    { required: true, message: t('admin.agent.full_name'), trigger: 'blur' },
+    { min: 1, max: 255, message: t('admin.agent.full_name'), trigger: 'blur' }
+  ],
+  phone: [
+    { required: true, message: t('admin.agent.phone'), trigger: 'blur' },
+    { pattern: phoneRe, message: t('admin.agent.phone'), trigger: 'blur' }
+  ],
+  email: [
+    { required: true, message: t('admin.agent.email'), trigger: 'blur' },
+    { type: 'email', max: 320, message: t('admin.agent.email'), trigger: 'blur' }
+  ],
   province: [{ required: true, message: t('admin.agent.province'), trigger: 'blur' }],
-  parent_id: [{ required: true, message: t('admin.agent.parent_id'), trigger: 'blur' }],
 }
 
 const allRequiredDocs = computed(() => form.business_license_url && form.agency_contract_url)
@@ -203,10 +225,11 @@ const handleSubmit = async (mode) => {
       result.value = res.data
       ElMessage.success(res.data.message || t('admin.onboarding.create_success'))
     } else {
-      if (res.data?.details) {
+      // 422 with data.details[] carries field-level errors per §3 / §5
+      if (Array.isArray(res.data?.details) && res.data.details.length) {
         res.data.details.forEach(d => ElMessage.error(`${d.field}: ${d.message}`))
       } else {
-        ElMessage.error(res.msg || t('admin.common.fail'))
+        ElMessage.error(translateError(res))
       }
     }
   } finally {

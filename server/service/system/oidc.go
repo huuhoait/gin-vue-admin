@@ -120,7 +120,7 @@ func (s *OIDCService) HandleCallback(ctx context.Context, code string) (*system.
 			Password:      utils.BcryptHash(uuid.New().String()), // unusable random password
 			AuthorityId:   uint(888),
 			OAuthProvider: providerName,
-			OAuthSub:      claims.Sub,
+			OAuthSub:      &claims.Sub,
 			Enable:        1,
 		}
 		if err := global.GVA_DB.WithContext(ctx).Create(&user).Error; err != nil {

@@ -116,6 +116,25 @@ const resetLoading = () => {
   closeLoadingInstance()
 }
 
+// Lightweight UUID v4 generator for idempotency keys. Kept inline to avoid a
+// circular import with utils/format.js (which imports this module indirectly).
+const uuidv4 = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID()
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+// Routes proxied to SkyAgent Core/Order follow the FE↔BFF contract in
+// external-frontend-integration.md: Bearer auth (§2) + X-Idempotency-Key on
+// every mutation (§6, code 3002). Native GVA endpoints keep the x-token
+// scheme they were built around.
+const isSkyAgentRoute = (url = '') => url.startsWith('/admin-api/v1/')
+const isMutation = (method = '') =>
+  ['post', 'put', 'patch', 'delete'].includes(method.toLowerCase())
+
 service.interceptors.request.use(
   (config) => {
     if (typeof config.timeout === 'undefined') {
@@ -134,6 +153,15 @@ service.interceptors.request.use(
       'x-token': userStore.token,
       'x-user-id': userStore.userInfo.ID,
       ...config.headers
+    }
+
+    if (isSkyAgentRoute(config.url)) {
+      if (userStore.token && !config.headers.Authorization) {
+        config.headers.Authorization = `Bearer ${userStore.token}`
+      }
+      if (isMutation(config.method) && !config.headers['X-Idempotency-Key']) {
+        config.headers['X-Idempotency-Key'] = uuidv4()
+      }
     }
 
     return config

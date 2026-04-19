@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check web/src/utils/request.js)",
+      "Bash(node --check web/src/utils/skyagentError.js)",
+      "Bash(node --check web/src/api/skyagent/onboarding.js)",
+      "Bash(lsof -iTCP:8888 -sTCP:LISTEN)",
+      "Bash(lsof -iTCP:8081 -sTCP:LISTEN)",
+      "Bash(lsof -iTCP:8888 -sTCP:LISTEN -P)",
+      "Bash(lsof -iTCP:8081 -sTCP:LISTEN -P)",
+      "Bash(pnpm --version)",
+      "Bash(go version *)",
+      "Read(//private/tmp/**)",
+      "Bash(lsof -iTCP -sTCP:LISTEN -P)",
+      "Bash(pnpm install *)",
+      "Bash(PGPASSWORD=\"\" psql -h 127.0.0.1 -p 5435 -U skyagent -l)",
+      "Bash(yes)",
+      "Read(//opt/homebrew/opt/libpq/bin/**)",
+      "Read(//Applications/Postgres.app/Contents/**)",
+      "Bash(docker exec bmad-admin-db-1 *)",
+      "Bash(timeout 90 bash -c 'until lsof -iTCP:8888 -sTCP:LISTEN -P 2>/dev/null | grep -q :8888; do sleep 2; done; echo \"server bound to :8888\"')",
+      "Bash(curl -s -o /tmp/h1.out -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:8888/health)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /tmp/h2.out -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:8082/api/health)",
+      "Bash(go build *)"
+    ]
+  }
+}

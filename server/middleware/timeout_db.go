@@ -51,9 +51,11 @@ func (t *DBQueryTimeout) Initialize(db *gorm.DB) error {
 	cb.Update().After("gorm:update").Register("gva:timeout_after_update", cancelAfter)
 	cb.Delete().Before("gorm:delete").Register("gva:timeout_before_delete", addTimeout)
 	cb.Delete().After("gorm:delete").Register("gva:timeout_after_delete", cancelAfter)
+	// Row/Raw return a lazy *sql.Row or *sql.Rows; the caller's .Scan()/.Next()
+	// runs after the After-callbacks fire. Canceling here would invalidate
+	// that still-pending work (this is what breaks AutoMigrate.HasTable). The
+	// 5s deadline on the context still fires on its own if the query hangs.
 	cb.Row().Before("gorm:row").Register("gva:timeout_before_row", addTimeout)
-	cb.Row().After("gorm:row").Register("gva:timeout_after_row", cancelAfter)
 	cb.Raw().Before("gorm:raw").Register("gva:timeout_before_raw", addTimeout)
-	cb.Raw().After("gorm:raw").Register("gva:timeout_after_raw", cancelAfter)
 	return nil
 }

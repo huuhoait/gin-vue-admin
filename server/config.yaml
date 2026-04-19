@@ -7,7 +7,7 @@ aliyun-oss:
     base-path: yourBasePath
 autocode:
     web: web/src
-    root: /Users/pkt/Library/Mobile Documents/com~apple~CloudDocs/Project/bmad/services/admin
+    root: /Users/hoale/Library/Mobile Documents/com~apple~CloudDocs/Project/gin-vue-admin
     server: server
     module: github.com/huuhoait/gin-vue-admin/server
     ai-path: ""
@@ -25,9 +25,6 @@ captcha:
     key-long: 6
     img-width: 240
     img-height: 80
-    # Require captcha after 3 failed login attempts from the same IP. Set to
-    # 0 to disable entirely (not recommended — login is the primary
-    # brute-force target).
     open-captcha: 3
     open-captcha-timeout: 3600
 cloudflare-r2:
@@ -40,15 +37,25 @@ cloudflare-r2:
 cors:
     mode: strict-whitelist
     whitelist:
-        - allow-origin: example1.com
-          allow-methods: POST, GET
+        - allow-origin: http://127.0.0.1:8081
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT
           allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
-          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
           allow-credentials: true
-        - allow-origin: example2.com
-          allow-methods: GET, POST
-          allow-headers: content-type
-          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+        - allow-origin: http://localhost:8081
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
+          allow-credentials: true
+        - allow-origin: http://127.0.0.1:8082
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
+          allow-credentials: true
+        - allow-origin: http://localhost:8082
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
           allow-credentials: true
 db-list:
     - type: ""
@@ -87,9 +94,7 @@ hua-wei-obs:
     access-key: you-access-key
     secret-key: you-secret-key
 jwt:
-    # IMPORTANT: never commit a real signing key. Override at deploy time with
-    # env var GVA_JWT_SIGNING_KEY. An empty value forces release mode to panic.
-    signing-key: "GVA_JWT_SIGNING_KEY"
+    signing-key: 206b6efe-666b-46ce-b03c-fd319c546123
     expires-time: 7d
     buffer-time: 1d
     issuer: qmPlus
@@ -110,13 +115,13 @@ mcp:
     url_prefix: ""
     separate: false
 minio:
-    endpoint: yourEndpoint
-    access-key-id: yourAccessKeyId
-    access-key-secret: yourAccessKeySecret
-    bucket-name: yourBucketName
+    endpoint: localhost:9000
+    access-key-id: minioadmin
+    access-key-secret: minioadmin
+    bucket-name: gva-uploads
     use-ssl: false
     base-path: ""
-    bucket-url: http://host:9000/yourBucketName
+    bucket-url: http://localhost:9000/gva-uploads
 mongo:
     coll: ""
     options: ""
@@ -160,6 +165,17 @@ mysql:
     max-open-conns: 100
     singular: false
     log-zap: false
+oidc:
+    enabled: false
+    provider-url: ""
+    client-id: ""
+    client-secret: ""
+    redirect-url: http://localhost:8888/api/v1/base/oidc/callback
+    scopes:
+        - openid
+        - profile
+        - email
+    claim-username: email
 oracle:
     prefix: ""
     port: ""
@@ -188,6 +204,12 @@ pgsql:
     max-open-conns: 100
     singular: false
     log-zap: false
+proxy:
+    core_service_url: http://127.0.0.1:8001
+    order_service_url: http://127.0.0.1:8082
+    request_timeout: 10
+    core_db_dsn: ""
+    order_db_dsn: ""
 qiniu:
     zone: ZoneHuaDong
     bucket: ""
@@ -232,7 +254,7 @@ sqlite:
     log-zap: false
 system:
     db-type: pgsql
-    oss-type: local
+    oss-type: minio
     router-prefix: ""
     addr: 8888
     iplimit-count: 15000
@@ -242,7 +264,6 @@ system:
     use-mongo: false
     use-strict-auth: false
     disable-auto-migrate: false
-    # OpenAPI UI at /swagger/index.html — off when GIN_MODE=release unless true.
     enable-swagger: false
 tencent-cos:
     bucket: xxxxx-10005608
@@ -251,14 +272,6 @@ tencent-cos:
     secret-key: your-secret-key
     base-url: https://gin.vue.admin
     path-prefix: github.com/huuhoait/gin-vue-admin/server
-# SkyAgent BFF proxy (Story 9.1)
-proxy:
-    core_service_url: "http://127.0.0.1:8001"
-    order_service_url: "http://127.0.0.1:8082"
-    request_timeout: 10
-    core_db_dsn: ""
-    order_db_dsn: ""
-
 zap:
     level: info
     prefix: '[github.com/huuhoait/gin-vue-admin/server]'
@@ -269,16 +282,3 @@ zap:
     show-line: true
     log-in-console: true
     retention-day: -1
-
-# OIDC / SSO configuration
-oidc:
-    enabled: false
-    provider-url: ""
-    client-id: ""
-    client-secret: ""
-    redirect-url: "http://localhost:8888/api/v1/base/oidc/callback"
-    scopes:
-        - openid
-        - profile
-        - email
-    claim-username: "email"

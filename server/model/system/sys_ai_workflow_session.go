@@ -24,10 +24,10 @@ type SysAIWorkflowSession struct {
 	ConversationID string              `json:"conversationId" gorm:"column:conversation_id;size:255;comment:DifySessionID"`
 	MessageID      string              `json:"messageId" gorm:"column:message_id;size:255;comment:DifyMessageID"`
 	CurrentNodeID  string              `json:"currentNodeId" gorm:"column:current_node_id;size:64;comment:CurrentChooseInNodeID"`
-	Settings       common.JSONMap      `json:"settings" gorm:"column:settings;type:longtext;comment:Pageset"`
-	FormData       common.JSONMap      `json:"formData" gorm:"column:form_data;type:longtext;comment:TableDocumentData"`
-	ResultData     common.JSONMap      `json:"resultData" gorm:"column:result_data;type:longtext;comment:CurrentDisplayResult"`
-	Messages       []AIWorkflowMessage `json:"messages" gorm:"column:messages;serializer:json;type:longtext;comment:SessionMessage"`
+	Settings       common.JSONMap      `json:"settings" gorm:"column:settings;type:text;comment:Pageset"`
+	FormData       common.JSONMap      `json:"formData" gorm:"column:form_data;type:text;comment:TableDocumentData"`
+	ResultData     common.JSONMap      `json:"resultData" gorm:"column:result_data;type:text;comment:CurrentDisplayResult"`
+	Messages       []AIWorkflowMessage `json:"messages" gorm:"column:messages;serializer:json;type:text;comment:SessionMessage"`
 }
 
 func (s *SysAIWorkflowSession) TableName() string {
