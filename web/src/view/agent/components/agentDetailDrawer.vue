@@ -30,8 +30,20 @@
         <el-descriptions :title="t('admin.agent.audit')" :column="2" border class="mt-4">
           <el-descriptions-item :label="t('admin.agent.created_at')">{{ agent.created_at }}</el-descriptions-item>
           <el-descriptions-item :label="t('admin.agent.updated_at')">{{ agent.updated_at }}</el-descriptions-item>
-          <el-descriptions-item :label="t('admin.agent.created_by')">{{ agent.created_by || '-' }}</el-descriptions-item>
-          <el-descriptions-item :label="t('admin.agent.updated_by')">{{ agent.updated_by || '-' }}</el-descriptions-item>
+          <el-descriptions-item :label="t('admin.agent.created_by')">
+            <span v-if="agent.created_by_name">{{ agent.created_by_name }}</span>
+            <el-tooltip v-else-if="agent.created_by" :content="agent.created_by" placement="top">
+              <span class="font-mono">{{ agent.created_by }}</span>
+            </el-tooltip>
+            <span v-else>-</span>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('admin.agent.updated_by')">
+            <span v-if="agent.updated_by_name">{{ agent.updated_by_name }}</span>
+            <el-tooltip v-else-if="agent.updated_by" :content="agent.updated_by" placement="top">
+              <span class="font-mono">{{ agent.updated_by }}</span>
+            </el-tooltip>
+            <span v-else>-</span>
+          </el-descriptions-item>
         </el-descriptions>
       </template>
     </div>

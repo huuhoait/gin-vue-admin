@@ -12,11 +12,6 @@
             <el-option v-for="l in 5" :key="l - 1" :label="`Level ${l - 1}`" :value="l - 1" />
           </el-select>
         </el-form-item>
-        <el-form-item :label="t('admin.agent.filter_kyc')">
-          <el-select v-model="searchInfo.kyc_tier" :placeholder="t('admin.common.select')" clearable>
-            <el-option v-for="k in 3" :key="k - 1" :label="t(`admin.agent.kyc_tier_${k - 1}`)" :value="k - 1" />
-          </el-select>
-        </el-form-item>
         <el-form-item>
           <el-input v-model="searchInfo.keyword" :placeholder="t('admin.agent.search_keyword')" clearable />
         </el-form-item>
@@ -64,11 +59,6 @@
         <el-table-column :label="t('admin.agent.status')" min-width="130">
           <template #default="{ row }">
             <el-tag :type="statusTagType[row.status] || 'info'" size="small">{{ t(`admin.agent.status_${row.status}`) }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('admin.agent.kyc_tier')" min-width="110" align="center">
-          <template #default="{ row }">
-            <el-tag :type="kycTagType[row.kyc_tier]" size="small">{{ t(`admin.agent.kyc_tier_${row.kyc_tier}`) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="t('admin.agent.province')" prop="province" min-width="120" />
@@ -121,13 +111,11 @@ const statusTagType = {
   suspended: 'danger',
   terminated: 'info',
 }
-const kycTagType = { 0: 'info', 1: '', 2: 'success' }
-
 const loading = ref(false)
 const flatData = ref([])
 const treeView = ref(true)
 const pagination = reactive({ total: 0, page: 1, pageSize: 50 })
-const searchInfo = reactive({ status: '', level: '', kyc_tier: '', keyword: '', referral_code: '', created_from: '', created_to: '' })
+const searchInfo = reactive({ status: '', level: '', keyword: '', referral_code: '', created_from: '', created_to: '' })
 const dateRange = ref(null)
 
 const onDateChange = (val) => {
@@ -194,11 +182,25 @@ const fetchList = async () => {
       pageSize: pagination.pageSize,
       ...Object.fromEntries(Object.entries(searchInfo).filter(([, v]) => v !== '' && v !== null)),
     })
-    if (res.code === 0 && res.data) {
-      flatData.value = res.data.list || []
-      pagination.total = res.data.total || 0
-      pagination.page = res.data.page || 1
-      pagination.pageSize = res.data.pageSize || 50
+    if (res.code !== 0) return
+
+    // Core returns either:
+    //   PageResult:  { list, total, page, pageSize }        (offset)
+    //   CursorPage:  { data | list, cursor, has_more }      (cursor — current shape)
+    // and may return data:null for an empty result. Normalize to an array.
+    const payload = res.data || {}
+    const items = payload.data || payload.list || []
+    flatData.value = Array.isArray(items) ? items : []
+
+    if (typeof payload.total === 'number') {
+      pagination.total = payload.total
+      pagination.page = payload.page || pagination.page
+      pagination.pageSize = payload.pageSize || pagination.pageSize
+    } else {
+      // Cursor pagination: use the returned batch size as a best-effort total
+      // so the footer shows something meaningful. Real "load more" paging
+      // would need a cursor-aware UI change.
+      pagination.total = flatData.value.length
     }
   } finally {
     loading.value = false
@@ -207,7 +209,7 @@ const fetchList = async () => {
 
 const onSearch = () => { pagination.page = 1; fetchList() }
 const onReset = () => {
-  Object.assign(searchInfo, { status: '', level: '', kyc_tier: '', keyword: '', referral_code: '', created_from: '', created_to: '' })
+  Object.assign(searchInfo, { status: '', level: '', keyword: '', referral_code: '', created_from: '', created_to: '' })
   dateRange.value = null
   pagination.page = 1
   fetchList()

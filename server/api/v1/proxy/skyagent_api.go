@@ -8,6 +8,7 @@ import (
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/middleware"
+	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
 	proxyPkg "github.com/huuhoait/gin-vue-admin/server/service/proxy"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -45,7 +46,9 @@ func (s *SkyAgentApi) GetAgentList(c *gin.Context) {
 // @Success  200 {object} proxyPkg.GVAEnvelope
 // @Router   /admin-api/v1/agents/{id} [get]
 func (s *SkyAgentApi) GetAgentDetail(c *gin.Context) {
-	doProxy(c, getProxyService().Core.Client, http.MethodGet, "/v1/agents/"+c.Param("id"), nil)
+	doProxyWith(c, getProxyService().Core.Client, http.MethodGet, "/v1/agents/"+c.Param("id"), nil,
+		enrichUserNames("created_by", "updated_by", "maker_id", "checker_id"),
+	)
 }
 
 // CreateAgent proxies POST /v1/agents.
@@ -252,12 +255,39 @@ func injectMakerChecker(body any, userUUID string) any {
 // volume on large payloads (attachment manifests, bulk lists).
 const maxLoggedBodyBytes = 8 * 1024
 
+// envelopeTransformer can mutate an envelope after a successful proxy call
+// (e.g. to enrich the response data). Must not mutate on error paths.
+type envelopeTransformer func(c *gin.Context, env *proxyPkg.GVAEnvelope)
+
+// doProxy is the default proxy path with no response enrichment.
+func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body any) {
+	doProxyWith(c, client, method, path, body, nil)
+}
+
 // WARNING: these logs contain full upstream payloads including PII
 // (CCCD, phone, bank account, email). They should only be enabled in
 // trusted environments. Route admins/ops to the audit chain for
 // sanitized, retention-controlled traces instead.
-func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body any) {
-	headers := proxyPkg.AuthHeaders(c)
+func doProxyWith(c *gin.Context, client *proxyPkg.Client, method, path string, body any, transform envelopeTransformer) {
+	headers, err := proxyPkg.AuthHeaders(c)
+	if err != nil {
+		// JWT middleware should have short-circuited before we got here;
+		// if we're still missing a UUID, the auth chain is misconfigured.
+		// Fail loudly rather than forwarding an anonymous request.
+		global.GVA_LOG.Error("skyagent proxy auth failure",
+			zap.String("request_id", middleware.GetRequestID(c)),
+			zap.String("method", method),
+			zap.String("inbound_path", c.FullPath()),
+			zap.String("downstream_path", path),
+			zap.Error(err),
+		)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"code": response.ERROR,
+			"data": nil,
+			"msg":  "unauthorized: missing user identity",
+		})
+		return
+	}
 
 	// Forward query string for GET requests.
 	opts := &proxyPkg.RequestOpts{Headers: headers}
@@ -329,7 +359,64 @@ func doProxy(c *gin.Context, client *proxyPkg.Client, method, path string, body 
 		global.GVA_LOG.Info("skyagent proxy call done", logFields...)
 	}
 
+	// Post-process successful envelopes (e.g. resolve maker/checker UUIDs
+	// to display names). Errors inside transformers are not fatal — the
+	// original envelope is forwarded regardless.
+	if transform != nil && envelope != nil && envelope.Code == 0 && httpStatus < http.StatusBadRequest {
+		transform(c, envelope)
+	}
+
 	proxyPkg.Respond(c, envelope, httpStatus)
+}
+
+// enrichUserNames returns a transformer that resolves any of the given field
+// names inside the envelope's top-level data object from UUID -> display name
+// (from sys_users) and writes them back as `<field>_name` sidecars. Fields
+// that are missing, non-string, or fail to resolve are left untouched.
+func enrichUserNames(fields ...string) envelopeTransformer {
+	if len(fields) == 0 {
+		return nil
+	}
+	return func(c *gin.Context, env *proxyPkg.GVAEnvelope) {
+		if len(env.Data) == 0 || string(env.Data) == "null" {
+			return
+		}
+		var payload map[string]any
+		if err := json.Unmarshal(env.Data, &payload); err != nil {
+			// Envelope data isn't a JSON object (list/scalar). Skip.
+			return
+		}
+
+		uuids := make([]string, 0, len(fields))
+		for _, f := range fields {
+			if v, ok := payload[f].(string); ok && v != "" {
+				uuids = append(uuids, v)
+			}
+		}
+		if len(uuids) == 0 {
+			return
+		}
+
+		names := proxyPkg.ResolveUserNames(c.Request.Context(), uuids)
+		if len(names) == 0 {
+			return
+		}
+		for _, f := range fields {
+			v, ok := payload[f].(string)
+			if !ok || v == "" {
+				continue
+			}
+			if name, found := names[v]; found {
+				payload[f+"_name"] = name
+			}
+		}
+
+		raw, err := json.Marshal(payload)
+		if err != nil {
+			return
+		}
+		env.Data = raw
+	}
 }
 
 // truncatedJSON marshals v and trims to maxLoggedBodyBytes for safe logging.
