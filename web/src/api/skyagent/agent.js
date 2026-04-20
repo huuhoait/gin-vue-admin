@@ -19,6 +19,16 @@ export const getAgentDetail = (id) => {
   })
 }
 
+// @Summary Get agent detail with plaintext PII (admin only)
+// @Router /admin-api/v1/agents/:id/full [get]
+// Upstream returns `Cache-Control: no-store` per contract §14.1.
+export const getAgentAdminDetail = (id) => {
+  return service({
+    url: `/admin-api/v1/agents/${id}/full`,
+    method: 'get'
+  })
+}
+
 // @Summary Create a new agent
 // @Router /admin-api/v1/agents [post]
 export const createAgent = (data) => {

@@ -113,7 +113,9 @@ func (s *SkyAgentApi) UpdateAgentStatus(c *gin.Context) {
 // @Success  200 {object} proxyPkg.GVAEnvelope
 // @Router   /admin-api/v1/agents/{id}/full [get]
 func (s *SkyAgentApi) GetAgentAdminDetail(c *gin.Context) {
-	doProxy(c, getProxyService().Core.Client, http.MethodGet, "/v1/admin/agents/"+c.Param("id"), nil)
+	doProxyWith(c, getProxyService().Core.Client, http.MethodGet, "/v1/admin/agents/"+c.Param("id"), nil,
+		enrichUserNames("created_by", "updated_by", "maker_id", "checker_id"),
+	)
 }
 
 // ---------------------------------------------------------------------------
@@ -187,7 +189,9 @@ func (s *SkyAgentApi) ListTickets(c *gin.Context) {
 }
 
 func (s *SkyAgentApi) GetTicket(c *gin.Context) {
-	doProxy(c, getProxyService().Core.Client, http.MethodGet, "/v1/onboarding/tickets/"+c.Param("ticket_id"), nil)
+	doProxyWith(c, getProxyService().Core.Client, http.MethodGet, "/v1/onboarding/tickets/"+c.Param("ticket_id"), nil,
+		enrichUserNames("maker_id", "checker_id"),
+	)
 }
 
 func (s *SkyAgentApi) UploadTicketAttachment(c *gin.Context) {
