@@ -51,7 +51,7 @@
 "admin.onboarding.ticket_list"  = "Danh sách Ticket"
 "admin.onboarding.create_ticket"= "Tạo Ticket"
 "admin.onboarding.review_queue" = "Hàng đợi duyệt"
-"admin.onboarding.create_agent_l0" = "Đăng ký Đại lý L0"
+"admin.onboarding.create_agent_l0" = "Master Agent"
 
 # --- Proxy (Story 9.1) -------------------------------------------------------
 "admin.proxy.upstream_unavailable" = "Dịch vụ không khả dụng"
