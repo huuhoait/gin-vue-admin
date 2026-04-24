@@ -15,7 +15,7 @@
   ],
   "settings": {
     "go.toolsEnvVars": {
-      "GOPROXY": "https://goproxy.cn,direct",
+      "GOPROXY": "https://goproxy.io,direct",
       "GONOPROXY": "none;"
     }
   },

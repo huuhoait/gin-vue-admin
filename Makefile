@@ -6,7 +6,7 @@ BUILD_IMAGE_SERVER  = golang:1.22
 # Select the Node.js version
 BUILD_IMAGE_WEB     = node:20
 # Project name
-PROJECT_NAME        = github.com/flipped-aurora/gin-vue-admin/server
+PROJECT_NAME        = github.com/huuhoaitvn/gin-vue-admin/server
 # Config file path
 CONFIG_FILE         = config.yaml
 # Image registry namespace

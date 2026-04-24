@@ -2,7 +2,7 @@
   <div>
     <WarningBar
       title="This feature provides synchronous table export. For large datasets requiring async export, please contact us for customization."
-      href="https://flipped-aurora.feishu.cn/docx/KwjxdnvatozgwIxGV0rcpkZSn4d"
+      href="https://huuhoaitvn.feishu.cn/docx/KwjxdnvatozgwIxGV0rcpkZSn4d"
     />
     <div class="gva-search-box">
       <el-form

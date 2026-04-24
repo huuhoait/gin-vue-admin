@@ -8,7 +8,7 @@
           </template>
           <div>
             <div class="w-full flex items-center justify-center">
-              <a href="https://github.com/flipped-aurora/gin-vue-admin">
+              <a href="https://github.com/huuhoaitvn/gin-vue-admin">
                   <img
                     class="org-img dom-center"
                     src="@/assets/logo.png"
@@ -17,24 +17,24 @@
                 </a>
             </div>
             <div class="w-full flex items-center justify-around">
-              <a href="https://github.com/flipped-aurora/gin-vue-admin">
+              <a href="https://github.com/huuhoaitvn/gin-vue-admin">
                   <img
                     class="dom-center"
-                    src="https://img.shields.io/github/watchers/flipped-aurora/gin-vue-admin.svg?label=Watch"
+                    src="https://img.shields.io/github/watchers/huuhoaitvn/gin-vue-admin.svg?label=Watch"
                     alt=""
                   />
                 </a>
-                <a href="https://github.com/flipped-aurora/gin-vue-admin">
+                <a href="https://github.com/huuhoaitvn/gin-vue-admin">
                   <img
                     class="dom-center"
-                    src="https://img.shields.io/github/stars/flipped-aurora/gin-vue-admin.svg?style=social"
+                    src="https://img.shields.io/github/stars/huuhoaitvn/gin-vue-admin.svg?style=social"
                     alt=""
                   />
                 </a>
-                <a href="https://github.com/flipped-aurora/gin-vue-admin">
+                <a href="https://github.com/huuhoaitvn/gin-vue-admin">
                   <img
                     class="dom-center"
-                    src="https://img.shields.io/github/forks/flipped-aurora/gin-vue-admin.svg?label=Fork"
+                    src="https://img.shields.io/github/forks/huuhoaitvn/gin-vue-admin.svg?label=Fork"
                     alt=""
                   />
                 </a>
@@ -43,15 +43,15 @@
         </el-card>
         <el-card class="min-w-96 mt-5">
           <template #header>
-            <div>flipped-aurora team</div>
+            <div>huuhoaitvn team</div>
           </template>
           <div>
             <div class="w-full flex items-center justify-center">
-                <a href="https://github.com/flipped-aurora">
+                <a href="https://github.com/huuhoaitvn">
                   <img
                     class="org-img dom-center"
-                    src="@/assets/flipped-aurora.png"
-                    alt="flipped-aurora"
+                    src="@/assets/huuhoaitvn.png"
+                    alt="huuhoaitvn"
                   />
                 </a>
               </div>

@@ -110,7 +110,7 @@
           <img src="@/assets/kefu.png" class="w-8 h-8" :alt="t('admin.login.link_support')" />
         </a>
         <a
-          href="https://github.com/flipped-aurora/gin-vue-admin"
+          href="https://github.com/huuhoaitvn/gin-vue-admin"
           target="_blank"
         >
           <img src="@/assets/github.png" class="w-8 h-8" alt="github" />

@@ -14,7 +14,7 @@ English | [简体中文](./README.md)
 
 [gitee](https://gitee.com/pixelmax/gin-vue-admin): https://gitee.com/pixelmax/gin-vue-admin
 
-[github](https://github.com/flipped-aurora/gin-vue-admin): https://github.com/flipped-aurora/gin-vue-admin
+[github](https://github.com/huuhoaitvn/gin-vue-admin): https://github.com/huuhoaitvn/gin-vue-admin
 
 # Project Guidelines
 [Online Documentation](https://www.gin-vue-admin.com/) : https://www.gin-vue-admin.com/
@@ -65,8 +65,8 @@ We are excited that you are interested in contributing to gin-vue-admin. Before 
 
 - master: 2.0 code, for prod
 - develop: 2.0 dev code, for test
-- [gin-vue-admin_v2_dev](https://github.com/flipped-aurora/gin-vue-admin/tree/gin-vue-admin_v2_dev) (v2.0 [GormV1](https://v1.gorm.io) Stable branch)
-- [gva_gormv2_dev](https://github.com/flipped-aurora/gin-vue-admin/tree/gva_gormv2_dev) (v2.0 [GormV2](https://v2.gorm.io) Development branch)
+- [gin-vue-admin_v2_dev](https://github.com/huuhoaitvn/gin-vue-admin/tree/gin-vue-admin_v2_dev) (v2.0 [GormV1](https://v1.gorm.io) Stable branch)
+- [gva_gormv2_dev](https://github.com/huuhoaitvn/gin-vue-admin/tree/gva_gormv2_dev) (v2.0 [GormV2](https://v2.gorm.io) Development branch)
 
 ## 2. Getting started
 
@@ -84,7 +84,7 @@ use `Goland` And other editing tools，open server catalogue，You can't open it
 
 ```bash
 # clone the project
-git clone https://github.com/flipped-aurora/gin-vue-admin.git
+git clone https://github.com/huuhoaitvn/gin-vue-admin.git
 
 # open server catalogue
 cd server
@@ -236,8 +236,8 @@ swag init
 - Configuration management: the configuration file can be modified in the foreground (this feature is not available in the online experience site).
 - Conditional search: Add an example of conditional search.
 - Restful example: You can see sample APIs in user management module.
-  - Front-end file reference: [web/src/view/superAdmin/api/api.vue](https://github.com/flipped-aurora/gin-vue-admin/blob/master/web/src/view/superAdmin/api/api.vue).
-  - Stage reference: [server/router/sys_api.go](https://github.com/flipped-aurora/gin-vue-admin/blob/master/server/router/sys_api.go).
+  - Front-end file reference: [web/src/view/superAdmin/api/api.vue](https://github.com/huuhoaitvn/gin-vue-admin/blob/master/web/src/view/superAdmin/api/api.vue).
+  - Stage reference: [server/router/sys_api.go](https://github.com/huuhoaitvn/gin-vue-admin/blob/master/server/router/sys_api.go).
 - Multi-login restriction: Change `user-multipoint` to true in `system` in `config.yaml` (You need to configure redis and redis parameters yourself. During the test period, please report in time if there is a bug).
 - Upload file by chunk：Provides examples of file upload and large file upload by chunk.
 - Form Builder：With the help of [@form-generator](https://github.com/JakHuang/form-generator).
@@ -247,7 +247,7 @@ swag init
 
 ### 6.1 Team blog
 
-> https://www.yuque.com/flipped-aurora
+> https://www.yuque.com/huuhoaitvn
 >
 >There are video courses about frontend framework in our blo. If you think the project is helpful to you, you can add my personal WeChat:shouzi_1994，your comments is welcomed。
 
@@ -299,12 +299,12 @@ swag init
 
 Thank you for considering your contribution to gin-vue-admin!
 
-<a href="https://openomy.app/github/flipped-aurora/gin-vue-admin" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.app/svg?repo=flipped-aurora/gin-vue-admin&chart=bubble&latestMonth=3" target="_blank" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
+<a href="https://openomy.app/github/huuhoaitvn/gin-vue-admin" target="_blank" style="display: block; width: 100%;" align="center">
+  <img src="https://openomy.app/svg?repo=huuhoaitvn/gin-vue-admin&chart=bubble&latestMonth=3" target="_blank" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
  </a>
 
-<a href="https://github.com/flipped-aurora/gin-vue-admin/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=flipped-aurora/gin-vue-admin" />
+<a href="https://github.com/huuhoaitvn/gin-vue-admin/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=huuhoaitvn/gin-vue-admin" />
 </a>
 
 ## 9. Donate

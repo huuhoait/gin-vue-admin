@@ -18,7 +18,7 @@ export const config = {
 export const viteLogo = (env) => {
   if (config.showViteLogo) {
     console.log(greenText(`> SkyAgent Admin Portal (forked from gin-vue-admin)`))
-    console.log(greenText(`> Upstream: https://github.com/flipped-aurora/gin-vue-admin`))
+    console.log(greenText(`> Upstream: https://github.com/huuhoaitvn/gin-vue-admin`))
     console.log(greenText(`> Version: v${packageInfo.version}`))
     console.log(
       greenText(

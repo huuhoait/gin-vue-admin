@@ -12,7 +12,7 @@ Unauthorized commercial use may lead to legal claims. Please respect intellectua
       <span>
         <a
           class="font-bold text-active"
-          href="https://github.com/flipped-aurora/gin-vue-admin"
+          href="https://github.com/huuhoaitvn/gin-vue-admin"
           >Gin-Vue-Admin</a
         >
       </span>
@@ -23,8 +23,8 @@ Unauthorized commercial use may lead to legal claims. Please respect intellectua
       <span>
         <a
           class="font-bold text-active"
-          href="https://github.com/flipped-aurora"
-          >flipped-aurora team</a
+          href="https://github.com/huuhoaitvn"
+          >huuhoaitvn team</a
         >
       </span>
     </div>
@@ -37,7 +37,7 @@ Unauthorized commercial use may lead to legal claims. Please respect intellectua
   })
 
   console.log(
-    `%c powered by %c flipped-aurorae %c`,
+    `%c powered by %c huuhoaitvne %c`,
     'background:#0081ff; padding: 1px; border-radius: 3px 0 0 3px; color: #fff',
     'background:#354855; padding: 1px 5px; border-radius: 0 3px 3px 0; color: #fff; font-weight: bold;',
     'background:transparent'

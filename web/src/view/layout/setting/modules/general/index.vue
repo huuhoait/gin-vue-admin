@@ -133,7 +133,7 @@
                 {{ t('admin.layout.settings.about.description') }}
               </p>
               <div class="flex items-center gap-3 text-sm">
-                <a href="https://github.com/flipped-aurora/gin-vue-admin" target="_blank"
+                <a href="https://github.com/huuhoaitvn/gin-vue-admin" target="_blank"
                   class="font-medium transition-colors duration-150 hover:underline"
                   :style="{ color: config.primaryColor }">
                   {{ t('admin.layout.settings.about.github') }}

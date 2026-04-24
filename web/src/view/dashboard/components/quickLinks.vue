@@ -76,7 +76,7 @@
   const recentVisits = [
     { icon: Reading, title: 'Buy license', path: 'https://plugin.gin-vue-admin.com/license' },
     { icon: Document, title: 'Plugin market', path: 'https://plugin.gin-vue-admin.com/#/layout/home' },
-    { icon: Link, title: 'Repository', path: 'https://github.com/flipped-aurora/gin-vue-admin' }
+    { icon: Link, title: 'Repository', path: 'https://github.com/huuhoaitvn/gin-vue-admin' }
   ]
 </script>
 

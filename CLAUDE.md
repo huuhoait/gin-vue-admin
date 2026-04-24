@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Two independently deployable halves, built together but run separately:
 
-- `server/` — Go 1.25, Gin, GORM. Go module is `github.com/huuhoait/gin-vue-admin/server` (note: **not** the upstream `flipped-aurora` path). Entrypoint `server/main.go` → `core.RunServer()`. Listens on the port from `server/config.yaml` (`system.addr`, default `8888`).
+- `server/` — Go 1.25, Gin, GORM. Go module is `github.com/huuhoait/gin-vue-admin/server` (note: **not** the upstream `huuhoaitvn` path). Entrypoint `server/main.go` → `core.RunServer()`. Listens on the port from `server/config.yaml` (`system.addr`, default `8888`).
 - `web/` — Vue 3 + Vite 6 + Pinia + Element Plus + UnoCSS. Package manager is **pnpm** (lockfile `pnpm-lock.yaml`); the Makefile still invokes `yarn` inside Docker builds.
 - `server/plugin/`, `web/src/plugin/` — paired GVA plugins (see plugin model below).
 - `deploy/`, `docs/`, `scripts/` — deployment templates, runbooks, and a CJK-extraction toolchain used by the i18n migration.
@@ -82,7 +82,7 @@ This admin is deployed as the **BFF for SkyAgent** — a separate microservice s
 
 ## Go module path gotcha
 
-The `go.mod` declares `github.com/huuhoait/gin-vue-admin/server` but upstream GVA uses `github.com/flipped-aurora/gin-vue-admin/server`. Imports inside this repo **must** use `huuhoait`; copy-pasted snippets from upstream docs will compile-fail until the prefix is swapped.
+The `go.mod` declares `github.com/huuhoait/gin-vue-admin/server` but upstream GVA uses `github.com/huuhoaitvn/gin-vue-admin/server`. Imports inside this repo **must** use `huuhoait`; copy-pasted snippets from upstream docs will compile-fail until the prefix is swapped.
 
 ## Swagger / API doc regeneration
 

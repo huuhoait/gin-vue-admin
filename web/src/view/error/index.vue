@@ -9,10 +9,10 @@
         </p>
         <p>
           Repo: <a
-            href="https://github.com/flipped-aurora/gin-vue-admin"
+            href="https://github.com/huuhoaitvn/gin-vue-admin"
             target="_blank"
             class="text-blue-600"
-            >https://github.com/flipped-aurora/gin-vue-admin</a
+            >https://github.com/huuhoaitvn/gin-vue-admin</a
           >
         </p>
         <el-button @click="toDashboard">Back to home</el-button>

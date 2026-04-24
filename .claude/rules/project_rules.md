@@ -306,7 +306,7 @@ method to allow the plugin to automatically register with the main system.
 
 ### **Default Plugin Registration Feature**
 
-In `plugin/register.go`, use anonymous imports like `_ "github.com/flipped-aurora/gin-vue-admin/server/plugin/plugin_name"` to activate the plugin's `init` function.
+In `plugin/register.go`, use anonymous imports like `_ "github.com/huuhoaitvn/gin-vue-admin/server/plugin/plugin_name"` to activate the plugin's `init` function.
 
 ### **Code Organization Examples**:
 
