@@ -46,9 +46,13 @@ const i18n = createI18n({
     'vi-VN': viVN,
     'en-US': enUS
   },
-  // Silence "missing key" warnings in prod; in dev they are genuine bugs.
-  missingWarn: import.meta.env.DEV,
-  fallbackWarn: import.meta.env.DEV
+  // In dev, only warn on missing keys that are *meant* to be i18n keys
+  // (the `admin.*` namespace per CLAUDE.md). Menu/breadcrumb titles stored
+  // in the DB as literal display strings (e.g. "Server Status", "Trang chủ")
+  // also pass through t(), and falling back to the literal is intentional.
+  // Production silences warnings entirely.
+  missingWarn: import.meta.env.DEV ? /^admin\./ : false,
+  fallbackWarn: import.meta.env.DEV ? /^admin\./ : false
 })
 
 /**

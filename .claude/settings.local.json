@@ -23,7 +23,10 @@
       "Read(//tmp/**)",
       "Bash(curl -s -o /tmp/h2.out -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:8082/api/health)",
       "Bash(go build *)",
-      "Bash(go test *)"
+      "Bash(go test *)",
+      "Bash(awk 'NR==70 || NR==16 || NR==39 || NR==36 {print FILENAME\":\"NR\": \"$0}' src/view/layout/tabs/index.vue)",
+      "Bash(pnpm lint *)",
+      "Bash(pnpm exec *)"
     ]
   }
 }
