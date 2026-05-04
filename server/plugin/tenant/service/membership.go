@@ -119,3 +119,33 @@ func (s *membershipService) MembersOfTenant(tenantID uint) ([]model.UserTenant, 
 	err := global.GVA_DB.Where("tenant_id = ?", tenantID).Find(&list).Error
 	return list, err
 }
+
+// TenantWithMembership pairs a Tenant row with the user's per-membership flag
+// so the frontend tenant switcher can render the dropdown without a second
+// round-trip to discover which entry is the user's primary tenant.
+type TenantWithMembership struct {
+	model.Tenant
+	IsPrimary bool `json:"isPrimary"`
+}
+
+// MyTenantsForUser returns every enabled tenant the user has membership in,
+// ordered with the primary tenant first and then alphabetically by name. The
+// IsPrimary flag is preserved per row so the FE can highlight the default
+// selection in the switcher.
+func (s *membershipService) MyTenantsForUser(userID uint) ([]TenantWithMembership, error) {
+	var list []TenantWithMembership
+	if userID == 0 {
+		return list, nil
+	}
+	// SELECT t.*, ut.is_primary FROM gva_tenants t
+	//   JOIN gva_user_tenants ut ON t.id = ut.tenant_id
+	//   WHERE ut.user_id = ? AND t.enabled = TRUE
+	//   ORDER BY ut.is_primary DESC, t.name ASC
+	err := global.GVA_DB.Table("gva_tenants AS t").
+		Select("t.*, ut.is_primary AS is_primary").
+		Joins("JOIN gva_user_tenants ut ON ut.tenant_id = t.id").
+		Where("ut.user_id = ? AND t.enabled = ?", userID, true).
+		Order("ut.is_primary DESC, t.name ASC").
+		Scan(&list).Error
+	return list, err
+}

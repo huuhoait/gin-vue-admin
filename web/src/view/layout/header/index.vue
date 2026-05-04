@@ -47,6 +47,7 @@
 
     <div class="ml-2 flex items-center">
       <tools />
+      <TenantSwitcher />
       <el-dropdown>
         <div class="flex justify-center items-center h-full w-full">
           <span
@@ -105,6 +106,7 @@
   import { fmtTitle } from '@/utils/fmtRouterTitle'
   import gvaAside from '@/view/layout/aside/index.vue'
   import Logo from '@/components/logo/index.vue'
+  import TenantSwitcher from '@/components/tenantSwitcher/index.vue'
 
   const { t } = useI18n()
   const userStore = useUserStore()

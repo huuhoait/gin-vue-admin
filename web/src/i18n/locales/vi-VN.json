@@ -1620,6 +1620,13 @@
         "switch_to": "Chuyển sang",
         "profile": "Thông tin cá nhân"
       },
+      "tenant_switcher": {
+        "placeholder": "Tenant",
+        "no_access": "Chưa được gán tenant",
+        "switch_to": "Chuyển sang {name}",
+        "current_tag": "hiện tại",
+        "primary_tag": "mặc định"
+      },
       "tools": {
         "video_tutorial": "Hướng dẫn video",
         "search": "Tìm kiếm",

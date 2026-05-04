@@ -23,3 +23,11 @@ export const unassignUser = (params) =>
 
 export const membersOfTenant = (params) =>
   service({ url: '/tenantMembership/members', method: 'get', params })
+
+/**
+ * List the tenants the current user has membership in. Used by the topbar
+ * tenant switcher; returns an array of `{ ID, code, name, isPrimary, ... }`.
+ * @returns {Promise} the standard `{ code, data, msg }` envelope.
+ */
+export const myTenants = () =>
+  service({ url: '/tenant/mine', method: 'get', donNotShowLoading: true })

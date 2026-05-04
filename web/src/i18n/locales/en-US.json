@@ -1620,6 +1620,13 @@
         "switch_to": "Switch to",
         "profile": "Profile"
       },
+      "tenant_switcher": {
+        "placeholder": "Tenant",
+        "no_access": "No tenants assigned",
+        "switch_to": "Switch to {name}",
+        "current_tag": "current",
+        "primary_tag": "primary"
+      },
       "tools": {
         "video_tutorial": "Video tutorials",
         "search": "Search",
