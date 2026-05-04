@@ -20,7 +20,7 @@ type tenantApi struct{}
 // @Security ApiKeyAuth
 // @accept   application/json
 // @Produce  application/json
-// @Param    data body request.CreateTenantReq true "tenant fields"
+// @Param    data body request.CreateTenantReq true "tenant fields (code, name, description, contact info, domain, expireAt, accountLimit)"
 // @Router   /tenant/create [post]
 func (a *tenantApi) CreateTenant(c *gin.Context) {
 	var req request.CreateTenantReq
@@ -39,6 +39,11 @@ func (a *tenantApi) CreateTenant(c *gin.Context) {
 
 // UpdateTenant
 // @Tags     Tenant
+// @Summary  update tenant
+// @Security ApiKeyAuth
+// @accept   application/json
+// @Produce  application/json
+// @Param    data body request.UpdateTenantReq true "tenant fields (id required; other fields are partial-update)"
 // @Router   /tenant/update [put]
 func (a *tenantApi) UpdateTenant(c *gin.Context) {
 	var req request.UpdateTenantReq

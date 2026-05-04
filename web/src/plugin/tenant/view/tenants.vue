@@ -25,12 +25,24 @@
       <el-table :data="tableData" row-key="ID" style="width: 100%">
         <el-table-column :label="t('admin.plugin.tenant.col_code')" prop="code" width="160" />
         <el-table-column :label="t('admin.plugin.tenant.col_name')" prop="name" min-width="180" />
-        <el-table-column :label="t('admin.plugin.tenant.col_description')" prop="description" min-width="220" show-overflow-tooltip />
+        <el-table-column :label="t('admin.plugin.tenant.col_description')" prop="description" min-width="200" show-overflow-tooltip />
         <el-table-column :label="t('admin.plugin.tenant.col_enabled')" width="100">
           <template #default="scope">
             <el-tag :type="scope.row.enabled ? 'success' : 'danger'" size="small">
               {{ scope.row.enabled ? t('admin.plugin.tenant.yes') : t('admin.plugin.tenant.no') }}
             </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('admin.plugin.tenant.col_expire_at')" width="160">
+          <template #default="scope">
+            <span v-if="scope.row.expireAt">{{ formatDate(scope.row.expireAt) }}</span>
+            <el-tag v-else type="info" size="small">{{ t('admin.plugin.tenant.expire_at_never') }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('admin.plugin.tenant.col_account_limit')" width="120">
+          <template #default="scope">
+            <span v-if="scope.row.accountLimit > 0">{{ scope.row.accountLimit }}</span>
+            <el-tag v-else type="info" size="small">{{ t('admin.plugin.tenant.account_limit_unlimited') }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="t('admin.plugin.tenant.col_created')" width="160">
@@ -66,6 +78,29 @@
         </el-form-item>
         <el-form-item :label="t('admin.plugin.tenant.description_label')">
           <el-input v-model="formData.description" type="textarea" :rows="2" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.field_contact_name')">
+          <el-input v-model="formData.contactName" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.field_contact_phone')">
+          <el-input v-model="formData.contactPhone" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.field_domain')">
+          <el-input v-model="formData.domain" :placeholder="t('admin.plugin.tenant.domain_placeholder')" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.field_expire_at')">
+          <el-date-picker
+            v-model="formData.expireAt"
+            type="datetime"
+            :placeholder="t('admin.plugin.tenant.expire_at_never')"
+            value-format="YYYY-MM-DDTHH:mm:ssZ"
+            clearable
+            class="w-full"
+          />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.field_account_limit')">
+          <el-input-number v-model="formData.accountLimit" :min="0" />
+          <div class="text-xs text-gray-500 mt-1">{{ t('admin.plugin.tenant.account_limit_hint') }}</div>
         </el-form-item>
         <el-form-item v-if="formMode === 'edit'" :label="t('admin.plugin.tenant.enabled_field')">
           <el-switch v-model="formData.enabled" />
@@ -144,7 +179,18 @@ const memberRows = ref([])
 const memberForm = ref({ userID: 1, isPrimary: false })
 
 function emptyForm() {
-  return { id: null, code: '', name: '', description: '', enabled: true }
+  return {
+    id: null,
+    code: '',
+    name: '',
+    description: '',
+    contactName: '',
+    contactPhone: '',
+    domain: '',
+    expireAt: null,
+    accountLimit: 0,
+    enabled: true
+  }
 }
 
 const loadList = async () => {
@@ -178,6 +224,11 @@ const openEdit = (row) => {
     code: row.code,
     name: row.name,
     description: row.description || '',
+    contactName: row.contactName || '',
+    contactPhone: row.contactPhone || '',
+    domain: row.domain || '',
+    expireAt: row.expireAt || null,
+    accountLimit: row.accountLimit ?? 0,
     enabled: row.enabled
   }
   formDrawer.value = true
@@ -188,7 +239,12 @@ const onSave = async () => {
     const res = await createTenant({
       code: formData.value.code,
       name: formData.value.name,
-      description: formData.value.description
+      description: formData.value.description,
+      contactName: formData.value.contactName,
+      contactPhone: formData.value.contactPhone,
+      domain: formData.value.domain,
+      expireAt: formData.value.expireAt || null,
+      accountLimit: formData.value.accountLimit ?? 0
     })
     if (res.code === 0) {
       ElMessage.success(t('admin.plugin.tenant.created_msg'))
@@ -198,12 +254,25 @@ const onSave = async () => {
       ElMessage.error(res.msg || t('admin.plugin.tenant.create_failed'))
     }
   } else {
-    const res = await updateTenant({
+    // Tri-state semantics for ExpireAt: when the picker is cleared we send
+    // clearExpireAt=true so the backend NULLs the column instead of leaving
+    // it untouched.
+    const payload = {
       id: formData.value.id,
       name: formData.value.name,
       description: formData.value.description,
+      contactName: formData.value.contactName,
+      contactPhone: formData.value.contactPhone,
+      domain: formData.value.domain,
+      accountLimit: formData.value.accountLimit ?? 0,
       enabled: formData.value.enabled
-    })
+    }
+    if (formData.value.expireAt) {
+      payload.expireAt = formData.value.expireAt
+    } else {
+      payload.clearExpireAt = true
+    }
+    const res = await updateTenant(payload)
     if (res.code === 0) {
       ElMessage.success(t('admin.plugin.tenant.updated_msg'))
       formDrawer.value = false
@@ -255,7 +324,18 @@ const onAssign = async () => {
     ElMessage.success(t('admin.plugin.tenant.assigned_msg'))
     refreshMembers()
   } else {
-    ElMessage.error(res.msg || t('admin.plugin.tenant.assign_failed'))
+    // Surface the dedicated cap-reached message when the backend signals it
+    // via the i18n key. The server returns the localized text in `msg` and
+    // the response interceptor surfaces it; we still provide a tailored
+    // fallback so the operator always knows why the assign failed.
+    const isLimit = typeof res.msg === 'string' && (
+      res.msg.includes('account limit') || res.msg.includes('giới hạn')
+    )
+    ElMessage.error(
+      res.msg || (isLimit
+        ? t('admin.plugin.tenant.assign_failed_limit')
+        : t('admin.plugin.tenant.assign_failed'))
+    )
   }
 }
 

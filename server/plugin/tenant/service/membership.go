@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model"
 
@@ -12,8 +14,46 @@ type membershipService struct{}
 // Assign adds a user to a tenant. When isPrimary=true, demotes any other
 // primary entry for this user atomically — a user has at most one primary
 // tenant at a time.
+//
+// Enforces the tenant's AccountLimit when present (>0). The check is done
+// inside the transaction so concurrent assigns cannot both squeeze past a
+// stale read; if the membership row already exists for this (user,tenant)
+// pair the limit is NOT re-checked (re-assigning is idempotent and does not
+// grow the count).
 func (s *membershipService) Assign(userID, tenantID uint, isPrimary bool) error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		// Existence check first — we need the tenant's AccountLimit anyway,
+		// so loading it here doubles as a fast-fail when the tenant id is
+		// bogus and lets us surface a meaningful error instead of GORM's
+		// foreign-key-style noise downstream.
+		var tenant model.Tenant
+		if err := tx.Where("id = ?", tenantID).First(&tenant).Error; err != nil {
+			return err
+		}
+
+		// Detect "already a member" — re-assignment is idempotent w.r.t. the
+		// account-limit cap. We still need to handle is_primary toggling
+		// further down.
+		var existing model.UserTenant
+		err := tx.Where("user_id = ? AND tenant_id = ?", userID, tenantID).First(&existing).Error
+		alreadyMember := err == nil
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
+		// Cap enforcement applies only to net-new assignments and only when
+		// the tenant has explicitly set a non-zero AccountLimit.
+		if !alreadyMember && tenant.AccountLimit > 0 {
+			var count int64
+			if err := tx.Model(&model.UserTenant{}).
+				Where("tenant_id = ?", tenantID).Count(&count).Error; err != nil {
+				return err
+			}
+			if count >= int64(tenant.AccountLimit) {
+				return ErrAccountLimitReached
+			}
+		}
+
 		if isPrimary {
 			if err := tx.Model(&model.UserTenant{}).
 				Where("user_id = ? AND is_primary = ?", userID, true).

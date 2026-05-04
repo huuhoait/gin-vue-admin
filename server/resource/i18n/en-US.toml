@@ -74,9 +74,12 @@
 "admin.plugin.oauth2.secret_rotated" = "Secret rotated. Save it — it will not be shown again."
 
 # --- Plugin: Tenant (multi-tenancy) -----------------------------------------
-"admin.plugin.tenant.assigned"        = "User assigned to tenant"
-"admin.plugin.tenant.removed"         = "User removed from tenant"
-"admin.plugin.tenant.invalid_header"  = "Invalid X-Tenant-ID header"
-"admin.plugin.tenant.access_denied"   = "User is not a member of the requested tenant"
-"admin.plugin.tenant.has_members"     = "Cannot delete tenant with active members; remove members first"
+"admin.plugin.tenant.assigned"               = "User assigned to tenant"
+"admin.plugin.tenant.removed"                = "User removed from tenant"
+"admin.plugin.tenant.invalid_header"         = "Invalid X-Tenant-ID header"
+"admin.plugin.tenant.access_denied"          = "User is not a member of the requested tenant"
+"admin.plugin.tenant.has_members"            = "Cannot delete tenant with active members; remove members first"
+"admin.plugin.tenant.disabled"               = "Tenant is disabled"
+"admin.plugin.tenant.expired"                = "Tenant has expired"
+"admin.plugin.tenant.account_limit_reached"  = "Tenant has reached its account limit"
 
