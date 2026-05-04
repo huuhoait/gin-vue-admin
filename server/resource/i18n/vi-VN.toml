@@ -61,3 +61,24 @@
 "admin.dashboard.load_failed"      = "Không tải được bảng điều khiển"
 "admin.dashboard.unavailable"      = "Dịch vụ bảng điều khiển không khả dụng"
 
+# --- Menu titles (security grouping) ----------------------------------------
+"admin.menu.security"                          = "Bảo mật"
+"admin.plugin.online_users.menu_title"         = "Phiên trực tuyến"
+"admin.plugin.oauth2.menu_title"               = "OAuth2 Clients"
+"admin.plugin.sysmonitor.menu_title"           = "Giám sát hệ thống"
+"admin.plugin.tenant.menu_title"               = "Tenants"
+
+# --- Plugin: Online Users ---------------------------------------------------
+"admin.plugin.online_users.session_terminated" = "Đã kết thúc phiên"
+
+# --- Plugin: OAuth2 Server --------------------------------------------------
+"admin.plugin.oauth2.client_created" = "Đã tạo client. Hãy lưu client secret — sẽ không hiển thị lại."
+"admin.plugin.oauth2.secret_rotated" = "Đã đổi secret. Hãy lưu lại — sẽ không hiển thị lại."
+
+# --- Plugin: Tenant (multi-tenancy) -----------------------------------------
+"admin.plugin.tenant.assigned"        = "Đã thêm người dùng vào tenant"
+"admin.plugin.tenant.removed"         = "Đã xoá người dùng khỏi tenant"
+"admin.plugin.tenant.invalid_header"  = "Header X-Tenant-ID không hợp lệ"
+"admin.plugin.tenant.access_denied"   = "Người dùng không thuộc tenant này"
+"admin.plugin.tenant.has_members"     = "Không thể xoá tenant đang có thành viên; hãy xoá thành viên trước"
+

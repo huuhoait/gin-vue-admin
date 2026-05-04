@@ -45,6 +45,10 @@ func Routers() *gin.Engine {
 	Router.Use(middleware.I18nLocale())
 	// UseCustomof Recovery InIntervalpiece, Record panic AndInbound
 	Router.Use(middleware.GinRecovery(true))
+	// Plugin-registered post-handler hooks (online-session tracking, etc.).
+	// Must be installed before route registration so it observes every
+	// request including system + plugin routes.
+	Router.Use(middleware.PostHandlerChain())
 	if gin.Mode() == gin.DebugMode {
 		Router.Use(gin.Logger())
 	}

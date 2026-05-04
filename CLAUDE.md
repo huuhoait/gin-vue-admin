@@ -56,7 +56,7 @@ This project follows the gin-vue-admin (GVA) layered architecture strictly. See 
 - **`enter.go` group pattern**: each of `api/v1/`, `service/`, `router/` exposes an `ApiGroup` / `ServiceGroup` / `RouterGroup` singleton. Cross-module references go through these globals (`service.ServiceGroupApp.XxxService`, `api.ApiGroupApp.XxxApi`). This is how circular imports are avoided — do not short-circuit it.
 - **Swagger annotations are mandatory** on every exposed handler. The FE contract depends on `swag init` producing a complete `docs/swagger.json`.
 - **Response envelope** is `{ code, data, msg }` via `server/model/common/response`. All handlers must go through `response.OkWithDetailed` / `response.FailWithMessage` etc. — do not write raw JSON.
-- **i18n**: user-facing `msg` fields flow through `server/global/i18n` (TOML bundles in `server/resource/i18n/`). Backend logs stay English. FE uses vue-i18n (`web/src/i18n/`). Key format: `admin.<domain>.<section>.<label>`. Default locale `vi-VN`, fallback `en-US`.
+- **i18n (forced)**: every user-visible string must go through bundles — no hardcoded UI copy or API `msg` literals in new or touched code. Backend: `server/global/i18n` + TOML in `server/resource/i18n/` (`response.FailWithCode` / message codes, not ad-hoc strings). Frontend: vue-i18n (`web/src/i18n/`, `web/src/i18n/locales/*.json`). Backend logs stay English. Key format: `admin.<domain>.<section>.<label>`. Default locale `vi-VN`, fallback `en-US`. Before commit, run the CJK gate from `I18N.md` (`node scripts/extract-cjk.mjs --scope=all` or `make admin-i18n-lint` if your Makefile defines it).
 
 ### Plugin model
 

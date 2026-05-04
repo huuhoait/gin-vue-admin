@@ -26,7 +26,15 @@
       "Bash(go test *)",
       "Bash(awk 'NR==70 || NR==16 || NR==39 || NR==36 {print FILENAME\":\"NR\": \"$0}' src/view/layout/tabs/index.vue)",
       "Bash(pnpm lint *)",
-      "Bash(pnpm exec *)"
+      "Bash(pnpm exec *)",
+      "Bash(go vet *)",
+      "Bash(npx eslint *)",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\(list\\(d.get\\('admin',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\(json.dumps\\(d['admin']['plugin'], indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('web/src/i18n/locales/en-US.json'\\)\\);p=d.get\\('admin',{}\\).get\\('plugin',{}\\);print\\('plugin keys:', list\\(p.keys\\(\\)\\)\\)\")",
+      "Bash(node scripts/extract-cjk.mjs --scope=all)",
+      "Bash(python3 -c ' *)",
+      "Bash(rm /tmp/merge_i18n.py)"
     ]
   }
 }

@@ -59,3 +59,24 @@
 "admin.dashboard.load_failed"      = "Failed to load dashboard"
 "admin.dashboard.unavailable"      = "Dashboard service unavailable"
 
+# --- Menu titles (security grouping) ----------------------------------------
+"admin.menu.security"                          = "Security"
+"admin.plugin.online_users.menu_title"         = "Online Sessions"
+"admin.plugin.oauth2.menu_title"               = "OAuth2 Clients"
+"admin.plugin.sysmonitor.menu_title"           = "System Monitor"
+"admin.plugin.tenant.menu_title"               = "Tenants"
+
+# --- Plugin: Online Users ---------------------------------------------------
+"admin.plugin.online_users.session_terminated" = "Session terminated"
+
+# --- Plugin: OAuth2 Server --------------------------------------------------
+"admin.plugin.oauth2.client_created" = "Client created. Save the client secret — it will not be shown again."
+"admin.plugin.oauth2.secret_rotated" = "Secret rotated. Save it — it will not be shown again."
+
+# --- Plugin: Tenant (multi-tenancy) -----------------------------------------
+"admin.plugin.tenant.assigned"        = "User assigned to tenant"
+"admin.plugin.tenant.removed"         = "User removed from tenant"
+"admin.plugin.tenant.invalid_header"  = "Invalid X-Tenant-ID header"
+"admin.plugin.tenant.access_denied"   = "User is not a member of the requested tenant"
+"admin.plugin.tenant.has_members"     = "Cannot delete tenant with active members; remove members first"
+
