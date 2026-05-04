@@ -1,6 +1,9 @@
 -- =============================================================================
 -- Security menu grouping — seed for existing deployments
 --
+-- For a single bundled script (menus + sys_apis + casbin_rule + authority_menus)
+-- see: export_security_oauth_session.sql
+--
 -- Creates a top-level "Security" menu and reparents the OAuth2 Clients +
 -- Online Sessions plugin menus underneath it. Also normalises the menu
 -- titles of all four new plugins (online-users, oauth2, sysmonitor, tenant)
@@ -74,10 +77,58 @@ WHERE m.name IN ('security', 'oauth2Clients', 'onlineUsers', 'sysmonitor', 'tena
     WHERE am.sys_authority_authority_id = 888 AND am.sys_base_menu_id = m.id
   );
 
+-- ---------------------------------------------------------------------------
+-- 6. Grant the new plugin APIs to the default admin role via Casbin so the
+--    sidebar items don't 403 on click. Mirrors the Go auto-grant in
+--    server/plugin/plugin-tool/utils/check.go (ensureDefaultSuperAdminCasbin).
+--    Adjust 888 to your admin authority_id if different.
+-- ---------------------------------------------------------------------------
+INSERT INTO casbin_rule (ptype, v0, v1, v2)
+SELECT 'p', '888', t.path, t.method FROM (VALUES
+  -- Online Users
+  ('/onlineUsers/list',                 'GET'),
+  ('/onlineUsers/kick',                 'POST'),
+  -- System Monitor
+  ('/sysmonitor/server',                'GET'),
+  ('/sysmonitor/runtime',               'GET'),
+  ('/sysmonitor/cache',                 'GET'),
+  -- OAuth2 client management
+  ('/oauth2Client/create',              'POST'),
+  ('/oauth2Client/update',              'PUT'),
+  ('/oauth2Client/delete',              'DELETE'),
+  ('/oauth2Client/find',                'GET'),
+  ('/oauth2Client/list',                'GET'),
+  ('/oauth2Client/regenerateSecret',    'POST'),
+  -- OAuth2 authorize endpoint (token/introspect/revoke are public-by-design,
+  -- gated by client credentials — no Casbin row needed)
+  ('/oauth2/authorize',                 'GET'),
+  -- Tenant
+  ('/tenant/create',                    'POST'),
+  ('/tenant/update',                    'PUT'),
+  ('/tenant/delete',                    'DELETE'),
+  ('/tenant/find',                      'GET'),
+  ('/tenant/list',                      'GET'),
+  ('/tenantMembership/assign',          'POST'),
+  ('/tenantMembership/unassign',        'DELETE'),
+  ('/tenantMembership/members',         'GET')
+) AS t(path, method)
+WHERE NOT EXISTS (
+  SELECT 1 FROM casbin_rule r
+  WHERE r.ptype = 'p' AND r.v0 = '888' AND r.v1 = t.path AND r.v2 = t.method
+);
+
 -- =============================================================================
 -- Rollback (run manually if you need to revert the grouping):
 --   UPDATE sys_base_menus SET parent_id = 9 WHERE name IN ('oauth2Clients','onlineUsers');
 --   DELETE FROM sys_authority_menus WHERE sys_base_menu_id IN
 --     (SELECT id FROM sys_base_menus WHERE name = 'security');
 --   DELETE FROM sys_base_menus WHERE name = 'security';
+--   DELETE FROM casbin_rule WHERE v0 = '888' AND v1 IN
+--     ('/onlineUsers/list','/onlineUsers/kick',
+--      '/sysmonitor/server','/sysmonitor/runtime','/sysmonitor/cache',
+--      '/oauth2Client/create','/oauth2Client/update','/oauth2Client/delete',
+--      '/oauth2Client/find','/oauth2Client/list','/oauth2Client/regenerateSecret',
+--      '/oauth2/authorize',
+--      '/tenant/create','/tenant/update','/tenant/delete','/tenant/find','/tenant/list',
+--      '/tenantMembership/assign','/tenantMembership/unassign','/tenantMembership/members');
 -- =============================================================================

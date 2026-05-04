@@ -30,7 +30,9 @@ type AssignUserReq struct {
 	IsPrimary bool `json:"isPrimary"`
 }
 
+// UnassignUserReq is bound from the query string (DELETE) — Gin's query
+// binder uses the form: tag, so json: alone wouldn't match.
 type UnassignUserReq struct {
-	UserID   uint `json:"userID" binding:"required"`
-	TenantID uint `json:"tenantID" binding:"required"`
+	UserID   uint `json:"userID" form:"userID" binding:"required"`
+	TenantID uint `json:"tenantID" form:"tenantID" binding:"required"`
 }

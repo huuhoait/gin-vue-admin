@@ -11,6 +11,7 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/plugin/oauth2server/model"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const (
@@ -83,7 +84,11 @@ func (s *oauth2Service) ExchangeCode(client model.OAuth2Client, code, redirectUR
 	var resp TokenResponse
 	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		var ac model.OAuth2AuthCode
-		if err := tx.Where("code = ?", code).First(&ac).Error; err != nil {
+		// FOR UPDATE serialises concurrent redemptions of the same code at the
+		// DB layer. Without it READ COMMITTED lets two transactions both see
+		// used_at IS NULL and proceed — RFC 6749 §10.5 requires single-use.
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+			Where("code = ?", code).First(&ac).Error; err != nil {
 			return ErrInvalidGrant
 		}
 		if ac.UsedAt != nil {
@@ -141,7 +146,10 @@ func (s *oauth2Service) RefreshAccessToken(client model.OAuth2Client, refreshTok
 	var resp TokenResponse
 	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		var tok model.OAuth2Token
-		if err := tx.Where("refresh_token = ?", refreshToken).First(&tok).Error; err != nil {
+		// Lock the row so concurrent refresh attempts can't both observe
+		// revoked_at IS NULL and mint two replacement pairs.
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+			Where("refresh_token = ?", refreshToken).First(&tok).Error; err != nil {
 			return ErrInvalidGrant
 		}
 		if tok.RevokedAt != nil {

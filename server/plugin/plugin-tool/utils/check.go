@@ -1,13 +1,16 @@
 package utils
 
 import (
+	"path/filepath"
+	"runtime"
+	"strconv"
+	"strings"
+	"sync"
+
+	adapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"path/filepath"
-	"runtime"
-	"strings"
-	"sync"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/model/system"
@@ -58,15 +61,128 @@ func RegisterApis(apis ...system.SysApi) {
 	if err != nil {
 		zap.L().Error("Failed to register API", zap.Error(err))
 	}
+	ensureDefaultSuperAdminCasbin(apis)
+}
+
+// apiGroupsGrantedToDefaultSuperAdmin gates which plugin ApiGroups receive
+// auto-Casbin grants on boot. Whitelisting matches the menu-grant pattern in
+// menusGrantedToDefaultSuperAdmin — first-party plugins (announcement, gva)
+// stay opt-out so this change does not silently widen their permission set.
+var apiGroupsGrantedToDefaultSuperAdmin = map[string]struct{}{
+	"OnlineUsers":      {},
+	"SysMonitor":       {},
+	"OAuth2Client":     {},
+	"OAuth2":           {},
+	"Tenant":           {},
+	"TenantMembership": {},
+}
+
+// ensureDefaultSuperAdminCasbin grants the default super-admin authority
+// (888) Casbin access to a plugin's APIs. Idempotent — checks for an
+// existing rule before inserting. Skips silently if the gorm-adapter table
+// is unavailable.
+func ensureDefaultSuperAdminCasbin(apis []system.SysApi) {
+	if global.GVA_DB == nil || len(apis) == 0 {
+		return
+	}
+	const superAdminAuthority = "888"
+	for _, api := range apis {
+		if _, ok := apiGroupsGrantedToDefaultSuperAdmin[api.ApiGroup]; !ok {
+			continue
+		}
+		var n int64
+		if err := global.GVA_DB.Model(&adapter.CasbinRule{}).
+			Where("ptype = ? AND v0 = ? AND v1 = ? AND v2 = ?",
+				"p", superAdminAuthority, api.Path, api.Method).
+			Count(&n).Error; err != nil {
+			continue
+		}
+		if n > 0 {
+			continue
+		}
+		if err := global.GVA_DB.Create(&adapter.CasbinRule{
+			Ptype: "p",
+			V0:    superAdminAuthority,
+			V1:    api.Path,
+			V2:    api.Method,
+		}).Error; err != nil {
+			zap.L().Warn("link api to default super admin failed",
+				zap.String("api", api.Path),
+				zap.String("method", api.Method),
+				zap.Error(err))
+		}
+	}
+}
+
+// resolveLegacyPluginParentMenus maps ParentId 9 (upstream gin-vue-admin
+// convention) onto the real "plugin" menu row ID for this fork's menu seed.
+func resolveLegacyPluginParentMenus(menus []system.SysBaseMenu) {
+	if global.GVA_DB == nil {
+		return
+	}
+	var pluginID uint
+	if err := global.GVA_DB.Model(&system.SysBaseMenu{}).Select("id").Where("name = ?", "plugin").Limit(1).Scan(&pluginID).Error; err != nil || pluginID == 0 {
+		return
+	}
+	for i := range menus {
+		if menus[i].ParentId == 9 {
+			menus[i].ParentId = pluginID
+		}
+	}
+}
+
+// menusGrantedToDefaultSuperAdmin are linked to authority_id 888 on boot so
+// the sidebar shows them without running SQL seeds manually.
+var menusGrantedToDefaultSuperAdmin = map[string]struct{}{
+	"security": {}, "oauth2Clients": {}, "onlineUsers": {},
+	"sysmonitor": {}, "tenants": {},
+}
+
+func ensureDefaultSuperAdminMenus(menuNames []string) {
+	if global.GVA_DB == nil || len(menuNames) == 0 {
+		return
+	}
+	const superAdminAuthority uint = 888
+	aid := strconv.FormatUint(uint64(superAdminAuthority), 10)
+	for _, name := range menuNames {
+		if _, ok := menusGrantedToDefaultSuperAdmin[name]; !ok {
+			continue
+		}
+		var mid uint
+		if err := global.GVA_DB.Model(&system.SysBaseMenu{}).Select("id").Where("name = ?", name).Limit(1).Scan(&mid).Error; err != nil || mid == 0 {
+			continue
+		}
+		midStr := strconv.FormatUint(uint64(mid), 10)
+		var n int64
+		if err := global.GVA_DB.Model(&system.SysAuthorityMenu{}).
+			Where("sys_authority_authority_id = ? AND sys_base_menu_id = ?", aid, midStr).
+			Count(&n).Error; err != nil {
+			continue
+		}
+		if n > 0 {
+			continue
+		}
+		if err := global.GVA_DB.Create(&system.SysAuthorityMenu{
+			AuthorityId: aid,
+			MenuId:      midStr,
+		}).Error; err != nil {
+			zap.L().Warn("link menu to default super admin failed", zap.String("menu", name), zap.Error(err))
+		}
+	}
 }
 
 func RegisterMenus(menus ...system.SysBaseMenu) {
+	if len(menus) == 0 {
+		return
+	}
 	name := getPluginName()
 	if name != "" {
 		rw.Lock()
 		MenuMap[name] = menus
 		rw.Unlock()
 	}
+
+	resolveLegacyPluginParentMenus(menus)
 
 	parentMenu := menus[0]
 	otherMenus := menus[1:]
@@ -84,13 +200,24 @@ func RegisterMenus(menus ...system.SysBaseMenu) {
 				zap.L().Error("Failed to register menu", zap.Error(err))
 				return errors.Wrap(err, "Failed to register menu")
 			}
+			// FirstOrCreate does not refresh arbitrary columns on an existing row;
+			// always sync parent_id so reparenting seeds (e.g. Security) converge.
+			if err = tx.Model(&system.SysBaseMenu{}).Where("id = ?", otherMenus[i].ID).Update("parent_id", pid).Error; err != nil {
+				zap.L().Error("Failed to reparent menu", zap.Error(err))
+				return errors.Wrap(err, "Failed to reparent menu")
+			}
 		}
 		return nil
 	})
 	if err != nil {
 		zap.L().Error("Failed to register menu", zap.Error(err))
+		return
 	}
-
+	names := make([]string, 0, len(menus))
+	for i := range menus {
+		names = append(names, menus[i].Name)
+	}
+	ensureDefaultSuperAdminMenus(names)
 }
 
 func RegisterDictionaries(dictionaries ...system.SysDictionary) {
