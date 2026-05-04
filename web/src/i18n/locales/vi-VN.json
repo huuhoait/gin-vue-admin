@@ -509,7 +509,20 @@
         "remove_failed": "Xoá thất bại",
         "load_failed": "Không tải được danh sách tenant",
         "members_load_failed": "Không tải được danh sách thành viên",
-        "menu_title": "Tenants"
+        "menu_title": "Tenants",
+        "field_contact_name": "Người liên hệ",
+        "field_contact_phone": "Số điện thoại liên hệ",
+        "field_domain": "Tên miền",
+        "field_expire_at": "Ngày hết hạn",
+        "field_account_limit": "Giới hạn tài khoản",
+        "expire_at_never": "Không hết hạn",
+        "account_limit_unlimited": "Không giới hạn",
+        "account_limit_hint": "0 nghĩa là không giới hạn",
+        "domain_placeholder": "mã subdomain hoặc tên miền riêng",
+        "col_expire_at": "Hết hạn",
+        "col_account_limit": "Hạn mức",
+        "col_member_count": "Thành viên",
+        "assign_failed_limit": "Không thể thêm người dùng: tenant đã đạt giới hạn số tài khoản"
       }
     },
     "menu": {

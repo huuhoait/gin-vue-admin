@@ -76,9 +76,12 @@
 "admin.plugin.oauth2.secret_rotated" = "Đã đổi secret. Hãy lưu lại — sẽ không hiển thị lại."
 
 # --- Plugin: Tenant (multi-tenancy) -----------------------------------------
-"admin.plugin.tenant.assigned"        = "Đã thêm người dùng vào tenant"
-"admin.plugin.tenant.removed"         = "Đã xoá người dùng khỏi tenant"
-"admin.plugin.tenant.invalid_header"  = "Header X-Tenant-ID không hợp lệ"
-"admin.plugin.tenant.access_denied"   = "Người dùng không thuộc tenant này"
-"admin.plugin.tenant.has_members"     = "Không thể xoá tenant đang có thành viên; hãy xoá thành viên trước"
+"admin.plugin.tenant.assigned"               = "Đã thêm người dùng vào tenant"
+"admin.plugin.tenant.removed"                = "Đã xoá người dùng khỏi tenant"
+"admin.plugin.tenant.invalid_header"         = "Header X-Tenant-ID không hợp lệ"
+"admin.plugin.tenant.access_denied"          = "Người dùng không thuộc tenant này"
+"admin.plugin.tenant.has_members"            = "Không thể xoá tenant đang có thành viên; hãy xoá thành viên trước"
+"admin.plugin.tenant.disabled"               = "Tenant đã bị vô hiệu hoá"
+"admin.plugin.tenant.expired"                = "Tenant đã hết hạn"
+"admin.plugin.tenant.account_limit_reached"  = "Tenant đã đạt giới hạn số tài khoản"
 
