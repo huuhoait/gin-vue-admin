@@ -67,7 +67,13 @@
       />
     </div>
 
-    <el-drawer v-model="formDrawer" :title="formMode === 'create' ? t('admin.plugin.tenant.drawer_new') : t('admin.plugin.tenant.drawer_edit')" size="500" destroy-on-close>
+    <el-drawer
+      v-model="formDrawer"
+      :title="formMode === 'create' ? t('admin.plugin.tenant.drawer_new') : t('admin.plugin.tenant.drawer_edit')"
+      size="500"
+      destroy-on-close
+      @open="loadPackageOptions"
+    >
       <el-form :model="formData" label-position="top">
         <el-form-item :label="t('admin.plugin.tenant.code_label')" required>
           <el-input v-model="formData.code" :disabled="formMode === 'edit'" :placeholder="t('admin.plugin.tenant.code_placeholder')" />
@@ -101,6 +107,21 @@
         <el-form-item :label="t('admin.plugin.tenant.field_account_limit')">
           <el-input-number v-model="formData.accountLimit" :min="0" />
           <div class="text-xs text-gray-500 mt-1">{{ t('admin.plugin.tenant.account_limit_hint') }}</div>
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.package.field_package')">
+          <el-select
+            v-model="formData.packageCode"
+            clearable
+            filterable
+            class="w-full"
+          >
+            <el-option
+              v-for="p in packageOptions"
+              :key="p.code"
+              :value="p.code"
+              :label="`${p.code} — ${p.name}`"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item v-if="formMode === 'edit'" :label="t('admin.plugin.tenant.enabled_field')">
           <el-switch v-model="formData.enabled" />
@@ -159,6 +180,7 @@ import {
   unassignUser,
   membersOfTenant
 } from '@/plugin/tenant/api/tenant'
+import { listTenantPackages } from '@/plugin/tenant/api/package'
 
 defineOptions({ name: 'Tenants' })
 
@@ -177,6 +199,7 @@ const membersDrawer = ref(false)
 const activeTenant = ref(null)
 const memberRows = ref([])
 const memberForm = ref({ userID: 1, isPrimary: false })
+const packageOptions = ref([])
 
 function emptyForm() {
   return {
@@ -189,7 +212,23 @@ function emptyForm() {
     domain: '',
     expireAt: null,
     accountLimit: 0,
+    packageCode: '',
     enabled: true
+  }
+}
+
+// loadPackageOptions populates the Package selector lazily when the drawer
+// opens. Cached for the lifetime of the page; admins rarely add packages
+// during a single tenant edit session.
+const loadPackageOptions = async () => {
+  if (packageOptions.value.length > 0) return
+  try {
+    const res = await listTenantPackages({ page: 1, pageSize: 100, enabled: true })
+    if (res.code === 0) {
+      packageOptions.value = res.data.list || []
+    }
+  } catch {
+    packageOptions.value = []
   }
 }
 
@@ -229,6 +268,7 @@ const openEdit = (row) => {
     domain: row.domain || '',
     expireAt: row.expireAt || null,
     accountLimit: row.accountLimit ?? 0,
+    packageCode: row.packageCode || '',
     enabled: row.enabled
   }
   formDrawer.value = true
@@ -244,7 +284,8 @@ const onSave = async () => {
       contactPhone: formData.value.contactPhone,
       domain: formData.value.domain,
       expireAt: formData.value.expireAt || null,
-      accountLimit: formData.value.accountLimit ?? 0
+      accountLimit: formData.value.accountLimit ?? 0,
+      packageCode: formData.value.packageCode
     })
     if (res.code === 0) {
       ElMessage.success(t('admin.plugin.tenant.created_msg'))
@@ -265,6 +306,7 @@ const onSave = async () => {
       contactPhone: formData.value.contactPhone,
       domain: formData.value.domain,
       accountLimit: formData.value.accountLimit ?? 0,
+      packageCode: formData.value.packageCode,
       enabled: formData.value.enabled
     }
     if (formData.value.expireAt) {

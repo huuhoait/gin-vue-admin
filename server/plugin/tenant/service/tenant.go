@@ -21,6 +21,7 @@ func (s *tenantService) Create(req request.CreateTenantReq) (model.Tenant, error
 		Domain:       req.Domain,
 		ExpireAt:     req.ExpireAt,
 		AccountLimit: req.AccountLimit,
+		PackageCode:  req.PackageCode,
 		Enabled:      true,
 	}
 	err := global.GVA_DB.Create(&row).Error
@@ -60,6 +61,12 @@ func (s *tenantService) Update(req request.UpdateTenantReq) (model.Tenant, error
 	}
 	if req.AccountLimit != nil {
 		updates["account_limit"] = *req.AccountLimit
+	}
+	// PackageCode follows the same "empty == unchanged" rule as the other
+	// string fields. To explicitly clear the link, an admin can set the
+	// column directly via DB tooling — v1 deliberately keeps this conservative.
+	if req.PackageCode != "" {
+		updates["package_code"] = req.PackageCode
 	}
 	if req.Enabled != nil {
 		updates["enabled"] = *req.Enabled

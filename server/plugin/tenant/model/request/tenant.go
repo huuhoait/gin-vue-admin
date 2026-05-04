@@ -19,30 +19,29 @@ type CreateTenantReq struct {
 	Domain       string     `json:"domain"`
 	ExpireAt     *time.Time `json:"expireAt"`
 	AccountLimit int        `json:"accountLimit" binding:"omitempty,min=0"`
+	PackageCode  string     `json:"packageCode"`
 }
 
-// UpdateTenantReq is the payload for PUT /tenant/update. All optional fields
-// use pointer / sentinel semantics so that omitted values do not overwrite
-// existing data:
-//   - String fields: empty string means "do not change" (preserves prior
-//     behaviour). Use UpdateTenantClearReq variant if explicit clearing is
-//     needed in future.
-//   - ExpireAt:     nil pointer means "do not change". To clear an
-//     expiration explicitly, use ClearExpireAt=true.
-//   - AccountLimit: pointer; nil means "do not change". Pass 0 explicitly
-//     to mark as unlimited.
-//   - Enabled:      pointer; nil means "do not change".
+// UpdateTenantReq is the payload for PUT /tenant/update. Optional fields use
+// pointer / sentinel semantics so omitted values don't overwrite existing
+// data:
+//   - String fields: empty string means "do not change".
+//   - ExpireAt: nil pointer means "do not change". Use ClearExpireAt=true to
+//     explicitly clear an expiration.
+//   - AccountLimit: pointer; nil means "do not change". 0 = unlimited.
+//   - Enabled: pointer; nil means "do not change".
 type UpdateTenantReq struct {
-	ID             uint       `json:"id" binding:"required"`
-	Name           string     `json:"name"`
-	Description    string     `json:"description"`
-	ContactName    string     `json:"contactName"`
-	ContactPhone   string     `json:"contactPhone"`
-	Domain         string     `json:"domain"`
-	ExpireAt       *time.Time `json:"expireAt"`
-	ClearExpireAt  bool       `json:"clearExpireAt"`
-	AccountLimit   *int       `json:"accountLimit" binding:"omitempty,min=0"`
-	Enabled        *bool      `json:"enabled"`
+	ID            uint       `json:"id" binding:"required"`
+	Name          string     `json:"name"`
+	Description   string     `json:"description"`
+	ContactName   string     `json:"contactName"`
+	ContactPhone  string     `json:"contactPhone"`
+	Domain        string     `json:"domain"`
+	ExpireAt      *time.Time `json:"expireAt"`
+	ClearExpireAt bool       `json:"clearExpireAt"`
+	AccountLimit  *int       `json:"accountLimit" binding:"omitempty,min=0"`
+	PackageCode   string     `json:"packageCode"`
+	Enabled       *bool      `json:"enabled"`
 }
 
 type TenantListReq struct {

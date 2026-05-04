@@ -15,6 +15,9 @@ import (
 //   - AccountLimit: cap on the number of users that can be assigned to this
 //     tenant. 0 means "unlimited". Enforced by the membership service when
 //     assigning new members; existing members beyond the cap are not pruned.
+//   - PackageCode: optional reference to gva_tenant_packages.code. Loose FK
+//     (no DB constraint) — deleting a package does not cascade, and a tenant
+//     can outlive its package while admins reconcile manually.
 //
 // Reads (FindByID, FindByCode) intentionally do NOT short-circuit on
 // disabled/expired — callers (login flow, tenant middleware) decide policy
@@ -30,6 +33,7 @@ type Tenant struct {
 	Domain       string     `json:"domain" gorm:"size:255;index;comment:subdomain code or vanity domain"`
 	ExpireAt     *time.Time `json:"expireAt" gorm:"comment:expiration time; null = never"`
 	AccountLimit int        `json:"accountLimit" gorm:"default:0;comment:max member count; 0 = unlimited"`
+	PackageCode  string     `json:"packageCode" gorm:"size:64;index;comment:tenant package code"`
 	Enabled      bool       `json:"enabled" gorm:"default:true;index"`
 }
 
