@@ -97,5 +97,9 @@
   "/src/view/systemTools/version/version.vue": "SysVersion",
   "/src/plugin/announcement/form/info.vue": "InfoForm",
   "/src/plugin/announcement/view/info.vue": "Info",
-  "/src/plugin/email/view/index.vue": "Email"
+  "/src/plugin/email/view/index.vue": "Email",
+  "/src/plugin/oauth2server/view/clients.vue": "OAuth2Clients",
+  "/src/plugin/onlineusers/view/online.vue": "OnlineUsers",
+  "/src/plugin/sysmonitor/view/dashboard.vue": "SysMonitor",
+  "/src/plugin/tenant/view/tenants.vue": "Tenants"
 }

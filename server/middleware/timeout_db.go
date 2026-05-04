@@ -26,13 +26,20 @@ func (t *DBQueryTimeout) Initialize(db *gorm.DB) error {
 		if db.Statement == nil || db.Statement.Context == nil {
 			return
 		}
-		// Only add timeout if the context doesn't already have a deadline
-		if _, ok := db.Statement.Context.Deadline(); ok {
+		ctx := db.Statement.Context
+		// Respect an active upstream deadline (e.g. HTTP client timeout). A
+		// context that is already canceled or past its deadline still reports
+		// Deadline() == true; skipping in that case leaves GORM reusing a dead
+		// ctx for the next statement on the same chain (Count then Find+Preload).
+		if _, ok := ctx.Deadline(); ok && ctx.Err() == nil {
 			return
 		}
-		ctx, cancel := context.WithTimeout(db.Statement.Context, timeout)
-		// Store cancel in the statement so it's called when the statement finishes.
-		db.Statement.Context = ctx
+		parent := ctx
+		if parent.Err() != nil {
+			parent = context.Background()
+		}
+		newCtx, cancel := context.WithTimeout(parent, timeout)
+		db.Statement.Context = newCtx
 		db.InstanceSet("gva:cancel", cancel)
 	}
 	cancelAfter := func(db *gorm.DB) {
