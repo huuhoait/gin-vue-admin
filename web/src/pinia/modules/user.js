@@ -5,6 +5,7 @@ import { ElLoading, ElMessage } from 'element-plus'
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouterStore } from './router'
+import { useTenantStore } from './tenant'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { useStorage } from '@vueuse/core'
 import i18n from '@/i18n'
@@ -77,6 +78,17 @@ export const useUserStore = defineStore('user', () => {
       setUserInfo(res.data.user)
       setToken(res.data.token)
 
+      // Load the user's tenant memberships so the topbar switcher and the
+      // X-Tenant-ID interceptor have a populated active tenant before any
+      // tenant-scoped page is rendered. Failure here is non-fatal — the
+      // backend middleware falls back to the user's primary tenant.
+      try {
+        const tenantStore = useTenantStore()
+        await tenantStore.loadMyTenants()
+      } catch (err) {
+        console.warn('loadMyTenants failed:', err)
+      }
+
       // Initialize route info
       const routerStore = useRouterStore()
       await routerStore.SetAsyncRouter()
@@ -134,6 +146,13 @@ export const useUserStore = defineStore('user', () => {
     // Clear related localStorage items
     localStorage.removeItem('originSetting')
     localStorage.removeItem('token')
+    // Drop tenant selection so the next sign-in starts from a clean slate.
+    try {
+      const tenantStore = useTenantStore()
+      tenantStore.clearActiveTenant()
+    } catch (_) {
+      // Pinia may already be torn down — safe to ignore.
+    }
   }
 
   return {

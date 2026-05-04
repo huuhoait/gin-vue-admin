@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useUserStore } from '@/pinia/modules/user'
+import { useTenantStore } from '@/pinia/modules/tenant'
 import { ElLoading, ElMessage } from 'element-plus'
 import { emitter } from '@/utils/bus'
 import router from '@/router/index'
@@ -153,6 +154,21 @@ service.interceptors.request.use(
       'x-token': userStore.token,
       'x-user-id': userStore.userInfo.ID,
       ...config.headers
+    }
+
+    // Attach X-Tenant-ID for super-admin tenant switching. The store import
+    // is at the top of the file, but useTenantStore() is invoked here
+    // per-request so the call resolves lazily after pinia is installed by
+    // main.js. The header is only sent when a non-zero tenant is selected;
+    // the backend treats absence of the header as "use my primary tenant".
+    try {
+      const tenantStore = useTenantStore()
+      const tid = Number(tenantStore.activeTenantId)
+      if (tid > 0 && !config.headers['X-Tenant-ID']) {
+        config.headers['X-Tenant-ID'] = String(tid)
+      }
+    } catch (_) {
+      // Pinia not yet initialised (very early startup) — skip header.
     }
 
     if (isSkyAgentRoute(config.url)) {

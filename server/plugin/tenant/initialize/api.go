@@ -14,6 +14,7 @@ func Api(_ context.Context) {
 		{Path: "/tenant/delete", Description: "delete tenant", ApiGroup: "Tenant", Method: "DELETE"},
 		{Path: "/tenant/find", Description: "find tenant", ApiGroup: "Tenant", Method: "GET"},
 		{Path: "/tenant/list", Description: "list tenants", ApiGroup: "Tenant", Method: "GET"},
+		{Path: "/tenant/mine", Description: "list tenants accessible to the current user", ApiGroup: "Tenant", Method: "GET"},
 		{Path: "/tenantMembership/assign", Description: "assign user to tenant", ApiGroup: "TenantMembership", Method: "POST"},
 		{Path: "/tenantMembership/unassign", Description: "remove user from tenant", ApiGroup: "TenantMembership", Method: "DELETE"},
 		{Path: "/tenantMembership/members", Description: "list members of a tenant", ApiGroup: "TenantMembership", Method: "GET"},

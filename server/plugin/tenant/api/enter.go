@@ -11,4 +11,5 @@ var (
 type apiGroup struct {
 	Tenant     tenantApi
 	Membership membershipApi
+	My         myApi
 }

@@ -63,6 +63,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { useRouterStore } from '@/pinia/modules/router'
   import { useUserStore } from '@/pinia/modules/user'
+  import { useTenantStore } from '@/pinia/modules/tenant'
   import { useAppStore } from '@/pinia'
   import { storeToRefs } from 'pinia'
   import '@/style/transition.scss'
@@ -91,6 +92,16 @@
     emitter.on('reload', reload)
     if (userStore.loadingInstance) {
       userStore.loadingInstance.close()
+    }
+    // Refresh the tenant list whenever the layout mounts (page reload, manual
+    // navigation back into the SPA). Login already calls loadMyTenants once,
+    // but a reload-after-switch lands here without re-running LoginIn, so
+    // this keeps the switcher up to date with backend memberships.
+    const tenantStore = useTenantStore()
+    if (userStore.token && !tenantStore.loaded) {
+      tenantStore.loadMyTenants().catch((err) => {
+        console.warn('tenant load on mount failed:', err)
+      })
     }
   })
 
