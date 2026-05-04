@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/global/audit"
 	"github.com/huuhoait/gin-vue-admin/server/model/example"
 	"github.com/huuhoait/gin-vue-admin/server/model/system"
 
@@ -95,5 +96,12 @@ func RegisterTables() {
 		global.GVA_LOG.Error("register biz_table failed", zap.Error(err))
 		os.Exit(0)
 	}
+
+	// Register the audit callbacks (CreatedBy/UpdatedBy/DeletedBy auto-stamp)
+	// once the schema is settled. Idempotent — safe across reload paths.
+	if err := audit.Register(db); err != nil {
+		global.GVA_LOG.Warn("register audit callback failed", zap.Error(err))
+	}
+
 	global.GVA_LOG.Info("register table success")
 }

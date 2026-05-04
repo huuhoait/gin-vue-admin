@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
+	"github.com/huuhoait/gin-vue-admin/server/global/audit"
 	"github.com/huuhoait/gin-vue-admin/server/utils"
 	"github.com/golang-jwt/jwt/v5"
 
@@ -55,6 +56,10 @@ func JWTAuth() gin.HandlerFunc {
 		//	c.Abort()
 		//}
 		c.Set("claims", claims)
+		// Propagate the user id into the request context so downstream GORM
+		// callbacks (audit auto-stamp) can read it without depending on
+		// gin.Context. Cheap — context.WithValue allocates one struct.
+		c.Request = c.Request.WithContext(audit.WithUserID(c.Request.Context(), claims.BaseClaims.ID))
 		if claims.ExpiresAt.Unix()-time.Now().Unix() < claims.BufferTime {
 			// Cooldown: once a token has been refreshed in the last 5 minutes
 			// skip re-issuance. Prevents a storm of Redis writes on every
