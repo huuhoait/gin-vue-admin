@@ -20,4 +20,5 @@ func Router(engine *gin.Engine) {
 	private.Use(coremw.JWTAuth()).Use(coremw.CasbinHandler()).Use(tenantmw.TenantContext())
 	router.Router.Tenant.Init(public, private)
 	router.Router.Membership.Init(public, private)
+	router.Router.Package.Init(public, private)
 }

@@ -6,12 +6,14 @@ type CreateTenantReq struct {
 	Code        string `json:"code" binding:"required,min=2,max=64"`
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description"`
+	PackageCode string `json:"packageCode"`
 }
 
 type UpdateTenantReq struct {
 	ID          uint   `json:"id" binding:"required"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	PackageCode string `json:"packageCode"`
 	Enabled     *bool  `json:"enabled"`
 }
 

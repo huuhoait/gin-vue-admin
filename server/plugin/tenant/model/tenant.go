@@ -11,6 +11,11 @@ type Tenant struct {
 	Code        string `json:"code" gorm:"size:64;uniqueIndex;not null;comment:short stable identifier"`
 	Name        string `json:"name" gorm:"size:128;not null"`
 	Description string `json:"description" gorm:"type:text"`
+	// PackageCode is an optional reference to gva_tenant_packages.code. The
+	// link is intentionally a loose foreign key (no DB constraint) so that
+	// deleting a package does not cascade and a tenant can outlive its
+	// originally-assigned package while admins reconcile manually.
+	PackageCode string `json:"packageCode" gorm:"size:64;index;comment:tenant package code"`
 	Enabled     bool   `json:"enabled" gorm:"default:true;index"`
 }
 
