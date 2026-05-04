@@ -75,6 +75,7 @@ var apiGroupsGrantedToDefaultSuperAdmin = map[string]struct{}{
 	"OAuth2":           {},
 	"Tenant":           {},
 	"TenantMembership": {},
+	"TenantPackage":    {},
 }
 
 // ensureDefaultSuperAdminCasbin grants the default super-admin authority
@@ -135,7 +136,7 @@ func resolveLegacyPluginParentMenus(menus []system.SysBaseMenu) {
 // the sidebar shows them without running SQL seeds manually.
 var menusGrantedToDefaultSuperAdmin = map[string]struct{}{
 	"security": {}, "oauth2Clients": {}, "onlineUsers": {},
-	"sysmonitor": {}, "tenants": {},
+	"sysmonitor": {}, "tenants": {}, "tenantPackages": {},
 }
 
 func ensureDefaultSuperAdminMenus(menuNames []string) {
