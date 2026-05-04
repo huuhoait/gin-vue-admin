@@ -18,4 +18,11 @@ type BaseClaims struct {
 	Username    string
 	NickName    string
 	AuthorityId uint
+	// TenantID is the active tenant for this session. 0 means the system
+	// tenant — used for super-admin / cross-tenant access where no scoping
+	// is applied. Embedded here so the per-request tenant resolution
+	// middleware can read it without hitting the database. Pre-existing
+	// tokens issued before this field was added will deserialize as 0
+	// (system tenant), which matches the previous unscoped behaviour.
+	TenantID uint
 }

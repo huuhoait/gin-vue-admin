@@ -12,6 +12,7 @@ import (
 	systemReq "github.com/huuhoait/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/huuhoait/gin-vue-admin/server/model/system/response"
 	"github.com/huuhoait/gin-vue-admin/server/utils"
+	tenantsvc "github.com/huuhoait/gin-vue-admin/server/plugin/tenant/service"
 	sysService "github.com/huuhoait/gin-vue-admin/server/service/system"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -101,7 +102,13 @@ func (b *BaseApi) Login(c *gin.Context) {
 
 // TokenNext Issue JWT after login
 func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
-	token, claims, err := utils.LoginToken(&user)
+	// Resolve the user's primary tenant once, at login time, and stamp it
+	// into the JWT so subsequent requests can read it without a DB hit
+	// (see plugin/tenant/middleware/context.go). A user with no membership
+	// rows is treated as a system-tenant operator (tenantID=0) — same as
+	// the previous unscoped behaviour.
+	tenantID, _ := tenantsvc.Service.Membership.PrimaryTenantForUser(user.ID)
+	token, claims, err := utils.LoginTokenWithTenant(&user, tenantID)
 	if err != nil {
 		global.GVA_LOG.Error("Failed to get token!", zap.Error(err))
 		response.FailWithMessage("Failed to get token", c)

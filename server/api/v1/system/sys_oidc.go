@@ -11,6 +11,7 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
 	"github.com/huuhoait/gin-vue-admin/server/model/system/request"
+	tenantsvc "github.com/huuhoait/gin-vue-admin/server/plugin/tenant/service"
 	"github.com/huuhoait/gin-vue-admin/server/utils"
 )
 
@@ -69,7 +70,10 @@ func (o *OIDCApi) OIDCCallback(c *gin.Context) {
 		return
 	}
 
-	// Issue internal JWT (same as password login)
+	// Issue internal JWT (same as password login). Resolve and stamp the
+	// user's primary tenant into the claims so the tenant middleware can
+	// read it from the JWT instead of hitting gva_user_tenants per request.
+	tenantID, _ := tenantsvc.Service.Membership.PrimaryTenantForUser(user.ID)
 	j := utils.NewJWT()
 	claims := j.CreateClaims(request.BaseClaims{
 		UUID:        user.UUID,
@@ -77,6 +81,7 @@ func (o *OIDCApi) OIDCCallback(c *gin.Context) {
 		NickName:    user.NickName,
 		Username:    user.Username,
 		AuthorityId: user.AuthorityId,
+		TenantID:    tenantID,
 	})
 	token, err := j.CreateToken(claims)
 	if err != nil {

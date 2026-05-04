@@ -120,6 +120,23 @@ func GetUserInfo(c *gin.Context) *systemReq.CustomClaims {
 	}
 }
 
+// GetTenantID returns the active tenant from the JWT claims; 0 means the
+// system tenant (super-admin / unscoped). Falls back to 0 when claims are
+// missing or unparsable. Reading this avoids the per-request DB lookup the
+// tenant middleware previously performed against gva_user_tenants.
+func GetTenantID(c *gin.Context) uint {
+	if claims, exists := c.Get("claims"); !exists {
+		if cl, err := GetClaims(c); err != nil {
+			return 0
+		} else {
+			return cl.BaseClaims.TenantID
+		}
+	} else {
+		waitUse := claims.(*systemReq.CustomClaims)
+		return waitUse.BaseClaims.TenantID
+	}
+}
+
 // GetUserName FromGinofContextIngetFromjwtparsedusername
 func GetUserName(c *gin.Context) string {
 	if claims, exists := c.Get("claims"); !exists {
@@ -135,6 +152,18 @@ func GetUserName(c *gin.Context) string {
 }
 
 func LoginToken(user system.Login) (token string, claims systemReq.CustomClaims, err error) {
+	return LoginTokenWithTenant(user, 0)
+}
+
+// LoginTokenWithTenant issues a JWT for the given user with the supplied
+// tenant id stamped into the claims. tenantID=0 represents the system tenant
+// (super-admin / unscoped). Callers that know the user's primary tenant
+// (e.g. password login, OIDC callback) should use this directly so
+// downstream requests can read the tenant from the claims without a DB
+// lookup. The tenant package itself is intentionally not imported here —
+// callers in the API layer perform the membership lookup and pass the id
+// in, keeping utils/ free of business-domain dependencies.
+func LoginTokenWithTenant(user system.Login, tenantID uint) (token string, claims systemReq.CustomClaims, err error) {
 	j := NewJWT()
 	claims = j.CreateClaims(systemReq.BaseClaims{
 		UUID:        user.GetUUID(),
@@ -142,6 +171,7 @@ func LoginToken(user system.Login) (token string, claims systemReq.CustomClaims,
 		NickName:    user.GetNickname(),
 		Username:    user.GetUsername(),
 		AuthorityId: user.GetAuthorityId(),
+		TenantID:    tenantID,
 	})
 	token, err = j.CreateToken(claims)
 	return
