@@ -1,6 +1,7 @@
 package audit
 
 import (
+	"reflect"
 	"sync/atomic"
 
 	"gorm.io/gorm"
@@ -61,11 +62,14 @@ func stampCreate(db *gorm.DB) {
 	if !ok {
 		return
 	}
-	if hasField(db, colCreatedBy) {
-		setIfZero(db, colCreatedBy, uid)
-	}
-	if hasField(db, colUpdatedBy) {
-		setIfZero(db, colUpdatedBy, uid)
+	rv := reflect.Indirect(db.Statement.ReflectValue)
+	switch rv.Kind() {
+	case reflect.Slice, reflect.Array:
+		for i := 0; i < rv.Len(); i++ {
+			stampCreateElement(db, rv.Index(i), uid)
+		}
+	case reflect.Struct:
+		stampCreateElement(db, rv, uid)
 	}
 }
 
@@ -139,13 +143,34 @@ func toColumn(db *gorm.DB, fieldName string) string {
 	return fieldName
 }
 
-func setIfZero(db *gorm.DB, fieldName string, uid uint) {
-	col := toColumn(db, fieldName)
-	if v, zero := db.Statement.Schema.LookUpField(fieldName).ValueOf(db.Statement.Context, db.Statement.ReflectValue); !zero && v != nil {
-		// Field already populated explicitly — don't overwrite.
+// stampCreateElement stamps CreatedBy/UpdatedBy on one row. elem must be a
+// struct value or pointer-to-struct (batch Create passes slice elements).
+func stampCreateElement(db *gorm.DB, elem reflect.Value, uid uint) {
+	elem = reflect.Indirect(elem)
+	if elem.Kind() != reflect.Struct {
+		return
+	}
+	if hasField(db, colCreatedBy) {
+		setFieldIfZero(db, elem, colCreatedBy, uid)
+	}
+	if hasField(db, colUpdatedBy) {
+		setFieldIfZero(db, elem, colUpdatedBy, uid)
+	}
+}
+
+func setFieldIfZero(db *gorm.DB, elem reflect.Value, fieldName string, uid uint) {
+	f := db.Statement.Schema.LookUpField(fieldName)
+	if f == nil || f.Set == nil {
+		return
+	}
+	v, zero := f.ValueOf(db.Statement.Context, elem)
+	if !zero && v != nil {
 		if u, ok := v.(uint); ok && u != 0 {
 			return
 		}
+		if p, ok := v.(*uint); ok && p != nil && *p != 0 {
+			return
+		}
 	}
-	db.Statement.SetColumn(col, uid)
+	_ = f.Set(db.Statement.Context, elem, uid)
 }

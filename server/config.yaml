@@ -194,7 +194,7 @@ pgsql:
     prefix: ""
     port: "5435"
     config: sslmode=disable TimeZone=Asia/Shanghai
-    db-name: admin2
+    db-name: gva
     username: skyagent
     password: local-dev-only
     path: 127.0.0.1

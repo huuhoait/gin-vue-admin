@@ -34,7 +34,16 @@
       "Bash(python3 -c \"import json; d=json.load\\(open\\('web/src/i18n/locales/en-US.json'\\)\\);p=d.get\\('admin',{}\\).get\\('plugin',{}\\);print\\('plugin keys:', list\\(p.keys\\(\\)\\)\\)\")",
       "Bash(node scripts/extract-cjk.mjs --scope=all)",
       "Bash(python3 -c ' *)",
-      "Bash(rm /tmp/merge_i18n.py)"
+      "Bash(rm /tmp/merge_i18n.py)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git merge *)",
+      "Bash(git commit *)",
+      "Bash(git worktree *)",
+      "Bash(git log *)",
+      "Bash(git rev-list *)",
+      "Bash(git push *)"
     ]
   }
 }

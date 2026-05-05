@@ -142,7 +142,8 @@ export const useRouterStore = defineStore('router', () => {
     let topActive = sessionStorage.getItem('topActive')
     // Init menu content, prevent duplicates
     topMenu.value = [];
-    asyncRouters.value[0]?.children.forEach((item) => {
+    // asyncRouters may be empty or layout may have no children until SetAsyncRouter finishes
+    asyncRouters.value[0]?.children?.forEach((item) => {
       if (item.hidden) return
       menuMap[item.name] = item
       topMenu.value.push({ ...item, children: [] })

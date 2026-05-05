@@ -72,6 +72,22 @@ func TestStampCreate_PreservesExplicit(t *testing.T) {
 	}
 }
 
+func TestStampCreate_BatchSlice(t *testing.T) {
+	db := newDB(t)
+	ctx := WithUserID(context.Background(), 42)
+	batch := []widget{{Name: "batch-a"}, {Name: "batch-b"}}
+	if err := db.WithContext(ctx).Create(&batch).Error; err != nil {
+		t.Fatalf("batch create: %v", err)
+	}
+	var n int64
+	if err := db.Model(&widget{}).Where("created_by = ? AND updated_by = ?", 42, 42).Count(&n).Error; err != nil {
+		t.Fatalf("count: %v", err)
+	}
+	if n != 2 {
+		t.Fatalf("expected 2 batch rows stamped with uid=42, got %d", n)
+	}
+}
+
 func TestStampUpdate_OverwritesUpdatedBy(t *testing.T) {
 	db := newDB(t)
 	w := widget{Name: "delta", CreatedBy: 1, UpdatedBy: 1}
