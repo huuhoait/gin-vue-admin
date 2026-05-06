@@ -9,6 +9,25 @@ import (
 	"strings"
 )
 
+// Bootstrap endpoints must be reachable by any authenticated user to let the
+// frontend initialize (load user info, menu tree, and tenant memberships).
+// These handlers still apply authorization by scoping data to the caller's
+// claims; Casbin here would only block app boot when policies are incomplete.
+func isCasbinBypassPath(obj, method string) bool {
+	switch obj {
+	case "/user/getUserInfo":
+		return method == "GET"
+	case "/menu/getMenu":
+		return method == "POST"
+	case "/tenant/mine":
+		return method == "GET"
+	case "/jwt/jsonInBlacklist":
+		return method == "POST"
+	default:
+		return false
+	}
+}
+
 // CasbinHandler interceptor
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -18,6 +37,12 @@ func CasbinHandler() gin.HandlerFunc {
 		obj := strings.TrimPrefix(path, global.GVA_CONFIG.System.RouterPrefix)
 		// get request method
 		act := c.Request.Method
+
+		if isCasbinBypassPath(obj, act) {
+			c.Next()
+			return
+		}
+
 		// get user's role
 		sub := strconv.Itoa(int(waitUse.AuthorityId))
 		e := utils.GetCasbin() // check if policy exists

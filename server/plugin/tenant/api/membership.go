@@ -6,11 +6,34 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model/request"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/service"
+	systemService "github.com/huuhoait/gin-vue-admin/server/service/system"
+	"github.com/huuhoait/gin-vue-admin/server/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
 type membershipApi struct{}
+
+// primary member of the current tenant can manage its members; super-admin
+// flows (system tenant / unscoped) are allowed to manage any tenant.
+func ensureCanManageMembers(c *gin.Context, targetTenantID uint) bool {
+	// When the request is tenant-scoped, TenantContext stamps tenantID.
+	if raw, ok := c.Get("tenantID"); ok {
+		if current, ok := raw.(uint); ok && current != 0 {
+			// must not cross-tenant
+			if targetTenantID != current {
+				response.FailWithCode(c, "admin.plugin.tenant.access_denied")
+				return false
+			}
+			actor := utils.GetUserID(c)
+			if !serviceMembership.IsPrimaryMember(actor, current) {
+				response.FailWithCode(c, "admin.plugin.tenant.access_denied")
+				return false
+			}
+		}
+	}
+	return true
+}
 
 // AssignUser
 // @Tags     TenantMembership
@@ -26,7 +49,11 @@ func (a *membershipApi) AssignUser(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := serviceMembership.Assign(req.UserID, req.TenantID, req.IsPrimary); err != nil {
+	if !ensureCanManageMembers(c, req.TenantID) {
+		return
+	}
+	ctx := systemService.WithRequestContext(c.Request.Context(), c)
+	if err := serviceMembership.Assign(ctx, req.UserID, req.TenantID, req.IsPrimary); err != nil {
 		switch {
 		case errors.Is(err, service.ErrAccountLimitReached):
 			response.FailWithCode(c, "admin.plugin.tenant.account_limit_reached")
@@ -51,7 +78,11 @@ func (a *membershipApi) UnassignUser(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := serviceMembership.Unassign(req.UserID, req.TenantID); err != nil {
+	if !ensureCanManageMembers(c, req.TenantID) {
+		return
+	}
+	ctx := systemService.WithRequestContext(c.Request.Context(), c)
+	if err := serviceMembership.Unassign(ctx, req.UserID, req.TenantID); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -65,6 +96,9 @@ func (a *membershipApi) MembersOfTenant(c *gin.Context) {
 	var req request.IdReq
 	if err := c.ShouldBindQuery(&req); err != nil {
 		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if !ensureCanManageMembers(c, req.ID) {
 		return
 	}
 	list, err := serviceMembership.MembersOfTenant(req.ID)

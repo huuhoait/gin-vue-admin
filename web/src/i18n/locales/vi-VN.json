@@ -520,6 +520,7 @@
         "load_failed": "Không tải được danh sách tenant",
         "members_load_failed": "Không tải được danh sách thành viên",
         "menu_title": "Tenants",
+        "menu_members_title": "Thành viên",
         "field_contact_name": "Người liên hệ",
         "field_contact_phone": "Số điện thoại liên hệ",
         "field_domain": "Tên miền",
@@ -1873,7 +1874,7 @@
         "apis": {
           "filter_name": "Lọc theo tên",
           "filter_path": "Lọc theo đường dẫn",
-          "group_suffix": " nhóm",
+          "group_suffix": "{name}",
           "save_success": "Đã lưu quyền API"
         },
         "datas": {

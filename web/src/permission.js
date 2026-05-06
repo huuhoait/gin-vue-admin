@@ -19,6 +19,20 @@ function isExternalUrl(val) {
   return typeof val === 'string' && /^(https?:)?\/\//.test(val)
 }
 
+function pickFallbackHomeRouteName() {
+  const preferredNames = ['Dashboard', 'Home', 'Workbench', 'dashboard', 'home']
+  for (const n of preferredNames) {
+    if (router.hasRoute(n)) return n
+  }
+  const blockedNames = new Set(['Login', 'Init', 'ScanUpload', 'Reload', 'layout'])
+  const routes = router.getRoutes()
+  const candidates = routes
+    .filter((r) => r?.name && !blockedNames.has(String(r.name)))
+    .filter((r) => typeof r.path === 'string' && r.path.startsWith('/layout/'))
+    .filter((r) => !r.meta?.hidden)
+  return candidates[0]?.name ? String(candidates[0].name) : ''
+}
+
 // Utility: normalize paths
 function normalizeAbsolutePath(p) {
   const s = '/' + String(p || '')
@@ -175,8 +189,12 @@ router.beforeEach(async (to, from) => {
       if(!routerStore.asyncRouterFlag){
         await setupRouter(userStore)
       }
-      if(userStore.userInfo.authority.defaultRouter){
-        return { name: userStore.userInfo.authority.defaultRouter }
+      const target =
+        (userStore.userInfo.authority?.defaultRouter && router.hasRoute(userStore.userInfo.authority.defaultRouter))
+          ? userStore.userInfo.authority.defaultRouter
+          : pickFallbackHomeRouteName()
+      if (target) {
+        return { name: target }
       }
     }
     return  true

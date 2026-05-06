@@ -258,6 +258,17 @@ service.interceptors.response.use(
       return Promise.reject(error)
     }
 
+    if (error.response.status === 403) {
+      // Permissions or menu/policy might have just been updated by an admin.
+      // A reload forces re-fetch of dynamic routes and re-runs guards.
+      emitter.emit('show-error', {
+        code: '403',
+        message: getErrorMessage(error),
+        fn: () => window.location.reload()
+      })
+      return Promise.reject(error)
+    }
+
     emitter.emit('show-error', {
       code: error.response.status,
       message: getErrorMessage(error)

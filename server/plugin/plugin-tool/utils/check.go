@@ -187,11 +187,46 @@ func RegisterMenus(menus ...system.SysBaseMenu) {
 
 	parentMenu := menus[0]
 	otherMenus := menus[1:]
+	// FirstOrCreate overwrites the in-memory struct with the existing DB row
+	// (when one matches), so capture the seed's display fields up front to
+	// re-apply them afterwards.
+	parentSeedTitle := parentMenu.Meta.Title
+	parentSeedIcon := parentMenu.Meta.Icon
+	childSeedTitles := make([]string, len(otherMenus))
+	childSeedIcons := make([]string, len(otherMenus))
+	for i := range otherMenus {
+		childSeedTitles[i] = otherMenus[i].Meta.Title
+		childSeedIcons[i] = otherMenus[i].Meta.Icon
+	}
+
 	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		err := tx.Model(system.SysBaseMenu{}).Where("name = ? ", parentMenu.Name).FirstOrCreate(&parentMenu).Error
 		if err != nil {
 			zap.L().Error("Failed to register menu", zap.Error(err))
 			return errors.Wrap(err, "Failed to register menu")
+		}
+		// FirstOrCreate does not refresh arbitrary columns on an existing row;
+		// always sync key presentation + routing columns so seed changes
+		// (e.g. label i18n key, re-parenting, turning a leaf page into a
+		// routerHolder parent) propagate to live rows. Seeds are the source of
+		// truth for plugin-managed menus.
+		if err = tx.Model(&system.SysBaseMenu{}).Where("id = ?", parentMenu.ID).
+			Updates(map[string]any{
+				"parent_id":        parentMenu.ParentId,
+				"path":             parentMenu.Path,
+				"hidden":           parentMenu.Hidden,
+				"component":        parentMenu.Component,
+				"sort":             parentMenu.Sort,
+				"title":            parentSeedTitle,
+				"icon":             parentSeedIcon,
+				"active_name":      parentMenu.ActiveName,
+				"keep_alive":       parentMenu.KeepAlive,
+				"default_menu":     parentMenu.DefaultMenu,
+				"close_tab":        parentMenu.CloseTab,
+				"transition_type":  parentMenu.TransitionType,
+			}).Error; err != nil {
+			zap.L().Error("Failed to sync parent menu title/icon", zap.Error(err))
+			return errors.Wrap(err, "Failed to sync parent menu title/icon")
 		}
 		pid := parentMenu.ID
 		for i := range otherMenus {
@@ -202,8 +237,23 @@ func RegisterMenus(menus ...system.SysBaseMenu) {
 				return errors.Wrap(err, "Failed to register menu")
 			}
 			// FirstOrCreate does not refresh arbitrary columns on an existing row;
-			// always sync parent_id so reparenting seeds (e.g. Security) converge.
-			if err = tx.Model(&system.SysBaseMenu{}).Where("id = ?", otherMenus[i].ID).Update("parent_id", pid).Error; err != nil {
+			// always sync parent_id + routing columns so reparenting and label
+			// migrations converge.
+			if err = tx.Model(&system.SysBaseMenu{}).Where("id = ?", otherMenus[i].ID).
+				Updates(map[string]any{
+					"parent_id": pid,
+					"path":      otherMenus[i].Path,
+					"hidden":    otherMenus[i].Hidden,
+					"component": otherMenus[i].Component,
+					"sort":      otherMenus[i].Sort,
+					"title":     childSeedTitles[i],
+					"icon":      childSeedIcons[i],
+					"active_name":     otherMenus[i].ActiveName,
+					"keep_alive":      otherMenus[i].KeepAlive,
+					"default_menu":    otherMenus[i].DefaultMenu,
+					"close_tab":       otherMenus[i].CloseTab,
+					"transition_type": otherMenus[i].TransitionType,
+				}).Error; err != nil {
 				zap.L().Error("Failed to reparent menu", zap.Error(err))
 				return errors.Wrap(err, "Failed to reparent menu")
 			}

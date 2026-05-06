@@ -520,6 +520,7 @@
         "load_failed": "Failed to load tenants",
         "members_load_failed": "Failed to load members",
         "menu_title": "Tenants",
+        "menu_members_title": "Members",
         "field_contact_name": "Contact name",
         "field_contact_phone": "Contact phone",
         "field_domain": "Domain",
@@ -1873,7 +1874,7 @@
         "apis": {
           "filter_name": "Filter by name",
           "filter_path": "Filter by path",
-          "group_suffix": " group",
+          "group_suffix": "{name}",
           "save_success": "API permissions saved"
         },
         "datas": {

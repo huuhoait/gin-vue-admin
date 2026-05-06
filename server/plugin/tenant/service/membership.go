@@ -1,16 +1,40 @@
 package service
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model"
+	systemService "github.com/huuhoait/gin-vue-admin/server/service/system"
 
 	"gorm.io/gorm"
 )
 
+// userTenantTargetID encodes a UserTenant composite key for the data-change
+// log's targetID column ("<userID>:<tenantID>"). Keeps the audit trail
+// queryable per (user, tenant) pair without needing a JSON join.
+func userTenantTargetID(userID, tenantID uint) string {
+	return fmt.Sprintf("%d:%d", userID, tenantID)
+}
+
 type membershipService struct{}
+
+// IsPrimaryMember reports whether userID is the primary member of tenantID.
+func (s *membershipService) IsPrimaryMember(userID, tenantID uint) bool {
+	if userID == 0 || tenantID == 0 {
+		return false
+	}
+	var n int64
+	if err := global.GVA_DB.Model(&model.UserTenant{}).
+		Where("user_id = ? AND tenant_id = ? AND is_primary = ?", userID, tenantID, true).
+		Count(&n).Error; err != nil {
+		return false
+	}
+	return n > 0
+}
 
 // Assign adds a user to a tenant. When isPrimary=true, demotes any other
 // primary entry for this user atomically — a user has at most one primary
@@ -21,8 +45,14 @@ type membershipService struct{}
 // stale read; if the membership row already exists for this (user,tenant)
 // pair the limit is NOT re-checked (re-assigning is idempotent and does not
 // grow the count).
-func (s *membershipService) Assign(userID, tenantID uint, isPrimary bool) error {
-	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+func (s *membershipService) Assign(ctx context.Context, userID, tenantID uint, isPrimary bool) error {
+	// before/after snapshots populated inside the TX so we can emit one audit
+	// row after a successful commit. nil before means it was a net-new add.
+	var (
+		hadBefore     bool
+		beforePrimary bool
+	)
+	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		// Existence check first — we need the tenant's AccountLimit anyway,
 		// so loading it here doubles as a fast-fail when the tenant id is
 		// bogus and lets us surface a meaningful error instead of GORM's
@@ -40,6 +70,10 @@ func (s *membershipService) Assign(userID, tenantID uint, isPrimary bool) error 
 		alreadyMember := err == nil
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
+		}
+		if alreadyMember {
+			hadBefore = true
+			beforePrimary = existing.IsPrimary
 		}
 
 		// Cap enforcement applies only to net-new assignments and only when
@@ -74,11 +108,50 @@ func (s *membershipService) Assign(userID, tenantID uint, isPrimary bool) error 
 		}
 		return nil
 	})
+	if err != nil {
+		return err
+	}
+
+	// Audit trail — recorded after commit so a failed mutation never leaves a
+	// dangling log row. Action distinguishes net-new vs idempotent re-assign
+	// so reviewers can spot accidental duplicates.
+	action := "assign"
+	if hadBefore {
+		action = "reassign"
+	}
+	var before any
+	if hadBefore {
+		before = map[string]any{
+			"userID":    userID,
+			"tenantID":  tenantID,
+			"isPrimary": beforePrimary,
+		}
+	}
+	after := map[string]any{
+		"userID":    userID,
+		"tenantID":  tenantID,
+		"isPrimary": isPrimary,
+	}
+	systemService.RecordDataChange(ctx, "UserTenant", userTenantTargetID(userID, tenantID), action, before, after)
+	return nil
 }
 
-func (s *membershipService) Unassign(userID, tenantID uint) error {
-	return global.GVA_DB.Where("user_id = ? AND tenant_id = ?", userID, tenantID).
-		Delete(&model.UserTenant{}).Error
+func (s *membershipService) Unassign(ctx context.Context, userID, tenantID uint) error {
+	// Snapshot the row before deletion so the audit trail can show what was
+	// removed. Missing row → no-op delete and no log entry; the caller's
+	// effect is identical either way.
+	var before model.UserTenant
+	hadBefore := global.GVA_DB.Where("user_id = ? AND tenant_id = ?", userID, tenantID).
+		First(&before).Error == nil
+
+	if err := global.GVA_DB.Where("user_id = ? AND tenant_id = ?", userID, tenantID).
+		Delete(&model.UserTenant{}).Error; err != nil {
+		return err
+	}
+	if hadBefore {
+		systemService.RecordDataChange(ctx, "UserTenant", userTenantTargetID(userID, tenantID), "unassign", before, nil)
+	}
+	return nil
 }
 
 // MembershipsForUser lists every tenant the user can act on. Used by the

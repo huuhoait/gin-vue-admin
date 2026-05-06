@@ -21,4 +21,5 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	exampleRouter.InitAttachmentCategoryRouterRouter(privateGroup)
 
 	holder(publicGroup, privateGroup)
+
 }

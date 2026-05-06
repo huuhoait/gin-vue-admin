@@ -101,6 +101,7 @@
   "/src/plugin/oauth2server/view/clients.vue": "OAuth2Clients",
   "/src/plugin/onlineusers/view/online.vue": "OnlineUsers",
   "/src/plugin/sysmonitor/view/dashboard.vue": "SysMonitor",
+  "/src/plugin/tenant/view/members.vue": "Members",
   "/src/plugin/tenant/view/packages.vue": "TenantPackages",
   "/src/plugin/tenant/view/tenants.vue": "Tenants"
 }

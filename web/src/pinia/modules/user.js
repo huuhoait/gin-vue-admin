@@ -104,10 +104,34 @@ export const useUserStore = defineStore('user', () => {
         return true
       }
 
-      if (!router.hasRoute(userInfo.value.authority.defaultRouter)) {
-        ElMessage.error(i18n.global.t('admin.auth.no_default_route'))
-      } else {
-        await router.replace({ name: userInfo.value.authority.defaultRouter })
+      const pickFallbackHomeRoute = () => {
+        const preferredNames = ['Dashboard', 'Home', 'Workbench', 'dashboard', 'home']
+        for (const n of preferredNames) {
+          if (router.hasRoute(n)) return n
+        }
+        const blockedNames = new Set(['Login', 'Init', 'ScanUpload', 'Reload', 'layout'])
+        const routes = router.getRoutes()
+        // Prefer routes rendered under /layout (normal app shell)
+        const candidates = routes
+          .filter((r) => r?.name && !blockedNames.has(String(r.name)))
+          .filter((r) => typeof r.path === 'string' && r.path.startsWith('/layout/'))
+          .filter((r) => !r.meta?.hidden)
+        return candidates[0]?.name ? String(candidates[0].name) : ''
+      }
+
+      let target = userInfo.value.authority?.defaultRouter || ''
+      if (!target || !router.hasRoute(target)) {
+        const fallback = pickFallbackHomeRoute()
+        if (fallback) {
+          // Keep the app consistent for tabs/layout logic during this session.
+          userInfo.value.authority.defaultRouter = fallback
+          target = fallback
+        } else {
+          ElMessage.error(i18n.global.t('admin.auth.no_default_route'))
+        }
+      }
+      if (target && router.hasRoute(target)) {
+        await router.replace({ name: target })
       }
 
       const isWindows = /windows/i.test(navigator.userAgent)

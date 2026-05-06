@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
+	systemModel "github.com/huuhoait/gin-vue-admin/server/model/system"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model/request"
 )
@@ -22,7 +24,14 @@ func setupTestDB(t *testing.T) *gorm.DB {
 	if err != nil {
 		t.Fatalf("open sqlite: %v", err)
 	}
-	if err := db.AutoMigrate(&model.Tenant{}, &model.UserTenant{}); err != nil {
+	// sys_users + sys_data_change_logs are required by MembersOfTenant's JOIN
+	// and the audit RecordDataChange writes triggered by Assign/Unassign. We
+	// migrate them here so the plugin's service layer behaves identically to
+	// production rather than crashing on missing-table errors.
+	if err := db.AutoMigrate(
+		&model.Tenant{}, &model.UserTenant{},
+		&systemModel.SysUser{}, &systemModel.SysDataChangeLog{},
+	); err != nil {
 		t.Fatalf("migrate: %v", err)
 	}
 	prev := global.GVA_DB
@@ -30,7 +39,10 @@ func setupTestDB(t *testing.T) *gorm.DB {
 	t.Cleanup(func() {
 		global.GVA_DB = prev
 		// Drop tables so a re-used cache:shared sqlite handle starts clean.
-		_ = db.Migrator().DropTable(&model.UserTenant{}, &model.Tenant{})
+		_ = db.Migrator().DropTable(
+			&model.UserTenant{}, &model.Tenant{},
+			&systemModel.SysUser{}, &systemModel.SysDataChangeLog{},
+		)
 	})
 	return db
 }
@@ -87,21 +99,22 @@ func TestAssign_AccountLimitReached(t *testing.T) {
 		t.Fatalf("create tenant: %v", err)
 	}
 
-	if err := mSvc.Assign(101, tenant.ID, true); err != nil {
+	ctx := context.Background()
+	if err := mSvc.Assign(ctx, 101, tenant.ID, true); err != nil {
 		t.Fatalf("first assign: %v", err)
 	}
-	if err := mSvc.Assign(102, tenant.ID, false); err != nil {
+	if err := mSvc.Assign(ctx, 102, tenant.ID, false); err != nil {
 		t.Fatalf("second assign: %v", err)
 	}
 
-	err = mSvc.Assign(103, tenant.ID, false)
+	err = mSvc.Assign(ctx, 103, tenant.ID, false)
 	if !errors.Is(err, ErrAccountLimitReached) {
 		t.Fatalf("expected ErrAccountLimitReached, got %v", err)
 	}
 
 	// Re-assigning an existing member must remain idempotent and must NOT
 	// trip the cap (the row count does not grow).
-	if err := mSvc.Assign(101, tenant.ID, true); err != nil {
+	if err := mSvc.Assign(ctx, 101, tenant.ID, true); err != nil {
 		t.Fatalf("re-assign existing member should succeed, got %v", err)
 	}
 }
@@ -120,8 +133,9 @@ func TestAssign_UnlimitedWhenAccountLimitZero(t *testing.T) {
 		t.Fatalf("create tenant: %v", err)
 	}
 
+	ctx := context.Background()
 	for i := uint(1); i <= 5; i++ {
-		if err := mSvc.Assign(200+i, tenant.ID, false); err != nil {
+		if err := mSvc.Assign(ctx, 200+i, tenant.ID, false); err != nil {
 			t.Fatalf("assign user %d: %v", 200+i, err)
 		}
 	}

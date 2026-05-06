@@ -40,6 +40,9 @@ func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 		response.FailWithMessage("Failed to update", c)
 		return
 	}
+
+	// Apply the new policy immediately (Casbin enforcer caches policies in memory).
+	_ = casbinService.FreshCasbin()
 	response.OkWithMessage("Updated successfully", c)
 }
 
