@@ -65,3 +65,18 @@ type UnassignUserReq struct {
 	UserID   uint `json:"userID" form:"userID" binding:"required"`
 	TenantID uint `json:"tenantID" form:"tenantID" binding:"required"`
 }
+
+// CreateUserAndAssignReq creates a fresh SysUser scoped to a tenant in one
+// step. Username + Password are required; the rest are optional profile bits.
+// The new user is given the default "Tenant" authority (id 9300) and added
+// to the target tenant's membership in the same transaction so the tenant
+// AccountLimit check is enforced atomically.
+type CreateUserAndAssignReq struct {
+	TenantID  uint   `json:"tenantID" binding:"required"`
+	Username  string `json:"userName" binding:"required,min=3,max=64"`
+	Password  string `json:"password" binding:"required,min=6,max=128"`
+	NickName  string `json:"nickName"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
+	IsPrimary bool   `json:"isPrimary"`
+}

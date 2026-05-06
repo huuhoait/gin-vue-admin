@@ -48,7 +48,8 @@
       "Bash(python3)",
       "Bash(grep -rEho '\"admin\\\\.[A-Za-z0-9_.]+\"|`admin\\\\.[A-Za-z0-9_.]+`' \"/Users/hoale/Library/Mobile Documents/com~apple~CloudDocs/Project/gin-vue-admin/server/\" --include=\"*.go\")",
       "Bash(grep -rEn '\\(t|\\\\$t\\)\\\\\\(['\\\\''\"]admin\\\\.[^'\\\\''\"]+'\\\\''[+]|\\(t|\\\\$t\\)\\\\\\(\\\\`admin\\\\.[^\\\\`]+\\\\$\\\\{' '--include=*.vue' '--include=*.js')",
-      "Bash(rm -f /tmp/i18n-audit.mjs /tmp/i18n-be-audit.mjs /tmp/i18n-be-audit.mjs.bak /tmp/i18n-audit-v2.mjs /tmp/i18n-prefix-check.mjs)"
+      "Bash(rm -f /tmp/i18n-audit.mjs /tmp/i18n-be-audit.mjs /tmp/i18n-be-audit.mjs.bak /tmp/i18n-audit-v2.mjs /tmp/i18n-prefix-check.mjs)",
+      "Bash(node scripts/extract-cjk.mjs --scope=fe)"
     ],
     "additionalDirectories": [
       "/private/tmp"

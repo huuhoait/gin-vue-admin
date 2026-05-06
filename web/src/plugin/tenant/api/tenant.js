@@ -24,6 +24,9 @@ export const unassignUser = (params) =>
 export const membersOfTenant = (params) =>
   service({ url: '/tenantMembership/members', method: 'get', params })
 
+export const createUserInTenant = (data) =>
+  service({ url: '/tenantMembership/createUser', method: 'post', data })
+
 /**
  * List the tenants the current user has membership in. Used by the topbar
  * tenant switcher; returns an array of `{ ID, code, name, isPrimary, ... }`.

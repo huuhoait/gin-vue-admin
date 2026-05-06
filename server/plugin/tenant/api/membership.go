@@ -89,6 +89,37 @@ func (a *membershipApi) UnassignUser(c *gin.Context) {
 	response.OkWithCode(c, "admin.plugin.tenant.removed")
 }
 
+// CreateUserAndAssign
+// @Tags     TenantMembership
+// @Summary  create a basic user with the default Tenant role and assign to a tenant
+// @Security ApiKeyAuth
+// @accept   application/json
+// @Produce  application/json
+// @Param    data body request.CreateUserAndAssignReq true "tenantID, userName, password, nickName, phone, email, isPrimary"
+// @Router   /tenantMembership/createUser [post]
+func (a *membershipApi) CreateUserAndAssign(c *gin.Context) {
+	var req request.CreateUserAndAssignReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	ctx := systemService.WithRequestContext(c.Request.Context(), c)
+	if _, err := serviceMembership.CreateUserAndAssign(ctx, req); err != nil {
+		switch {
+		case errors.Is(err, service.ErrAccountLimitReached):
+			response.FailWithCode(c, "admin.plugin.tenant.account_limit_reached")
+		case errors.Is(err, service.ErrTenantDisabled):
+			response.FailWithCode(c, "admin.plugin.tenant.disabled")
+		case errors.Is(err, service.ErrTenantExpired):
+			response.FailWithCode(c, "admin.plugin.tenant.expired")
+		default:
+			response.FailWithMessage(err.Error(), c)
+		}
+		return
+	}
+	response.OkWithCode(c, "admin.plugin.tenant.assigned")
+}
+
 // MembersOfTenant
 // @Tags     TenantMembership
 // @Router   /tenantMembership/members [get]

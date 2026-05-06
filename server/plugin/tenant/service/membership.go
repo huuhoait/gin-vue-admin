@@ -6,12 +6,22 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/huuhoait/gin-vue-admin/server/global"
-	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model"
-	systemService "github.com/huuhoait/gin-vue-admin/server/service/system"
-
+	"github.com/google/uuid"
 	"gorm.io/gorm"
+
+	"github.com/huuhoait/gin-vue-admin/server/global"
+	systemModel "github.com/huuhoait/gin-vue-admin/server/model/system"
+	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model"
+	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model/request"
+	systemService "github.com/huuhoait/gin-vue-admin/server/service/system"
+	"github.com/huuhoait/gin-vue-admin/server/utils"
 )
+
+// TenantAuthorityID is the SysAuthority row used for users created via the
+// "create user in tenant" flow. Idempotently seeded on first use — no schema
+// migration required for existing DBs. Tenant-scoped users get no system
+// permissions by default; admins grant via the Authority management UI.
+const TenantAuthorityID uint = 9300
 
 // userTenantTargetID encodes a UserTenant composite key for the data-change
 // log's targetID column ("<userID>:<tenantID>"). Keeps the audit trail
@@ -134,6 +144,109 @@ func (s *membershipService) Assign(ctx context.Context, userID, tenantID uint, i
 	}
 	systemService.RecordDataChange(ctx, "UserTenant", userTenantTargetID(userID, tenantID), action, before, after)
 	return nil
+}
+
+// CreateUserAndAssign provisions a fresh SysUser with the default Tenant
+// authority and adds them to the target tenant in a single transaction. The
+// AccountLimit cap is enforced inside the TX to avoid concurrent over-fills,
+// and a unique-username collision short-circuits before any side effect.
+//
+// Audit emits one row keyed on the new user's id ("create_user_in_tenant"
+// action) so reviewers see the (creator → user → tenant) link in the data
+// change log without needing a follow-up assign row.
+func (s *membershipService) CreateUserAndAssign(ctx context.Context, req request.CreateUserAndAssignReq) (systemModel.SysUser, error) {
+	// Ensure the default Tenant authority row exists. FirstOrCreate is
+	// idempotent and works on existing DBs that pre-date this feature, so we
+	// don't need a separate migration step.
+	authority := systemModel.SysAuthority{
+		AuthorityId:   TenantAuthorityID,
+		AuthorityName: "Tenant",
+		ParentId:      utils.Pointer[uint](0),
+		DefaultRouter: "dashboard",
+	}
+	if err := global.GVA_DB.Where("authority_id = ?", TenantAuthorityID).
+		FirstOrCreate(&authority).Error; err != nil {
+		return systemModel.SysUser{}, err
+	}
+
+	hashedPwd := utils.BcryptHash(req.Password)
+	user := systemModel.SysUser{
+		UUID:        uuid.New(),
+		Username:    req.Username,
+		Password:    hashedPwd,
+		NickName:    req.NickName,
+		Phone:       req.Phone,
+		Email:       req.Email,
+		AuthorityId: TenantAuthorityID,
+		Authorities: []systemModel.SysAuthority{{AuthorityId: TenantAuthorityID}},
+		Enable:      1,
+	}
+
+	err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		var tenant model.Tenant
+		if err := tx.Where("id = ?", req.TenantID).First(&tenant).Error; err != nil {
+			return err
+		}
+
+		// Username uniqueness — checked inside the TX so two concurrent
+		// creates can't both win the race.
+		var dupe systemModel.SysUser
+		err := tx.Select("id").Where("username = ?", req.Username).First(&dupe).Error
+		if err == nil {
+			return errors.New("username already exists")
+		}
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
+		// Cap enforcement applies before user creation so we don't leave an
+		// orphaned SysUser row behind on rollback.
+		if tenant.AccountLimit > 0 {
+			var count int64
+			if err := tx.Model(&model.UserTenant{}).
+				Where("tenant_id = ?", req.TenantID).Count(&count).Error; err != nil {
+				return err
+			}
+			if count >= int64(tenant.AccountLimit) {
+				return ErrAccountLimitReached
+			}
+		}
+
+		if err := tx.Create(&user).Error; err != nil {
+			return err
+		}
+
+		if req.IsPrimary {
+			if err := tx.Model(&model.UserTenant{}).
+				Where("user_id = ? AND is_primary = ?", user.ID, true).
+				Update("is_primary", false).Error; err != nil {
+				return err
+			}
+		}
+		membership := model.UserTenant{
+			UserID:    user.ID,
+			TenantID:  req.TenantID,
+			IsPrimary: req.IsPrimary,
+		}
+		return tx.Create(&membership).Error
+	})
+	if err != nil {
+		return systemModel.SysUser{}, err
+	}
+
+	// Audit trail — Password is intentionally scrubbed by RecordDataChange's
+	// JSON sensitive-field regex, but we also blank it here as defense-in-depth.
+	auditUser := user
+	auditUser.Password = ""
+	systemService.RecordDataChange(ctx, "SysUser", fmt.Sprintf("%d", user.ID), "create_user_in_tenant",
+		nil,
+		map[string]any{
+			"user":     auditUser,
+			"tenantID": req.TenantID,
+			"isPrimary": req.IsPrimary,
+		},
+	)
+	return user, nil
 }
 
 func (s *membershipService) Unassign(ctx context.Context, userID, tenantID uint) error {

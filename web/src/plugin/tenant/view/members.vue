@@ -18,8 +18,9 @@
     <div class="gva-table-box">
       <el-form :inline="true" :model="memberForm">
         <el-form-item :label="t('admin.plugin.tenant.member_user')">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <el-button icon="user" @click="openUserPicker">{{ t('admin.plugin.tenant.member_pick_user') }}</el-button>
+            <el-button icon="plus" type="success" plain :disabled="!activeTenantId" @click="openCreateUser">{{ t('admin.plugin.tenant.member_create_user') }}</el-button>
             <span v-if="memberForm.userID" class="text-sm text-gray-700">
               #{{ memberForm.userID }} · {{ memberForm.username }}<span v-if="memberForm.nickName"> ({{ memberForm.nickName }})</span>
             </span>
@@ -96,6 +97,40 @@
         @size-change="(v) => { userPickerPageSize = v; userPickerPage = 1; loadUserPicker() }"
       />
     </el-dialog>
+
+    <el-dialog
+      v-model="createUserVisible"
+      :title="t('admin.plugin.tenant.create_user_title')"
+      width="520"
+      destroy-on-close
+      append-to-body
+    >
+      <el-form ref="createUserFormRef" :model="createUserForm" :rules="createUserRules" label-position="top">
+        <el-form-item :label="t('admin.plugin.tenant.create_user_username')" prop="userName">
+          <el-input v-model="createUserForm.userName" autocomplete="off" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.create_user_password')" prop="password">
+          <el-input v-model="createUserForm.password" type="password" show-password autocomplete="new-password" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.create_user_nickname')">
+          <el-input v-model="createUserForm.nickName" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.create_user_email')">
+          <el-input v-model="createUserForm.email" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.create_user_phone')">
+          <el-input v-model="createUserForm.phone" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.member_primary')">
+          <el-switch v-model="createUserForm.isPrimary" />
+        </el-form-item>
+        <div class="text-xs text-gray-500">{{ t('admin.plugin.tenant.create_user_role_hint') }}</div>
+      </el-form>
+      <template #footer>
+        <el-button @click="createUserVisible = false">{{ t('admin.plugin.tenant.cancel') }}</el-button>
+        <el-button type="primary" :loading="createUserSubmitting" @click="onCreateUserSubmit">{{ t('admin.plugin.tenant.save') }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -105,6 +140,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useTenantStore } from '@/pinia/modules/tenant'
 import service from '@/utils/request'
+import { createUserInTenant } from '@/plugin/tenant/api/tenant'
 
 const { t } = useI18n()
 const tenantStore = useTenantStore()
@@ -125,6 +161,21 @@ const userPickerRows = ref([])
 const userPickerPage = ref(1)
 const userPickerPageSize = ref(10)
 const userPickerTotal = ref(0)
+
+const createUserVisible = ref(false)
+const createUserSubmitting = ref(false)
+const createUserFormRef = ref(null)
+const createUserForm = ref({ userName: '', password: '', nickName: '', email: '', phone: '', isPrimary: false })
+const createUserRules = {
+  userName: [
+    { required: true, message: () => t('admin.plugin.tenant.create_user_username_required'), trigger: 'blur' },
+    { min: 3, max: 64, message: () => t('admin.plugin.tenant.create_user_username_length'), trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: () => t('admin.plugin.tenant.create_user_password_required'), trigger: 'blur' },
+    { min: 6, max: 128, message: () => t('admin.plugin.tenant.create_user_password_length'), trigger: 'blur' }
+  ]
+}
 
 function formatDate(val) {
   if (!val) return ''
@@ -225,6 +276,42 @@ const onUserRowSelect = (row) => {
   memberForm.value.username = row?.userName || ''
   memberForm.value.nickName = row?.nickName || ''
   userPickerVisible.value = false
+}
+
+const openCreateUser = () => {
+  if (!activeTenantId.value) return
+  createUserForm.value = { userName: '', password: '', nickName: '', email: '', phone: '', isPrimary: false }
+  createUserVisible.value = true
+}
+
+const onCreateUserSubmit = async () => {
+  if (!activeTenantId.value) return
+  try {
+    await createUserFormRef.value?.validate()
+  } catch {
+    return
+  }
+  createUserSubmitting.value = true
+  try {
+    const res = await createUserInTenant({
+      tenantID: activeTenantId.value,
+      userName: createUserForm.value.userName,
+      password: createUserForm.value.password,
+      nickName: createUserForm.value.nickName,
+      email: createUserForm.value.email,
+      phone: createUserForm.value.phone,
+      isPrimary: createUserForm.value.isPrimary
+    })
+    if (res?.code === 0) {
+      ElMessage.success(t('admin.plugin.tenant.create_user_success'))
+      createUserVisible.value = false
+      await loadMembers()
+    } else {
+      ElMessage.error(res?.msg || t('admin.plugin.tenant.create_user_failed'))
+    }
+  } finally {
+    createUserSubmitting.value = false
+  }
 }
 
 watch(activeTenantId, async () => {
