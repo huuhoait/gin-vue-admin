@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"time"
 
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model"
@@ -114,9 +115,29 @@ func (s *membershipService) HasAccess(userID, tenantID uint) bool {
 	return n > 0
 }
 
-func (s *membershipService) MembersOfTenant(tenantID uint) ([]model.UserTenant, error) {
-	var list []model.UserTenant
-	err := global.GVA_DB.Where("tenant_id = ?", tenantID).Find(&list).Error
+// MemberWithUser is the row shape returned by MembersOfTenant — the membership
+// fields plus the joined sys_users columns the FE needs to render a row
+// without a second round-trip per user.
+type MemberWithUser struct {
+	UserID    uint      `json:"userID"`
+	Username  string    `json:"username"`
+	NickName  string    `json:"nickName"`
+	IsPrimary bool      `json:"isPrimary"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+func (s *membershipService) MembersOfTenant(tenantID uint) ([]MemberWithUser, error) {
+	var list []MemberWithUser
+	// JOIN sys_users so the admin UI can show username/nickname instead of a
+	// raw numeric id. LEFT JOIN guards against orphaned membership rows whose
+	// user record was deleted out from under us — those still surface with
+	// blank name fields rather than vanishing silently.
+	err := global.GVA_DB.Table("gva_user_tenants AS ut").
+		Select("ut.user_id AS user_id, ut.is_primary AS is_primary, ut.created_at AS created_at, u.username AS username, u.nick_name AS nick_name").
+		Joins("LEFT JOIN sys_users u ON u.id = ut.user_id").
+		Where("ut.tenant_id = ?", tenantID).
+		Order("ut.is_primary DESC, ut.created_at ASC").
+		Scan(&list).Error
 	return list, err
 }
 

@@ -133,36 +133,85 @@
       </el-form>
     </el-drawer>
 
-    <el-drawer v-model="membersDrawer" :title="t('admin.plugin.tenant.members_drawer_title', { name: activeTenant?.name || '' })" size="600" destroy-on-close>
+    <el-drawer v-model="membersDrawer" :title="t('admin.plugin.tenant.members_drawer_title', { name: activeTenant?.name || '' })" size="640" destroy-on-close>
       <el-form :inline="true" :model="memberForm">
-        <el-form-item :label="t('admin.plugin.tenant.member_user_id')">
-          <el-input-number v-model="memberForm.userID" :min="1" />
+        <el-form-item :label="t('admin.plugin.tenant.member_user')">
+          <div class="flex items-center gap-2">
+            <el-button icon="user" @click="openUserPicker">{{ t('admin.plugin.tenant.member_pick_user') }}</el-button>
+            <span v-if="memberForm.userID" class="text-sm text-gray-700">
+              #{{ memberForm.userID }} · {{ memberForm.username }}<span v-if="memberForm.nickName"> ({{ memberForm.nickName }})</span>
+            </span>
+            <span v-else class="text-sm text-gray-400">{{ t('admin.plugin.tenant.member_no_user_chosen') }}</span>
+          </div>
         </el-form-item>
         <el-form-item :label="t('admin.plugin.tenant.member_primary')">
           <el-switch v-model="memberForm.isPrimary" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onAssign">{{ t('admin.plugin.tenant.member_assign') }}</el-button>
+          <el-button type="primary" :disabled="!memberForm.userID" @click="onAssign">{{ t('admin.plugin.tenant.member_assign') }}</el-button>
         </el-form-item>
       </el-form>
 
       <el-table :data="memberRows" size="small" style="width: 100%">
-        <el-table-column :label="t('admin.plugin.tenant.member_user_id')" prop="userID" width="120" />
-        <el-table-column :label="t('admin.plugin.tenant.member_primary')" width="100">
+        <el-table-column :label="t('admin.plugin.tenant.member_user_id')" prop="userID" width="80" />
+        <el-table-column :label="t('admin.plugin.tenant.member_username')" prop="username" min-width="140" />
+        <el-table-column :label="t('admin.plugin.tenant.member_nickname')" prop="nickName" min-width="140" />
+        <el-table-column :label="t('admin.plugin.tenant.member_primary')" width="90">
           <template #default="scope">
             <el-tag v-if="scope.row.isPrimary" type="success" size="small">{{ t('admin.plugin.tenant.primary_tag') }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('admin.plugin.tenant.member_joined')">
+        <el-table-column :label="t('admin.plugin.tenant.member_joined')" width="160">
           <template #default="scope">{{ formatDate(scope.row.createdAt) }}</template>
         </el-table-column>
-        <el-table-column :label="t('admin.plugin.tenant.col_actions')" width="120">
+        <el-table-column :label="t('admin.plugin.tenant.col_actions')" width="100" fixed="right">
           <template #default="scope">
             <el-button link type="danger" @click="onUnassign(scope.row)">{{ t('admin.plugin.tenant.member_remove') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-drawer>
+
+    <el-dialog
+      v-model="userPickerVisible"
+      :title="t('admin.plugin.tenant.user_picker_title')"
+      width="720"
+      destroy-on-close
+      append-to-body
+    >
+      <el-form :inline="true" :model="userPickerSearch">
+        <el-form-item :label="t('admin.plugin.tenant.user_picker_username')">
+          <el-input v-model="userPickerSearch.username" clearable @keyup.enter="onUserPickerSearch" />
+        </el-form-item>
+        <el-form-item :label="t('admin.plugin.tenant.user_picker_nickname')">
+          <el-input v-model="userPickerSearch.nickName" clearable @keyup.enter="onUserPickerSearch" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="search" @click="onUserPickerSearch">{{ t('admin.plugin.tenant.search') }}</el-button>
+          <el-button icon="refresh" @click="onUserPickerReset">{{ t('admin.plugin.tenant.reset') }}</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table :data="userPickerRows" size="small" style="width: 100%" highlight-current-row @row-click="onUserRowSelect">
+        <el-table-column :label="t('admin.plugin.tenant.member_user_id')" prop="ID" width="80" />
+        <el-table-column :label="t('admin.plugin.tenant.member_username')" prop="userName" min-width="140" />
+        <el-table-column :label="t('admin.plugin.tenant.member_nickname')" prop="nickName" min-width="140" />
+        <el-table-column :label="t('admin.plugin.tenant.col_actions')" width="120" fixed="right">
+          <template #default="scope">
+            <el-button type="primary" size="small" @click.stop="onUserRowSelect(scope.row)">{{ t('admin.plugin.tenant.user_picker_select') }}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        :current-page="userPickerPage"
+        :page-size="userPickerPageSize"
+        :total="userPickerTotal"
+        :page-sizes="[10, 20, 50]"
+        layout="total, sizes, prev, pager, next"
+        class="mt-2"
+        @current-change="(v) => { userPickerPage = v; loadUserPicker() }"
+        @size-change="(v) => { userPickerPageSize = v; userPickerPage = 1; loadUserPicker() }"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -181,6 +230,7 @@ import {
   membersOfTenant
 } from '@/plugin/tenant/api/tenant'
 import { listTenantPackages } from '@/plugin/tenant/api/package'
+import { getUserList } from '@/api/user'
 
 defineOptions({ name: 'Tenants' })
 
@@ -198,8 +248,15 @@ const formData = ref(emptyForm())
 const membersDrawer = ref(false)
 const activeTenant = ref(null)
 const memberRows = ref([])
-const memberForm = ref({ userID: 1, isPrimary: false })
+const memberForm = ref({ userID: null, username: '', nickName: '', isPrimary: false })
 const packageOptions = ref([])
+
+const userPickerVisible = ref(false)
+const userPickerRows = ref([])
+const userPickerTotal = ref(0)
+const userPickerPage = ref(1)
+const userPickerPageSize = ref(10)
+const userPickerSearch = ref({ username: '', nickName: '' })
 
 function emptyForm() {
   return {
@@ -344,8 +401,41 @@ const onDelete = async (row) => {
 
 const openMembers = async (row) => {
   activeTenant.value = row
+  memberForm.value = { userID: null, username: '', nickName: '', isPrimary: false }
   await refreshMembers()
   membersDrawer.value = true
+}
+
+const openUserPicker = () => {
+  userPickerSearch.value = { username: '', nickName: '' }
+  userPickerPage.value = 1
+  userPickerVisible.value = true
+  loadUserPicker()
+}
+
+const loadUserPicker = async () => {
+  const res = await getUserList({
+    page: userPickerPage.value,
+    pageSize: userPickerPageSize.value,
+    username: userPickerSearch.value.username,
+    nickName: userPickerSearch.value.nickName
+  })
+  if (res.code === 0) {
+    userPickerRows.value = res.data.list || []
+    userPickerTotal.value = res.data.total || 0
+  } else {
+    ElMessage.error(res.msg || t('admin.plugin.tenant.user_picker_load_failed'))
+  }
+}
+
+const onUserPickerSearch = () => { userPickerPage.value = 1; loadUserPicker() }
+const onUserPickerReset = () => { userPickerSearch.value = { username: '', nickName: '' }; onUserPickerSearch() }
+
+const onUserRowSelect = (row) => {
+  memberForm.value.userID = row.ID
+  memberForm.value.username = row.userName
+  memberForm.value.nickName = row.nickName || ''
+  userPickerVisible.value = false
 }
 
 const refreshMembers = async () => {
@@ -364,6 +454,7 @@ const onAssign = async () => {
   })
   if (res.code === 0) {
     ElMessage.success(t('admin.plugin.tenant.assigned_msg'))
+    memberForm.value = { userID: null, username: '', nickName: '', isPrimary: false }
     refreshMembers()
   } else {
     // Surface the dedicated cap-reached message when the backend signals it
