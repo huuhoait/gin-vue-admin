@@ -155,29 +155,10 @@ func (s *membershipService) Assign(ctx context.Context, userID, tenantID uint, i
 // action) so reviewers see the (creator → user → tenant) link in the data
 // change log without needing a follow-up assign row.
 func (s *membershipService) CreateUserAndAssign(ctx context.Context, req request.CreateUserAndAssignReq) (systemModel.SysUser, error) {
-	// Ensure the default Tenant authority row exists. FirstOrCreate is
-	// idempotent and works on existing DBs that pre-date this feature, so we
-	// don't need a separate migration step.
-	authority := systemModel.SysAuthority{
-		AuthorityId:   TenantAuthorityID,
-		AuthorityName: "Tenant",
-		ParentId:      utils.Pointer[uint](0),
-		DefaultRouter: "dashboard",
-	}
-	if err := global.GVA_DB.Where("authority_id = ?", TenantAuthorityID).
-		FirstOrCreate(&authority).Error; err != nil {
-		return systemModel.SysUser{}, err
-	}
-
-	// Brand-new Tenant authority rows have no menus or Casbin rules attached,
-	// which leaves freshly created tenant users staring at "no default home
-	// route" on login and a 403 the moment they try to manage their tenant.
-	// Idempotently provision the baseline so both fresh and pre-existing rows
-	// end up consistent.
-	if err := s.ensureTenantAuthorityProvisioned(); err != nil {
-		return systemModel.SysUser{}, err
-	}
-
+	// The Tenant authority row + its baseline menus + Casbin grants are
+	// provisioned at plugin boot (initialize.Authority) — sync.Once-guarded,
+	// runs once per process. Nothing to do here besides assigning the new
+	// user to that authority.
 	hashedPwd := utils.BcryptHash(req.Password)
 	user := systemModel.SysUser{
 		UUID:        uuid.New(),
@@ -256,88 +237,6 @@ func (s *membershipService) CreateUserAndAssign(ctx context.Context, req request
 		},
 	)
 	return user, nil
-}
-
-// tenantAuthorityMenus lists the menus every tenant user gets access to.
-// `dashboard` is required to satisfy the FE's defaultRouter check; the
-// `tenants` parent + `tenantMembers` submenu let primary tenant admins manage
-// their own membership list. Non-primary tenant users see the same menu but
-// hit the runtime ensureCanManageMembers gate.
-var tenantAuthorityMenus = []string{"dashboard", "tenants", "tenantMembers"}
-
-// tenantAuthorityCasbinPolicies lists the (path, method) pairs the Tenant
-// authority needs to operate the member-management UI. Bootstrap reads
-// (/menu/getMenu, /user/getUserInfo, /tenant/mine, /jwt/jsonInBlacklist) are
-// already in middleware.isCasbinBypassPath so they're omitted here.
-var tenantAuthorityCasbinPolicies = [][2]string{
-	{"/tenantMembership/members", "GET"},
-	{"/tenantMembership/assign", "POST"},
-	{"/tenantMembership/unassign", "DELETE"},
-	{"/tenantMembership/createUser", "POST"},
-	{"/user/getUserList", "POST"},
-	{"/user/setUserInfo", "PUT"},
-	{"/user/resetPassword", "POST"},
-}
-
-// ensureTenantAuthorityProvisioned guarantees the Tenant authority row has
-// the menus and Casbin rules a primary tenant admin needs to be useful out of
-// the box. Idempotent on every axis: looks up by (auth, menu) / (ptype, v0,
-// v1, v2) before inserting, so repeat calls are no-ops. Silently skips menus
-// that haven't been seeded yet (e.g. fresh DB where the tenant plugin's own
-// initialize.Menu hasn't run yet) — they'll be re-attempted on the next
-// CreateUserAndAssign call.
-func (s *membershipService) ensureTenantAuthorityProvisioned() error {
-	if global.GVA_DB == nil {
-		return nil
-	}
-	aid := fmt.Sprintf("%d", TenantAuthorityID)
-
-	for _, name := range tenantAuthorityMenus {
-		var menuID uint
-		if err := global.GVA_DB.Model(&systemModel.SysBaseMenu{}).
-			Select("id").Where("name = ?", name).
-			Limit(1).Scan(&menuID).Error; err != nil {
-			return err
-		}
-		if menuID == 0 {
-			continue
-		}
-		mid := fmt.Sprintf("%d", menuID)
-		var n int64
-		if err := global.GVA_DB.Model(&systemModel.SysAuthorityMenu{}).
-			Where("sys_authority_authority_id = ? AND sys_base_menu_id = ?", aid, mid).
-			Count(&n).Error; err != nil {
-			return err
-		}
-		if n > 0 {
-			continue
-		}
-		if err := global.GVA_DB.Create(&systemModel.SysAuthorityMenu{
-			AuthorityId: aid,
-			MenuId:      mid,
-		}).Error; err != nil {
-			return err
-		}
-	}
-
-	for _, p := range tenantAuthorityCasbinPolicies {
-		var n int64
-		if err := global.GVA_DB.Table("casbin_rule").
-			Where("ptype = ? AND v0 = ? AND v1 = ? AND v2 = ?", "p", aid, p[0], p[1]).
-			Count(&n).Error; err != nil {
-			return err
-		}
-		if n > 0 {
-			continue
-		}
-		if err := global.GVA_DB.Exec(
-			"INSERT INTO casbin_rule (ptype, v0, v1, v2) VALUES (?, ?, ?, ?)",
-			"p", aid, p[0], p[1],
-		).Error; err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (s *membershipService) Unassign(ctx context.Context, userID, tenantID uint) error {

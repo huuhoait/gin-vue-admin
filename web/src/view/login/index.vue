@@ -79,7 +79,7 @@
                   >{{ t('admin.auth.login') }}</el-button
                 >
               </el-form-item>
-              <el-form-item v-if="isDev" class="mb-6">
+              <el-form-item v-if="isDev && needInit" class="mb-6">
                 <el-button
                   class="shadow shadow-active h-11 w-full"
                   type="primary"
@@ -127,7 +127,7 @@
   import { captcha } from '@/api/user'
   import { checkDB } from '@/api/initdb'
   import BottomInfo from '@/components/bottomInfo/bottomInfo.vue'
-  import { reactive, ref, computed } from 'vue'
+  import { reactive, ref, computed, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
   import { useI18n } from 'vue-i18n'
   import { useRouter } from 'vue-router'
@@ -241,6 +241,20 @@
       return true
     })
   }
+
+  // Drives v-if on the dev-only init shortcut button. Starts false so the
+  // button stays hidden until checkDB confirms the DB still needs setup.
+  const needInit = ref(false)
+
+  onMounted(async () => {
+    if (!isDev) return
+    try {
+      const res = await checkDB()
+      needInit.value = res?.code === 0 && !!res.data?.needInit
+    } catch {
+      needInit.value = false
+    }
+  })
 
   // navigate to init page
   const checkInit = async () => {

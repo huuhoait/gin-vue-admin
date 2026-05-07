@@ -209,6 +209,15 @@ func stampTenantCreate(db *gorm.DB) {
 	if !ok {
 		return
 	}
+	// shouldInject already verified the field exists; LookUpField is internally
+	// cached by GORM so this call is O(1). Pass the field's index path down so
+	// stampElement uses FieldByIndex (direct pointer arithmetic) instead of
+	// FieldByName (string lookup) on every row.
+	field := db.Statement.Schema.LookUpField(tenantFieldName)
+	if field == nil {
+		return
+	}
+	indexPath := field.StructField.Index
 
 	// ReflectValue is set during create; it can be a single struct or a slice
 	// (batch create). Handle both: stamp every element whose TenantID is zero.
@@ -216,10 +225,10 @@ func stampTenantCreate(db *gorm.DB) {
 	switch rv.Kind() {
 	case reflect.Slice, reflect.Array:
 		for i := 0; i < rv.Len(); i++ {
-			stampElement(db, rv.Index(i), id)
+			stampElement(db, rv.Index(i), id, indexPath)
 		}
 	case reflect.Struct:
-		stampElement(db, rv, id)
+		stampElement(db, rv, id, indexPath)
 	}
 }
 
@@ -228,14 +237,14 @@ func stampTenantCreate(db *gorm.DB) {
 // schema.Field.Set) because the value also needs to be visible to the rest of
 // the create chain — calling SetColumn on the Statement keeps the column
 // cache and the struct in sync.
-func stampElement(db *gorm.DB, elem reflect.Value, id uint) {
+func stampElement(db *gorm.DB, elem reflect.Value, id uint, indexPath []int) {
 	if elem.Kind() == reflect.Ptr {
 		if elem.IsNil() {
 			return
 		}
 		elem = elem.Elem()
 	}
-	fv := elem.FieldByName(tenantFieldName)
+	fv := elem.FieldByIndex(indexPath)
 	if !fv.IsValid() || !fv.CanSet() {
 		return
 	}

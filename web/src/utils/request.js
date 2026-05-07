@@ -246,15 +246,21 @@ service.interceptors.response.use(
     }
 
     if (error.response.status === 401) {
-      emitter.emit('show-error', {
-        code: '401',
-        message: getErrorMessage(error),
-        fn: () => {
-          const userStore = useUserStore()
-          userStore.ClearStorage()
-          router.push({ name: 'Login', replace: true })
-        }
+      // Session is gone — don't gate the redirect on a confirm dialog. If the
+      // user closes that dialog with the X or the backdrop click, the
+      // redirect callback is dropped and they end up stranded on a page
+      // whose data calls are all 401-ing. Toast + immediate route to Login.
+      const message = getErrorMessage(error)
+      ElMessage({
+        showClose: true,
+        message,
+        type: 'error'
       })
+      const userStore = useUserStore()
+      userStore.ClearStorage()
+      if (router.currentRoute.value.name !== 'Login') {
+        router.push({ name: 'Login', replace: true })
+      }
       return Promise.reject(error)
     }
 

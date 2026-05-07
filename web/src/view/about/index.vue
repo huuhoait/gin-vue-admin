@@ -50,7 +50,7 @@
                 <a href="https://github.com/huuhoaitvn">
                   <img
                     class="org-img dom-center"
-                    src="@/assets/huuhoaitvn.png"
+                    src="@/assets/logo.png"
                     alt="huuhoaitvn"
                   />
                 </a>

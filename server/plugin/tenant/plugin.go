@@ -38,6 +38,11 @@ func (p *plugin) Register(group *gin.Engine) {
 	ctx := context.Background()
 	initialize.Api(ctx)
 	initialize.Menu(ctx)
+	// Authority must run after Menu so the tenant-plugin menus it links
+	// already exist in sys_base_menus. Idempotent and sync.Once-guarded;
+	// hoisted out of CreateUserAndAssign so user-create stops paying ~10
+	// existence-check SELECTs per call.
+	initialize.Authority(ctx)
 	// Gorm() runs AutoMigrate AND wires the auto-scoping GORM callbacks. It
 	// must run before any tenant-aware queries fly, which is the case here:
 	// Register() is called during framework boot, before route handlers serve
