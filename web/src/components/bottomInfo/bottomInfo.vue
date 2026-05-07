@@ -13,7 +13,7 @@ Unauthorized commercial use may lead to legal claims. Please respect intellectua
         <a
           class="font-bold text-active"
           href="https://github.com/huuhoaitvn/gin-vue-admin"
-          >Gin-Vue-Admin</a
+          >IIT</a
         >
       </span>
     </div>
@@ -24,7 +24,7 @@ Unauthorized commercial use may lead to legal claims. Please respect intellectua
         <a
           class="font-bold text-active"
           href="https://github.com/huuhoaitvn"
-          >huuhoaitvn team</a
+          >IIT team</a
         >
       </span>
     </div>
