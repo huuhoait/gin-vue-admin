@@ -34,8 +34,9 @@ import (
 // Mount this AFTER middleware.JWTAuth so claims are available.
 func TenantContext() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		userID := utils.GetUserID(c)
-		if userID == 0 {
+		if userID == 0 || utils.GetUserAuthorityId(c) == 888 {
 			c.Next()
 			return
 		}

@@ -2,12 +2,16 @@ package api
 
 import (
 	"errors"
+	"fmt"
+	"log"
 
+	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model/request"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/service"
 	systemService "github.com/huuhoait/gin-vue-admin/server/service/system"
 	"github.com/huuhoait/gin-vue-admin/server/utils"
+	"go.uber.org/zap"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +21,14 @@ type membershipApi struct{}
 // primary member of the current tenant can manage its members; super-admin
 // flows (system tenant / unscoped) are allowed to manage any tenant.
 func ensureCanManageMembers(c *gin.Context, targetTenantID uint) bool {
+	// Admin role can manage members regardless of primary membership.
+	// (Still requires JWT/Casbin to reach this handler.)
+	log.Println("Current authorityId", utils.GetUserAuthorityId(c))
+	fmt.Println("Current authorityId", utils.GetUserAuthorityId(c))
+	global.GVA_LOG.Info("Current role", zap.Uint("authorityId", utils.GetUserAuthorityId(c)))
+	if utils.GetUserAuthorityId(c) == 888 {
+		return true
+	}
 	// When the request is tenant-scoped, TenantContext stamps tenantID.
 	if raw, ok := c.Get("tenantID"); ok {
 		if current, ok := raw.(uint); ok && current != 0 {

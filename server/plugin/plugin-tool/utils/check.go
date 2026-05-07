@@ -136,7 +136,7 @@ func resolveLegacyPluginParentMenus(menus []system.SysBaseMenu) {
 // the sidebar shows them without running SQL seeds manually.
 var menusGrantedToDefaultSuperAdmin = map[string]struct{}{
 	"security": {}, "oauth2Clients": {}, "onlineUsers": {},
-	"sysmonitor": {}, "tenants": {}, "tenantPackages": {},
+	"sysmonitor": {}, "tenants": {}, "tenantList": {}, "tenantMembers": {}, "tenantPackages": {},
 }
 
 func ensureDefaultSuperAdminMenus(menuNames []string) {

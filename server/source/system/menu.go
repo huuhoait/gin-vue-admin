@@ -92,23 +92,6 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["superAdmin"], Path: "sysVersion", Name: "sysVersion", Component: "view/systemTools/version/version.vue", Sort: 11, Meta: Meta{Title: "Version Management", Icon: "server"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["superAdmin"], Path: "sysError", Name: "sysError", Component: "view/systemTools/sysError/sysError.vue", Sort: 12, Meta: Meta{Title: "Error Log", Icon: "warn"}},
 
-		// SkyAgent domain menus (Epic 8)
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "kyc", Name: "kyc", Component: "view/routerHolder.vue", Sort: 1, Meta: Meta{Title: "admin.menu.kyc", Icon: "document"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "kyc-cases", Name: "kycCases", Component: "view/routerHolder.vue", Sort: 2, Meta: Meta{Title: "admin.menu.kyc_cases", Icon: "list"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "commission", Name: "commission", Component: "view/routerHolder.vue", Sort: 3, Meta: Meta{Title: "admin.menu.commission", Icon: "coin"}},
-
-		// SkyAgent Epic 9 — Admin Portal integration menus
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "agent/list", Name: "agentList", Component: "view/agent/agentList.vue", Sort: 4, Meta: Meta{Title: "admin.agent.list", Icon: "user"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "agent/pending", Name: "agentPending", Component: "view/agent/pendingReview.vue", Sort: 5, Meta: Meta{Title: "admin.agent.pending", Icon: "bell"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "catalog/products", Name: "catalogProducts", Component: "view/catalog/productList.vue", Sort: 6, Meta: Meta{Title: "admin.catalog.products", Icon: "goods"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "catalog/suppliers", Name: "catalogSuppliers", Component: "view/catalog/supplierList.vue", Sort: 7, Meta: Meta{Title: "admin.catalog.suppliers", Icon: "van"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "order/list", Name: "orderList", Component: "view/order/orderList.vue", Sort: 8, Meta: Meta{Title: "admin.order.list", Icon: "document"}},
-		// Onboarding flow (Epic 11) — grouped under skyagent
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "onboarding/tickets", Name: "onboardingTickets", Component: "view/onboarding/ticketList.vue", Sort: 9, Meta: Meta{Title: "admin.onboarding.ticket_list", Icon: "tickets"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "onboarding/create", Name: "onboardingCreate", Component: "view/onboarding/createTicket.vue", Sort: 10, Meta: Meta{Title: "admin.onboarding.create_ticket", Icon: "circle-plus"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "onboarding/review", Name: "onboardingReview", Component: "view/onboarding/reviewQueue.vue", Sort: 11, Meta: Meta{Title: "admin.onboarding.review_queue", Icon: "checked"}},
-		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["skyagent"], Path: "onboarding/agent-l0", Name: "onboardingAgentL0", Component: "view/onboarding/createAgentL0.vue", Sort: 12, Meta: Meta{Title: "admin.onboarding.create_agent_l0", Icon: "user-filled"}},
-
 		// examplechild menus
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["example"], Path: "upload", Name: "upload", Component: "view/example/upload/upload.vue", Sort: 5, Meta: Meta{Title: "Media Library (Upload/Download)", Icon: "upload"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["example"], Path: "breakpoint", Name: "breakpoint", Component: "view/example/breakpoint/breakpoint.vue", Sort: 6, Meta: Meta{Title: "Resumable Upload", Icon: "upload-filled"}},

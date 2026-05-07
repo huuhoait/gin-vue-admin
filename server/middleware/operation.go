@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -15,9 +17,9 @@ import (
 
 	"github.com/huuhoait/gin-vue-admin/server/utils"
 
+	"github.com/gin-gonic/gin"
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/model/system"
-	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
@@ -105,6 +107,11 @@ func scrubSensitive(s string) string {
 
 func OperationRecord() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		log.Println("Current authorityId", utils.GetUserAuthorityId(c))
+		fmt.Println("Current authorityId", utils.GetUserAuthorityId(c))
+		global.GVA_LOG.Info("Current role", zap.Uint("authorityId", utils.GetUserAuthorityId(c)))
+
 		var body []byte
 		var userId int
 		if c.Request.Method != http.MethodGet {

@@ -7,6 +7,7 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/model/request"
 	"github.com/huuhoait/gin-vue-admin/server/plugin/tenant/service"
+	"github.com/huuhoait/gin-vue-admin/server/utils"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -100,6 +101,7 @@ func (a *tenantApi) FindTenant(c *gin.Context) {
 // @Tags     Tenant
 // @Router   /tenant/list [get]
 func (a *tenantApi) ListTenants(c *gin.Context) {
+	global.GVA_LOG.Info("Current role", zap.Uint("authorityId", utils.GetUserAuthorityId(c)))
 	var req request.TenantListReq
 	if err := c.ShouldBindQuery(&req); err != nil {
 		response.FailWithMessage(err.Error(), c)

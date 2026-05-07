@@ -72,7 +72,7 @@ db-list:
       max-idle-conns: 10
       max-open-conns: 100
       singular: false
-      log-zap: false
+      log-zap: true
       disable: true
 disk-list:
     - mount-point: /
@@ -273,7 +273,7 @@ tencent-cos:
     base-url: https://gin.vue.admin
     path-prefix: github.com/huuhoait/gin-vue-admin/server
 zap:
-    level: info
+    level: trace
     prefix: '[github.com/huuhoait/gin-vue-admin/server]'
     format: console
     director: log

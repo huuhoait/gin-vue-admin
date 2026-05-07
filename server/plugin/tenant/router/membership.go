@@ -9,6 +9,7 @@ import (
 type membershipRouter struct{}
 
 func (r *membershipRouter) Init(_ *gin.RouterGroup, private *gin.RouterGroup) {
+
 	{
 		group := private.Group("tenantMembership").Use(middleware.OperationRecord())
 		group.POST("assign", apiMembership.AssignUser)

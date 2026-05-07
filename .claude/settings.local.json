@@ -49,7 +49,12 @@
       "Bash(grep -rEho '\"admin\\\\.[A-Za-z0-9_.]+\"|`admin\\\\.[A-Za-z0-9_.]+`' \"/Users/hoale/Library/Mobile Documents/com~apple~CloudDocs/Project/gin-vue-admin/server/\" --include=\"*.go\")",
       "Bash(grep -rEn '\\(t|\\\\$t\\)\\\\\\(['\\\\''\"]admin\\\\.[^'\\\\''\"]+'\\\\''[+]|\\(t|\\\\$t\\)\\\\\\(\\\\`admin\\\\.[^\\\\`]+\\\\$\\\\{' '--include=*.vue' '--include=*.js')",
       "Bash(rm -f /tmp/i18n-audit.mjs /tmp/i18n-be-audit.mjs /tmp/i18n-be-audit.mjs.bak /tmp/i18n-audit-v2.mjs /tmp/i18n-prefix-check.mjs)",
-      "Bash(node scripts/extract-cjk.mjs --scope=fe)"
+      "Bash(node scripts/extract-cjk.mjs --scope=fe)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/i18n/locales/en-US.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('src/i18n/locales/vi-VN.json','utf8'\\)\\); console.log\\('json ok'\\)\")",
+      "Bash(env)",
+      "Bash(awk '/^pgsql:/,/^[a-z]/' \"/Users/hoale/Library/Mobile Documents/com~apple~CloudDocs/Project/gin-vue-admin/server/config.yaml\")",
+      "Bash(PGPASSWORD='local-dev-only' psql -h 127.0.0.1 -p 5435 -U skyagent -d gva -c \"SELECT id, username, nick_name, authority_id, email, phone, enable, created_at FROM sys_users WHERE username='hoalh';\")",
+      "Bash(docker exec *)"
     ],
     "additionalDirectories": [
       "/private/tmp"
