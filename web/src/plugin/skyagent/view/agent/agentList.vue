@@ -92,7 +92,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getAgentList } from '@/api/skyagent/agent'
+import { getAgentList } from '@/plugin/skyagent/api/agent'
 import CreateAgentDialog from './components/createAgentDialog.vue'
 import EditAgentDialog from './components/editAgentDialog.vue'
 import AgentDetailDrawer from './components/agentDetailDrawer.vue'

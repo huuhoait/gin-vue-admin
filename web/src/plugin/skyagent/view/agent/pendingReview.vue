@@ -47,7 +47,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getAgentList, updateAgentStatus } from '@/api/skyagent/agent'
+import { getAgentList, updateAgentStatus } from '@/plugin/skyagent/api/agent'
 import AgentDetailDrawer from './components/agentDetailDrawer.vue'
 
 const { t } = useI18n()

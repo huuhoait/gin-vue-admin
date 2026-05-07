@@ -10,7 +10,7 @@ Tài liệu duy nhất cho FE dev tích hợp **một dự án Vue admin tách r
 
 ## 1. Kiến trúc tích hợp
 
-Theo mô hình **Epic 9 — BFF Proxy** (`_bmad-output/planning-artifacts/stories-epic-9.md` §9.1): FE chỉ giao tiếp với **Admin BFF (gin-vue-admin)**; BFF proxy forward request xuống Core/Order qua HTTP client tại `services/admin/server/service/proxy/`. **API Gateway (:8000) KHÔNG được sử dụng** — BFF gọi trực tiếp Core và Order.
+Theo mô hình **Epic 9 — BFF Proxy** (`_bmad-output/planning-artifacts/stories-epic-9.md` §9.1): FE chỉ giao tiếp với **Admin BFF (gin-vue-admin)**; BFF proxy forward request xuống Core/Order qua HTTP client tại `services/admin/server/plugin/skyagent/service/`. **API Gateway (:8000) KHÔNG được sử dụng** — BFF gọi trực tiếp Core và Order.
 
 ```
 ┌─────────────┐         ┌────────────────────┐         ┌─────────────┐

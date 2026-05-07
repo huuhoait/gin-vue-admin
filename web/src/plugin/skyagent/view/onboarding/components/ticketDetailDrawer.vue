@@ -111,7 +111,7 @@
 import { ref, computed, watch, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElTooltip } from 'element-plus'
-import { getTicketDetail } from '@/api/skyagent/ticket'
+import { getTicketDetail } from '@/plugin/skyagent/api/ticket'
 
 const { t } = useI18n()
 const props = defineProps({ modelValue: Boolean, ticketId: String })

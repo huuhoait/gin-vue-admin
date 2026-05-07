@@ -47,7 +47,7 @@
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { createTicket, uploadAttachment, submitTicket } from '@/api/skyagent/ticket'
+import { createTicket, uploadAttachment, submitTicket } from '@/plugin/skyagent/api/ticket'
 
 const { t } = useI18n()
 

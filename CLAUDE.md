@@ -66,10 +66,11 @@ Plugins are self-contained vertical slices living in `server/plugin/<name>/` (mi
 
 This admin is deployed as the **BFF for SkyAgent** — a separate microservice system (Core on `:8001`, Order on `:8002`). The BFF pattern lives in:
 
-- `server/service/proxy/` — HTTP client (`client.go`), per-service wrappers (`core_proxy.go`, `order_proxy.go`), GVA-envelope parser (`response.go`), maker/checker injection from JWT (`auth.go`).
-- `server/api/v1/proxy/skyagent_api.go` — thin handlers that forward to Core/Order and surface the envelope unchanged.
-- `server/router/proxy/skyagent_router.go` — routes mounted under `/admin-api/v1/` (JWT + Casbin protected).
-- `web/src/api/skyagent/` + `web/src/view/{agent,onboarding,catalog,order}/` — the frontend that consumes these proxied endpoints.
+- `server/plugin/skyagent/service/` — HTTP client (`client.go`), per-service wrappers (`core_proxy.go`, `order_proxy.go`), GVA-envelope parser (`response.go`), maker/checker injection from JWT (`auth.go`).
+- `server/plugin/skyagent/api/skyagent_api.go` — thin handlers that forward to Core/Order and surface the envelope unchanged.
+- `server/plugin/skyagent/router/skyagent_router.go` — routes mounted under `/admin-api/v1/` (JWT + Casbin protected) by the plugin's `initialize.Router`.
+- `server/plugin/skyagent/dashboard/` — read-only Core/Order Postgres dashboard service consumed by `api/dashboard_api.go`.
+- `web/src/plugin/skyagent/api/` + `web/src/plugin/skyagent/view/{agent,onboarding,catalog,order}/` — the frontend plugin that consumes these proxied endpoints.
 
 **The BFF does not retry mutations.** Timeout is 10s. FE is responsible for `X-Idempotency-Key`. The authoritative contract for FE↔BFF↔Core/Order lives in `external-frontend-integration.md` at the repo root (envelope shapes, error codes, DTOs, pagination modes, idempotency rules).
 

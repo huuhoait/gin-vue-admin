@@ -50,7 +50,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { getTicketList, reviewTicket } from '@/api/skyagent/ticket'
+import { getTicketList, reviewTicket } from '@/plugin/skyagent/api/ticket'
 import TicketDetailDrawer from './components/ticketDetailDrawer.vue'
 
 const { t } = useI18n()

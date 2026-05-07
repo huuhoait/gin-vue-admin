@@ -25,7 +25,7 @@
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { createAgent } from '@/api/skyagent/agent'
+import { createAgent } from '@/plugin/skyagent/api/agent'
 
 const { t } = useI18n()
 const props = defineProps({ modelValue: Boolean })

@@ -75,7 +75,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getOrderList } from '@/api/skyagent/order'
+import { getOrderList } from '@/plugin/skyagent/api/order'
 import OrderDetailDrawer from './components/orderDetailDrawer.vue'
 
 const { t } = useI18n()

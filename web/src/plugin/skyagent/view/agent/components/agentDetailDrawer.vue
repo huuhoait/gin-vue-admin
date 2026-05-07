@@ -117,7 +117,7 @@ import { ref, computed, watch, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElTooltip } from 'element-plus'
 import { Unlock, Warning } from '@element-plus/icons-vue'
-import { getAgentDetail, getAgentAdminDetail } from '@/api/skyagent/agent'
+import { getAgentDetail, getAgentAdminDetail } from '@/plugin/skyagent/api/agent'
 
 const { t } = useI18n()
 const props = defineProps({ modelValue: Boolean, agentId: String })

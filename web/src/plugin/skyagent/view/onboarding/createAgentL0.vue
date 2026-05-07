@@ -176,7 +176,7 @@
 import { ref, reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { onboardingAgent } from '@/api/skyagent/onboarding'
+import { onboardingAgent } from '@/plugin/skyagent/api/onboarding'
 import { translateError } from '@/utils/skyagentError'
 import AttachmentUpload from './components/attachmentUpload.vue'
 

@@ -59,7 +59,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getProductList } from '@/api/skyagent/catalog'
+import { getProductList } from '@/plugin/skyagent/api/catalog'
 
 const { t } = useI18n()
 const groupOptions = ['telco', 'bank', 'travel', 'insurance']

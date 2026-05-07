@@ -17,11 +17,11 @@
 
 INSERT INTO sys_base_menus (created_at, updated_at, menu_level, parent_id, path, name, hidden, component, sort, title, icon)
 VALUES
-  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'agent/list',        'agentList',        false, 'view/agent/agentList.vue',        4,  'admin.agent.list',        'user'),
-  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'agent/pending',     'agentPending',     false, 'view/agent/pendingReview.vue',     5,  'admin.agent.pending',     'bell'),
-  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'catalog/products',  'catalogProducts',  false, 'view/catalog/productList.vue',     6,  'admin.catalog.products',  'goods'),
-  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'catalog/suppliers', 'catalogSuppliers', false, 'view/catalog/supplierList.vue',    7,  'admin.catalog.suppliers', 'van'),
-  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'order/list',        'orderList',        false, 'view/order/orderList.vue',         8,  'admin.order.list',        'document');
+  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'agent/list',        'agentList',        false, 'plugin/skyagent/view/agent/agentList.vue',        4,  'admin.agent.list',        'user'),
+  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'agent/pending',     'agentPending',     false, 'plugin/skyagent/view/agent/pendingReview.vue',     5,  'admin.agent.pending',     'bell'),
+  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'catalog/products',  'catalogProducts',  false, 'plugin/skyagent/view/catalog/productList.vue',     6,  'admin.catalog.products',  'goods'),
+  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'catalog/suppliers', 'catalogSuppliers', false, 'plugin/skyagent/view/catalog/supplierList.vue',    7,  'admin.catalog.suppliers', 'van'),
+  (NOW(), NOW(), 1, <SKYAGENT_PARENT_ID>, 'order/list',        'orderList',        false, 'plugin/skyagent/view/order/orderList.vue',         8,  'admin.order.list',        'document');
 
 -- ---------------------------------------------------------------------------
 -- APIs (sys_apis)

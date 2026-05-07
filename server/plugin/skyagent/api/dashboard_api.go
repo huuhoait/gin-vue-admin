@@ -1,4 +1,4 @@
-package proxy
+package api
 
 import (
 	"github.com/huuhoait/gin-vue-admin/server/model/common/response"

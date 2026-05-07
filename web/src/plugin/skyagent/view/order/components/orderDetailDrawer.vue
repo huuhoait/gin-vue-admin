@@ -45,7 +45,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getOrderDetail } from '@/api/skyagent/order'
+import { getOrderDetail } from '@/plugin/skyagent/api/order'
 
 const { t } = useI18n()
 const props = defineProps({ modelValue: Boolean, orderId: String })

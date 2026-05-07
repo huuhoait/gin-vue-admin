@@ -137,13 +137,9 @@ func Routers() *gin.Engine {
 		PrivateGroup.GET("/commission/ping", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"ok": true}) })
 	}
 
-	// SkyAgent BFF proxy routes (Epic 9)
-	{
-		proxyRouter := router.RouterGroupApp.Proxy
-		skyAgentGroup := Router.Group(global.GVA_CONFIG.System.RouterPrefix + "/admin-api/v1")
-		skyAgentGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
-		proxyRouter.InitSkyAgentRouter(skyAgentGroup)
-	}
+	// SkyAgent BFF proxy routes are now mounted by plugin/skyagent during
+	// InstallPlugin below. The plugin's initialize.Router applies the same
+	// JWT + Casbin middleware on the /admin-api/v1 group it owns.
 
 	//PluginRoutesafeInstall
 	InstallPlugin(PrivateGroup, PublicGroup, Router)

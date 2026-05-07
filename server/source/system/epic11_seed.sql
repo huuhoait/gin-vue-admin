@@ -26,18 +26,18 @@ DELETE FROM sys_base_menus WHERE name IN (
 INSERT INTO sys_base_menus (created_at, updated_at, menu_level, parent_id, path, name, hidden, component, sort, title, icon)
 VALUES
   -- Agent Management (Epic 9)
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'agent/list',           'agentList',          false, 'view/agent/agentList.vue',            4,  'admin.agent.list',                'user'),
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'agent/pending',        'agentPending',       false, 'view/agent/pendingReview.vue',         5,  'admin.agent.pending',             'bell'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'agent/list',           'agentList',          false, 'plugin/skyagent/view/agent/agentList.vue',            4,  'admin.agent.list',                'user'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'agent/pending',        'agentPending',       false, 'plugin/skyagent/view/agent/pendingReview.vue',         5,  'admin.agent.pending',             'bell'),
   -- Catalog (Epic 9)
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'catalog/products',     'catalogProducts',    false, 'view/catalog/productList.vue',         6,  'admin.catalog.products',          'goods'),
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'catalog/suppliers',    'catalogSuppliers',   false, 'view/catalog/supplierList.vue',        7,  'admin.catalog.suppliers',         'van'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'catalog/products',     'catalogProducts',    false, 'plugin/skyagent/view/catalog/productList.vue',         6,  'admin.catalog.products',          'goods'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'catalog/suppliers',    'catalogSuppliers',   false, 'plugin/skyagent/view/catalog/supplierList.vue',        7,  'admin.catalog.suppliers',         'van'),
   -- Orders (Epic 9)
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'order/list',           'orderList',          false, 'view/order/orderList.vue',             8,  'admin.order.list',                'document'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'order/list',           'orderList',          false, 'plugin/skyagent/view/order/orderList.vue',             8,  'admin.order.list',                'document'),
   -- Onboarding Flow (Epic 11)
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/tickets',   'onboardingTickets',  false, 'view/onboarding/ticketList.vue',       9,  'admin.onboarding.ticket_list',    'tickets'),
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/create',    'onboardingCreate',   false, 'view/onboarding/createTicket.vue',     10, 'admin.onboarding.create_ticket',  'circle-plus'),
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/review',    'onboardingReview',   false, 'view/onboarding/reviewQueue.vue',      11, 'admin.onboarding.review_queue',   'checked'),
-  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/agent-l0',  'onboardingAgentL0',  false, 'view/onboarding/createAgentL0.vue',    12, 'admin.onboarding.create_agent_l0','user-filled');
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/tickets',   'onboardingTickets',  false, 'plugin/skyagent/view/onboarding/ticketList.vue',       9,  'admin.onboarding.ticket_list',    'tickets'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/create',    'onboardingCreate',   false, 'plugin/skyagent/view/onboarding/createTicket.vue',     10, 'admin.onboarding.create_ticket',  'circle-plus'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/review',    'onboardingReview',   false, 'plugin/skyagent/view/onboarding/reviewQueue.vue',      11, 'admin.onboarding.review_queue',   'checked'),
+  (NOW(), NOW(), 1, <SKYAGENT_ID>, 'onboarding/agent-l0',  'onboardingAgentL0',  false, 'plugin/skyagent/view/onboarding/createAgentL0.vue',    12, 'admin.onboarding.create_agent_l0','user-filled');
 
 -- =============================================================================
 -- APIs (sys_apis)

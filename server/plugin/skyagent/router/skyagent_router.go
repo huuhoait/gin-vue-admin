@@ -1,20 +1,22 @@
-package proxy
+package router
 
 import (
-	v1 "github.com/huuhoait/gin-vue-admin/server/api/v1"
+	"github.com/huuhoait/gin-vue-admin/server/plugin/skyagent/api"
+
 	"github.com/gin-gonic/gin"
 )
 
 type SkyAgentRouter struct{}
 
-// InitSkyAgentRouter registers all SkyAgent proxy routes under a private
-// (JWT + Casbin protected) router group.
-//
-// Route prefix is expected to be /admin-api/v1 (or whatever the caller mounts).
-func (s *SkyAgentRouter) InitSkyAgentRouter(Router *gin.RouterGroup) {
-	skyApi := v1.ApiGroupApp.ProxyApiGroup
+// Init mounts every SkyAgent BFF route under the supplied private group. The
+// group is expected to already carry the JWT + Casbin middleware that gates
+// the rest of the admin surface — the plugin's initialize.Router applies
+// them. The mount prefix expected by the FE is /admin-api/v1.
+func (s *SkyAgentRouter) Init(private *gin.RouterGroup) {
+	skyApi := api.Api.SkyAgent
+	dashApi := api.Api.Dashboard
 
-	agents := Router.Group("agents")
+	agents := private.Group("agents")
 	{
 		agents.GET("", skyApi.GetAgentList)
 		agents.GET(":id", skyApi.GetAgentDetail)
@@ -24,23 +26,23 @@ func (s *SkyAgentRouter) InitSkyAgentRouter(Router *gin.RouterGroup) {
 		agents.GET(":id/full", skyApi.GetAgentAdminDetail)
 	}
 
-	orders := Router.Group("orders")
+	orders := private.Group("orders")
 	{
 		orders.GET("", skyApi.GetOrderList)
 		orders.GET(":id", skyApi.GetOrderDetail)
 	}
 
-	products := Router.Group("products")
+	products := private.Group("products")
 	{
 		products.GET("", skyApi.GetProductList)
 	}
 
-	suppliers := Router.Group("suppliers")
+	suppliers := private.Group("suppliers")
 	{
 		suppliers.GET("", skyApi.GetSupplierList)
 	}
 
-	tickets := Router.Group("onboarding/tickets")
+	tickets := private.Group("onboarding/tickets")
 	{
 		tickets.POST("", skyApi.CreateTicket)
 		tickets.GET("", skyApi.ListTickets)
@@ -51,10 +53,10 @@ func (s *SkyAgentRouter) InitSkyAgentRouter(Router *gin.RouterGroup) {
 	}
 
 	// All-in-one Agent L0 onboarding (Story 11.8)
-	Router.POST("onboarding/agents", skyApi.OnboardingAgent)
+	private.POST("onboarding/agents", skyApi.OnboardingAgent)
 
-	dash := Router.Group("dashboard")
+	dash := private.Group("dashboard")
 	{
-		dash.GET("overview", skyApi.GetDashboardOverview)
+		dash.GET("overview", dashApi.GetDashboardOverview)
 	}
 }

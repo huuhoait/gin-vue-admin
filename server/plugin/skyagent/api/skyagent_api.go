@@ -1,4 +1,4 @@
-package proxy
+package api
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"github.com/huuhoait/gin-vue-admin/server/global"
 	"github.com/huuhoait/gin-vue-admin/server/middleware"
 	"github.com/huuhoait/gin-vue-admin/server/model/common/response"
-	proxyPkg "github.com/huuhoait/gin-vue-admin/server/service/proxy"
+	proxyPkg "github.com/huuhoait/gin-vue-admin/server/plugin/skyagent/service"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

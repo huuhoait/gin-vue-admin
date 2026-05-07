@@ -28,7 +28,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getSupplierList } from '@/api/skyagent/catalog'
+import { getSupplierList } from '@/plugin/skyagent/api/catalog'
 
 const { t } = useI18n()
 const healthTagType = { online: 'success', offline: 'danger', degraded: 'warning' }

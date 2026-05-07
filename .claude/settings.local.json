@@ -55,7 +55,8 @@
       "Bash(awk '/^pgsql:/,/^[a-z]/' \"/Users/hoale/Library/Mobile Documents/com~apple~CloudDocs/Project/gin-vue-admin/server/config.yaml\")",
       "Bash(PGPASSWORD='local-dev-only' psql -h 127.0.0.1 -p 5435 -U skyagent -d gva -c \"SELECT id, username, nick_name, authority_id, email, phone, enable, created_at FROM sys_users WHERE username='hoalh';\")",
       "Bash(docker exec *)",
-      "Bash(node --input-type=module -e \"import\\('./src/view/login/index.vue'\\).catch\\(e => { console.log\\('imports check skipped'\\); }\\)\")"
+      "Bash(node --input-type=module -e \"import\\('./src/view/login/index.vue'\\).catch\\(e => { console.log\\('imports check skipped'\\); }\\)\")",
+      "Bash(grep -n \"server/api/v1/proxy\\\\|server/router/proxy\\\\|server/service/proxy\\\\|web/src/api/skyagent\\\\|web/src/view/{agent,onboarding,catalog,order}\\\\|view/{agent,onboarding,catalog,order}\" \"/Users/hoale/Library/Mobile Documents/com~apple~CloudDocs/Project/gin-vue-admin/CLAUDE.md\" \"/Users/hoale/Library/Mobile Documents/com~apple~CloudDocs/Project/gin-vue-admin/external-frontend-integration.md\")"
     ],
     "additionalDirectories": [
       "/private/tmp"

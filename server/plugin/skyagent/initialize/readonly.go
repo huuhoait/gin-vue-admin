@@ -1,19 +1,19 @@
 package initialize
 
 import (
-	proxyApi "github.com/huuhoait/gin-vue-admin/server/api/v1/proxy"
 	"github.com/huuhoait/gin-vue-admin/server/global"
+	pluginApi "github.com/huuhoait/gin-vue-admin/server/plugin/skyagent/api"
+
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-// InitSkyAgentReadonlyDBs opens read-only Postgres connections from config
-// and injects them into the dashboard API layer.
-// Call after Viper config is loaded. Does not panic — dashboard degrades
-// gracefully if connections are unavailable.
-func InitSkyAgentReadonlyDBs() {
+// Readonly opens read-only Postgres connections from config and injects them
+// into the dashboard API layer. Call after Viper config is loaded. Does not
+// panic — dashboard degrades gracefully if connections are unavailable.
+func Readonly() {
 	cfg := global.GVA_CONFIG.Proxy
 
 	if cfg.CoreDBDSN != "" {
@@ -21,7 +21,7 @@ func InitSkyAgentReadonlyDBs() {
 		if err != nil {
 			global.GVA_LOG.Warn("skyagent: core read-only DB unavailable", zap.Error(err))
 		} else {
-			proxyApi.DashboardDBs.CoreDB = db
+			pluginApi.DashboardDBs.CoreDB = db
 			global.GVA_LOG.Info("skyagent: core read-only DB connected")
 		}
 	}
@@ -31,7 +31,7 @@ func InitSkyAgentReadonlyDBs() {
 		if err != nil {
 			global.GVA_LOG.Warn("skyagent: order read-only DB unavailable", zap.Error(err))
 		} else {
-			proxyApi.DashboardDBs.OrderDB = db
+			pluginApi.DashboardDBs.OrderDB = db
 			global.GVA_LOG.Info("skyagent: order read-only DB connected")
 		}
 	}
