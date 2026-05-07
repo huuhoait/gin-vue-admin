@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,6 +13,16 @@ import (
 	"time"
 
 	"log"
+)
+
+// Sentinel errors classify proxy-layer failures so handlers can map them
+// onto contract-compliant SkyAgent responseCodes (5002/5003/5004) and
+// HTTP statuses. See external-frontend-integration.md §3, §5.
+var (
+	ErrUpstreamTimeout     = errors.New("upstream timeout")
+	ErrUpstreamUnreachable = errors.New("upstream unreachable")
+	ErrUpstreamReadFailed  = errors.New("read upstream response")
+	ErrUpstreamParseFailed = errors.New("parse upstream envelope")
 )
 
 // Client is a thin HTTP client that forwards requests to a downstream
@@ -100,7 +111,10 @@ func (c *Client) Do(ctx context.Context, method, path string, body any, opts *Re
 	if err != nil {
 		log.Printf("proxy: outbound error trace_id=%s method=%s url=%s dur_ms=%d err=%v",
 			traceID, method, reqURL.String(), time.Since(start).Milliseconds(), err)
-		return nil, 0, fmt.Errorf("proxy: downstream unreachable")
+		if errors.Is(err, context.DeadlineExceeded) {
+			return nil, 0, fmt.Errorf("proxy: downstream timeout: %w", ErrUpstreamTimeout)
+		}
+		return nil, 0, fmt.Errorf("proxy: downstream unreachable: %w", ErrUpstreamUnreachable)
 	}
 	defer resp.Body.Close()
 
@@ -108,7 +122,7 @@ func (c *Client) Do(ctx context.Context, method, path string, body any, opts *Re
 	if err != nil {
 		log.Printf("proxy: outbound read_error trace_id=%s method=%s url=%s status=%d dur_ms=%d err=%v",
 			traceID, method, reqURL.String(), resp.StatusCode, time.Since(start).Milliseconds(), err)
-		return nil, resp.StatusCode, fmt.Errorf("proxy: read response: %w", err)
+		return nil, resp.StatusCode, fmt.Errorf("proxy: read response: %w", ErrUpstreamReadFailed)
 	}
 
 	var envelope GVAEnvelope
@@ -116,7 +130,7 @@ func (c *Client) Do(ctx context.Context, method, path string, body any, opts *Re
 		if err := json.Unmarshal(rawBody, &envelope); err != nil {
 			log.Printf("proxy: outbound parse_error trace_id=%s method=%s url=%s status=%d dur_ms=%d err=%v body_len=%d",
 				traceID, method, reqURL.String(), resp.StatusCode, time.Since(start).Milliseconds(), err, len(rawBody))
-			return nil, resp.StatusCode, fmt.Errorf("proxy: parse envelope: %w", err)
+			return nil, resp.StatusCode, fmt.Errorf("proxy: parse envelope: %w", ErrUpstreamParseFailed)
 		}
 	}
 

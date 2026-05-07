@@ -62,7 +62,7 @@ func (s *SkyAgentApi) GetAgentDetail(c *gin.Context) {
 func (s *SkyAgentApi) CreateAgent(c *gin.Context) {
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
-		proxyPkg.RespondError(c, err)
+		proxyPkg.RespondBadRequest(c, err)
 		return
 	}
 	doProxy(c, getProxyService().Core.Client, http.MethodPost, "/v1/agents", body)
@@ -80,7 +80,7 @@ func (s *SkyAgentApi) CreateAgent(c *gin.Context) {
 func (s *SkyAgentApi) UpdateAgent(c *gin.Context) {
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
-		proxyPkg.RespondError(c, err)
+		proxyPkg.RespondBadRequest(c, err)
 		return
 	}
 	doProxy(c, getProxyService().Core.Client, http.MethodPut, "/v1/agents/"+c.Param("id"), body)
@@ -98,7 +98,7 @@ func (s *SkyAgentApi) UpdateAgent(c *gin.Context) {
 func (s *SkyAgentApi) UpdateAgentStatus(c *gin.Context) {
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
-		proxyPkg.RespondError(c, err)
+		proxyPkg.RespondBadRequest(c, err)
 		return
 	}
 	doProxy(c, getProxyService().Core.Client, http.MethodPut, "/v1/agents/"+c.Param("id")+"/status", body)
@@ -178,7 +178,7 @@ func (s *SkyAgentApi) GetSupplierList(c *gin.Context) {
 func (s *SkyAgentApi) CreateTicket(c *gin.Context) {
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
-		proxyPkg.RespondError(c, err)
+		proxyPkg.RespondBadRequest(c, err)
 		return
 	}
 	doProxy(c, getProxyService().Core.Client, http.MethodPost, "/v1/onboarding/tickets", body)
@@ -197,7 +197,7 @@ func (s *SkyAgentApi) GetTicket(c *gin.Context) {
 func (s *SkyAgentApi) UploadTicketAttachment(c *gin.Context) {
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
-		proxyPkg.RespondError(c, err)
+		proxyPkg.RespondBadRequest(c, err)
 		return
 	}
 	doProxy(c, getProxyService().Core.Client, http.MethodPost, "/v1/onboarding/tickets/"+c.Param("ticket_id")+"/attachments", body)
@@ -210,7 +210,7 @@ func (s *SkyAgentApi) SubmitTicket(c *gin.Context) {
 func (s *SkyAgentApi) ReviewTicket(c *gin.Context) {
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
-		proxyPkg.RespondError(c, err)
+		proxyPkg.RespondBadRequest(c, err)
 		return
 	}
 	doProxy(c, getProxyService().Core.Client, http.MethodPut, "/v1/onboarding/tickets/"+c.Param("ticket_id")+"/review", body)
@@ -220,7 +220,7 @@ func (s *SkyAgentApi) ReviewTicket(c *gin.Context) {
 func (s *SkyAgentApi) OnboardingAgent(c *gin.Context) {
 	var body map[string]any
 	if err := c.ShouldBindJSON(&body); err != nil {
-		proxyPkg.RespondError(c, err)
+		proxyPkg.RespondBadRequest(c, err)
 		return
 	}
 	doProxy(c, getProxyService().Core.Client, http.MethodPost, "/v1/onboarding/agents", body)

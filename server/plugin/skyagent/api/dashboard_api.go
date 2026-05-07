@@ -18,12 +18,12 @@ type DashboardApi struct{}
 func (d *DashboardApi) GetDashboardOverview(c *gin.Context) {
 	svc := getDashboardService()
 	if svc == nil {
-		response.FailWithMessage("Dashboard service unavailable", c)
+		response.FailWithCode(c, "admin.dashboard.unavailable")
 		return
 	}
 	metrics, err := svc.GetOverview(c.Request.Context())
 	if err != nil {
-		response.FailWithMessage("Failed to load dashboard", c)
+		response.FailWithCode(c, "admin.dashboard.load_failed")
 		return
 	}
 	response.OkWithData(metrics, c)
